@@ -16,6 +16,7 @@
     "@vue/composition-api": "^1.1.4",
     "@vueuse/core": "^6.2.1",
     "core-js": "^3.17.2",
+    "element-ui": "^2.15.6",
     "vue": "^2.6.14",
     "vue-demi": "^0.11.4",
     "vue-fragment": "^1.5.2",

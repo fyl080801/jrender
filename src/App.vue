@@ -3,17 +3,58 @@ import { reactive } from "@vue/composition-api";
 import { JRender } from "@jrender/core";
 
 const configs = reactive({
+  model: { text: "xxxxxxxaaaa", obj: {} },
   fields: [
     {
-      component: "div",
-      children: [{ component: "span", options: { domProps: { innerText: "xxx" } } }],
+      component: "el-form",
+      children: [
+        {
+          component: "el-input",
+          formItem: { label: "$:model.obj.text" },
+          options: {
+            props: { value: "$:model.obj.text" },
+            attrs: { placeholder: "input value" },
+            on: { input: "$:(e)=>UPDATE(model, 'obj.text', e)" },
+          },
+        },
+        // {
+        //   component: "input",
+        //   options: {
+        //     domProps: { placeholder: "input value", value: "$:model.obj.text" },
+        //     on: { input: "$:(e)=>UPDATE(model, 'obj.text', e.target.value)" },
+        //   },
+        // },
+        {
+          component: "div",
+          children: [
+            { component: "p", options: { domProps: { innerText: "xxx" } } },
+            { component: "p", options: { domProps: { innerText: "$:model.text" } } },
+            // { component: "p", options: { domProps: { innerText: "$:model.obj.text" } } },
+          ],
+        },
+      ],
     },
   ],
 });
+
+const onSetup = ({ onBeforeRender }: any) => {
+  onBeforeRender((field: any) => {
+    if (!field.formItem) {
+      return field;
+    }
+
+    // const props = field.formItem;
+
+    // delete field.formItem;
+
+    // return { component: "el-form-item", options: { props }, children: [field] };
+  });
+};
 </script>
 
 <template>
   <div>
-    <JRender :fields="configs.fields" />
+    <input v-model="configs.model.text" class="" />
+    <JRender :fields="configs.fields" v-model="configs.model" @setup="onSetup" />
   </div>
 </template>

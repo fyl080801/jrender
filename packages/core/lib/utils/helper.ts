@@ -10,6 +10,20 @@ export const isFunction = (target: unknown) => {
   return typeof target === "function";
 };
 
+export const isNumberLike = (value: unknown) => {
+  return String(value).match(/^\d+$/);
+};
+
+export const assignArray = (...targets: any) => {
+  return targets.reduce((pre: any, cur: any) => {
+    return (pre as unknown[]).concat(cur);
+  }, []);
+};
+
+export const assignObject = (...targets: Record<string, unknown>[]) => {
+  return Object.assign({}, ...targets);
+};
+
 export const deepClone = (target: unknown) => {
   if (!target) {
     return target;
@@ -44,7 +58,7 @@ export const deepClone = (target: unknown) => {
           result = {};
           for (const i in target as Record<string, unknown>) {
             (result as Record<string, unknown>)[i] = deepClone(
-              (target as Record<string, unknown>)[i]
+              (target as Record<string, unknown>)[i],
             );
           }
         }
@@ -61,6 +75,69 @@ export const deepClone = (target: unknown) => {
     } else {
       result = target;
     }
+  }
+
+  return result;
+};
+
+export const toPath = (pathString: string) => {
+  if (isArray(pathString)) {
+    return pathString;
+  }
+  if (typeof pathString === "number") {
+    return [pathString];
+  }
+  pathString = String(pathString);
+
+  // lodash 的实现 - https://github.com/lodash/lodash
+  const pathRx =
+    /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
+  const pathArray: unknown[] = [];
+
+  const replacer = (match: any, num: any, quote: any, str: any) => {
+    pathArray.push(quote ? str : num !== undefined ? Number(num) : match);
+    return pathArray[pathArray.length - 1];
+  };
+
+  pathString.replace(pathRx, replacer as any);
+
+  return pathArray;
+};
+
+export const hasOwnProperty = (target: Record<string, unknown>, prop: string) => {
+  return Object.prototype.hasOwnProperty.call(target, prop);
+};
+
+export const deepSet = (target: Record<string, unknown>, path: string, value: unknown) => {
+  const fields = isArray(path) ? path : toPath(path);
+  const prop = (fields as any).shift();
+
+  if (!fields.length) {
+    return (target[prop] = value);
+  }
+
+  if (!hasOwnProperty(target, prop) || target[prop] === null) {
+    // 当前下标是数字则认定是数组
+    const objVal = fields.length >= 1 && isNumberLike(fields[0]) ? [] : {};
+    target[prop] = objVal;
+  }
+
+  deepSet((target as any)[prop], fields as any, value);
+};
+
+export const deepGet = (target: Record<string, unknown>, path: string) => {
+  const fields = isArray(path) ? path : toPath(path);
+
+  if (!fields.length) {
+    return target;
+  }
+
+  let prop = (fields as any).shift();
+  let result = target;
+
+  while (prop) {
+    result = result[prop] as any;
+    prop = (fields as any).shift();
   }
 
   return result;
