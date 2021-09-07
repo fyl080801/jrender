@@ -18,6 +18,28 @@ const configs = reactive({
           },
         },
         // {
+        //   component: "el-select",
+        //   formItem: { label: "select" },
+        //   options: {
+        //     props: { value: "$:model.sel" },
+        //     on: { input: "$:(e)=>UPDATE(model, 'sel', e)" },
+        //   },
+        //   children: [
+        //     {
+        //       component: "repeat",
+        //       options: {
+        //         props: {
+        //           data: [{ value: "xxx" }],
+        //           field: {
+        //             component: "el-option",
+        //             options: { props: { value: "$:scope.value", label: "$:scope.value" } },
+        //           },
+        //         },
+        //       },
+        //     },
+        //   ],
+        // },
+        // {
         //   component: "input",
         //   options: {
         //     domProps: { placeholder: "input value", value: "$:model.obj.text" },
@@ -43,11 +65,11 @@ const onSetup = ({ onBeforeRender }: any) => {
       return field;
     }
 
-    // const props = field.formItem;
+    const props = field.formItem;
 
-    // delete field.formItem;
+    delete field.formItem;
 
-    // return { component: "el-form-item", options: { props }, children: [field] };
+    return { component: "el-form-item", options: { props }, children: [field] };
   });
 };
 </script>

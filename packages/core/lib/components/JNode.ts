@@ -13,7 +13,10 @@ import { injectProxy } from "../utils/proxy";
 
 export default defineComponent({
   name: "JNode",
-  props: { field: { type: Object, required: true } },
+  props: {
+    field: { type: Object, required: true },
+    scope: { type: [Object, String, Number, Boolean], default: () => ({}) },
+  },
   setup: (props) => {
     const vDeepSet = (target: Record<string, unknown>, path: string, value: unknown) => {
       const fields = isArray(path) ? path : toPath(path);
@@ -32,9 +35,10 @@ export default defineComponent({
     };
 
     const jrender = useJRender() as Record<string, unknown>;
-
+    const context = assignObject({}, jrender.context as Record<string, unknown>);
+    context.scope = props.scope;
     const injector = injectProxy({
-      context: jrender.context as Record<string, unknown>,
+      context,
       functional: {
         UPDATE: (target: Record<string, unknown>, path: string, value: unknown) => {
           vDeepSet(target, path, value);
@@ -62,15 +66,15 @@ export default defineComponent({
 
       const renderField = injector(nodeField) as any;
 
+      const renderComponent =
+        (jrender.components as Map<string, any>).get(renderField?.component) ||
+        renderField?.component;
+
       const renderChildren = renderField?.children?.map((field: unknown) => {
-        return h("JNode", { props: { field } });
+        return h("JNode", { props: { field, scope: props.scope } });
       });
 
-      return (
-        renderField &&
-        renderField.component &&
-        h(renderField.component, renderField.options, renderChildren)
-      );
+      return renderComponent && h(renderComponent, renderField.options, renderChildren);
     };
   },
 });

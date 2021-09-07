@@ -53,7 +53,7 @@ export const injectProxy = ({ context = {}, functional = {}, proxy = [] }) => {
           }
         }
 
-        return inject(value);
+        return isArray(value) || isObject(value) ? inject(value) : value;
       },
     });
   };
