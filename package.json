@@ -2,6 +2,9 @@
   "name": "jrender",
   "version": "0.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "postinstall": "husky install",
     "dev": "vite",
@@ -15,25 +18,31 @@
     "core-js": "^3.17.2",
     "vue": "^2.6.14",
     "vue-demi": "^0.11.4",
+    "vue-fragment": "^1.5.2",
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
     "@iconify/json": "^1.1.398",
+    "@octokit/core": "3",
+    "@types/node": "^16.7.12",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
+    "@vitejs/plugin-legacy": "^1.5.2",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
+    "@vue/runtime-dom": "^3.2.9",
     "eslint": "^7.32.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.17.0",
     "husky": "^7.0.2",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "prettier": "^2.3.2",
     "typescript": "^4.4.2",
+    "unplugin-vue2-script-setup": "^0.5.8",
     "vite": "^2.5.3",
     "vite-plugin-components": "^0.13.3",
     "vite-plugin-icons": "^0.6.5",
-    "vite-plugin-vue2": "^1.8.1",
+    "vite-plugin-vue2": "^1.8.2",
     "vite-plugin-windicss": "^1.4.1",
     "vue-template-compiler": "^2.6.14"
   }
