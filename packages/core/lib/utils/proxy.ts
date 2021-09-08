@@ -1,9 +1,14 @@
 import { isArray, isDom, isFunction, isObject } from "./helper";
 
 const ISPROXY = "__j_proxy";
+const RAW = "__j_raw";
 
 export const isInjectedProxy = (target: Record<string, unknown>) => {
   return target[ISPROXY];
+};
+
+export const getProxyRaw = (target: Record<string, unknown>) => {
+  return isInjectedProxy(target) ? target[RAW] : target;
 };
 
 export const injectProxy = (services: Record<string, any>) => {
@@ -24,6 +29,11 @@ export const injectProxy = (services: Record<string, any>) => {
       get: (target, p, receiver) => {
         if (p === ISPROXY) {
           return true;
+        }
+
+        if (p === RAW) {
+          debugger;
+          return target;
         }
 
         const value = Reflect.get(target, p, receiver);

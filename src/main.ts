@@ -1,15 +1,18 @@
 import Vue from "vue";
 import App from "@/App.vue";
-import { createApp, defineComponent } from "vue-demi";
+import { createApp, h } from "vue-demi";
 
 import Element from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-// import "windi.css";
+import { createRouter } from "./router";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-const app = createApp(App);
+const app = createApp({
+  router: createRouter(),
+  render: () => h(App),
+});
 
 app.use(Element);
 

@@ -1,4 +1,4 @@
-import { inject, provide } from "vue-demi";
+import { getCurrentInstance, inject, provide } from "vue-demi";
 import { createServiceProvider } from "./service";
 
 const serviceToken = Symbol("serviceToken");
@@ -29,4 +29,15 @@ export const useRootRender = (setup?: unknown) => {
   } else {
     return inject(setupToken, provider.getServices());
   }
+};
+
+export const useVueHelper = () => {
+  const instance = getCurrentInstance();
+  const VNodeType: any = instance?.proxy.$createElement("span", "").constructor;
+
+  return {
+    isVNode: (node: any) => {
+      return node instanceof VNodeType;
+    },
+  };
 };

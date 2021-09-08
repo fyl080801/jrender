@@ -3,7 +3,13 @@ export const isArray = (target: unknown) => {
 };
 
 export const isObject = (target: unknown) => {
-  return target !== null && typeof target === "object";
+  return (
+    target !== undefined &&
+    target !== null &&
+    typeof target === "object" &&
+    Object.prototype.toString.call(target) === "[object Object]" &&
+    !isArray(target)
+  );
 };
 
 export const isFunction = (target: unknown) => {

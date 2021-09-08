@@ -14,12 +14,6 @@ const emit = defineEmits(["setup", "input"]);
 const provider = createServiceProvider();
 const { context } = useJRender({
   context: reactive({ model: isReactive(props.value) ? props.value : reactive(props.value) }),
-  // components: {
-  //   repeat: JRepeat,
-  // },
-  // functional: {},
-  // beforeRenderHandlers: [],
-  // proxy: [],
   slots: useSlots(),
   fields: props.fields,
   innerServices: provider.getServices(),
