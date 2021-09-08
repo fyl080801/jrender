@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Fragment } from "vue-fragment";
-import { computed, isReactive, reactive, watch, set } from "vue-demi";
+import { computed, isReactive, reactive, watch, useSlots } from "vue-demi";
 import JNode from "./JNode";
 import JRepeat from "./JRepeat";
 import { useJRender } from "../utils/mixins";
@@ -21,6 +21,8 @@ const { context, beforeRenderHandlers, components, functional, proxy } = useJRen
   functional: {},
   beforeRenderHandlers: [],
   proxy: [],
+  slots: useSlots(),
+  fields: props.fields,
 }) as Record<string, unknown>;
 
 const isArrayRoot = computed(() => {

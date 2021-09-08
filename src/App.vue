@@ -20,6 +20,9 @@ const configs = reactive({
               // input: "@model.obj.text:arguments[0]",
             },
           },
+          children: [
+            { component: "span", options: { slot: "append", domProps: { innerText: "aaaa" } } },
+          ],
         },
         {
           component: "el-select",
@@ -35,7 +38,8 @@ const configs = reactive({
           children: [
             { component: "p", options: { domProps: { innerText: "xxx" } } },
             { component: "p", options: { domProps: { innerText: "$:model.text" } } },
-            // { component: "p", options: { domProps: { innerText: "$:model.obj.text" } } },
+            { component: "h1", children: [{ component: "slot" }] },
+            { component: "h2", children: [{ component: "slot", name: "subtitle" }] },
           ],
         },
         {
@@ -85,7 +89,10 @@ const onSetup = ({ onBeforeRender }: any) => {
 <template>
   <div>
     <input v-model="configs.model.text" />
-    <JRender :fields="configs.fields" v-model="configs.model" @setup="onSetup" />
+    <JRender :fields="configs.fields" v-model="configs.model" @setup="onSetup">
+      <div>inner scope</div>
+      <template v-slot:subtitle> subtitle slot </template>
+    </JRender>
     <p>{{ JSON.stringify(configs.model) }}</p>
   </div>
 </template>
