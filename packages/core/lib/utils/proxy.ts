@@ -1,4 +1,4 @@
-import { isArray, isFunction, isObject } from "./helper";
+import { isArray, isDom, isFunction, isObject } from "./helper";
 
 const ISPROXY = "__j_proxy";
 
@@ -53,7 +53,7 @@ export const injectProxy = ({ context = {}, functional = {}, proxy = [] }) => {
           }
         }
 
-        return isArray(value) || isObject(value) ? inject(value) : value;
+        return !isDom(value) ? inject(value) : value;
       },
     });
   };

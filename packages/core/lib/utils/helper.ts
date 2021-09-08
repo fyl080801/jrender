@@ -14,6 +14,24 @@ export const isNumberLike = (value: unknown) => {
   return String(value).match(/^\d+$/);
 };
 
+export const isDom = (target: unknown) => {
+  const expr =
+    typeof HTMLElement === "object"
+      ? function () {
+          return target instanceof HTMLElement;
+        }
+      : function () {
+          return (
+            target &&
+            typeof target === "object" &&
+            (target as HTMLElement).nodeType === 1 &&
+            typeof (target as HTMLElement).nodeName === "string"
+          );
+        };
+
+  return expr();
+};
+
 export const assignArray = (...targets: any) => {
   return targets.reduce((pre: any, cur: any) => {
     return (pre as unknown[]).concat(cur);

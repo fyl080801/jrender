@@ -1,13 +1,5 @@
-import { defineComponent, h, set } from "vue-demi";
-import {
-  assignArray,
-  assignObject,
-  deepClone,
-  hasOwnProperty,
-  isArray,
-  isNumberLike,
-  toPath,
-} from "../utils/helper";
+import { defineComponent, h } from "vue-demi";
+import { assignArray, assignObject, deepClone } from "../utils/helper";
 import { useJRender } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
 
@@ -18,32 +10,12 @@ export default defineComponent({
     scope: { type: [Object, String, Number, Boolean], default: () => ({}) },
   },
   setup: (props) => {
-    const vDeepSet = (target: Record<string, unknown>, path: string, value: unknown) => {
-      const fields = isArray(path) ? path : toPath(path);
-      const prop = (fields as any).shift();
+    const { components, context, beforeRenderHandlers, functional }: Record<string, unknown> =
+      useJRender() as Record<string, unknown>;
 
-      if (!fields.length) {
-        return set(target, prop, value);
-      }
-
-      if (!hasOwnProperty(target, prop) || target[prop] === undefined) {
-        const objVal = fields.length >= 1 && isNumberLike(fields[0]) ? [] : {};
-        set(target, prop, objVal);
-      }
-
-      vDeepSet((target as any)[prop], fields as any, value);
-    };
-
-    const jrender = useJRender() as Record<string, unknown>;
-    const context = assignObject({}, jrender.context as Record<string, unknown>);
-    context.scope = props.scope;
     const injector = injectProxy({
-      context,
-      functional: {
-        UPDATE: (target: Record<string, unknown>, path: string, value: unknown) => {
-          vDeepSet(target, path, value);
-        },
-      }, // assignObject(renderStore.state.functionals, rootSetup.functionals, functionals),
+      context: assignObject({}, context as Record<string, unknown>, { scope: props.scope }),
+      functional: assignObject({}, functional as Record<string, unknown>),
       proxy: [],
     });
 
@@ -56,7 +28,7 @@ export default defineComponent({
         children: props.field.children,
       });
 
-      const beforeHandlers = assignArray(jrender.beforeRenderHandlers);
+      const beforeHandlers = assignArray([], beforeRenderHandlers);
 
       for (let i = 0; i < beforeHandlers.length; i++) {
         if (nodeField) {
@@ -67,8 +39,7 @@ export default defineComponent({
       const renderField = injector(nodeField) as any;
 
       const renderComponent =
-        (jrender.components as Map<string, any>).get(renderField?.component) ||
-        renderField?.component;
+        (components as Map<string, any>).get(renderField?.component) || renderField?.component;
 
       const renderChildren = renderField?.children?.map((field: unknown) => {
         return h("JNode", { props: { field, scope: props.scope } });
