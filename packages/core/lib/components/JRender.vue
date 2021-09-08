@@ -4,14 +4,7 @@ import { computed, isReactive, reactive, watch, set } from "vue-demi";
 import JNode from "./JNode";
 import JRepeat from "./JRepeat";
 import { useJRender } from "../utils/mixins";
-import {
-  deepGet,
-  hasOwnProperty,
-  isArray,
-  isFunction,
-  isNumberLike,
-  toPath,
-} from "../utils/helper";
+import { isFunction } from "../utils/helper";
 
 const props = defineProps({
   fields: { type: [Array, Object], default: () => [] },
@@ -21,7 +14,7 @@ const props = defineProps({
 const emit = defineEmits(["setup", "input"]);
 
 const { context, beforeRenderHandlers, components, functional, proxy } = useJRender({
-  context: { model: isReactive(props.value) ? props.value : reactive(props.value) },
+  context: reactive({ model: isReactive(props.value) ? props.value : reactive(props.value) }),
   components: {
     repeat: JRepeat,
   },
