@@ -20,34 +20,14 @@ const props = defineProps({
 
 const emit = defineEmits(["setup", "input"]);
 
-const vDeepSet = (target: Record<string, unknown>, path: string, value: unknown) => {
-  const fields = isArray(path) ? path : toPath(path);
-  const prop = (fields as any).shift();
-
-  if (!fields.length) {
-    return set(target, prop, value);
-  }
-
-  if (!hasOwnProperty(target, prop) || target[prop] === undefined) {
-    const objVal = fields.length >= 1 && isNumberLike(fields[0]) ? [] : {};
-    set(target, prop, objVal);
-  }
-
-  vDeepSet((target as any)[prop], fields as any, value);
-};
-
-const { context, beforeRenderHandlers, components, functional } = useJRender({
+const { context, beforeRenderHandlers, components, functional, proxy } = useJRender({
   context: { model: isReactive(props.value) ? props.value : reactive(props.value) },
-  components: new Map([["repeat", JRepeat]]),
-  functional: {
-    UPDATE: (target: Record<string, unknown>, path: string, value: unknown) => {
-      vDeepSet(target, path, value);
-    },
-    GET: (target: Record<string, unknown>, path: string, def: unknown) => {
-      return deepGet(target, path) || def;
-    },
+  components: {
+    repeat: JRepeat,
   },
+  functional: {},
   beforeRenderHandlers: [],
+  proxy: [],
 }) as Record<string, unknown>;
 
 const isArrayRoot = computed(() => {
@@ -63,7 +43,7 @@ watch(
 
 emit("setup", {
   addComponent: (name: string, type: unknown) => {
-    (components as Map<string, unknown>).set(name, type);
+    (components as Record<string, unknown>)[name] = type;
   },
   addFunction: (name: string, fx: unknown) => {
     if (isFunction(fx)) {
@@ -75,11 +55,11 @@ emit("setup", {
       (beforeRenderHandlers as unknown[]).push(handler);
     }
   },
-  // addProxy: (proxy) => {
-  //   if (isFunction(proxy)) {
-  //     proxyList.push(proxy);
-  //   }
-  // },
+  addProxy: (handler: unknown) => {
+    if (isFunction(handler)) {
+      (proxy as unknown[]).push(handler);
+    }
+  },
 });
 </script>
 

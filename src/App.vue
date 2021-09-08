@@ -3,7 +3,7 @@ import { reactive } from "@vue/composition-api";
 import { JRender } from "@jrender/core";
 
 const configs = reactive({
-  model: { text: "xxxxxxxaaaa", obj: {} },
+  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }] },
   fields: [
     {
       component: "el-form",
@@ -15,7 +15,10 @@ const configs = reactive({
           options: {
             props: { value: "$:model.obj.text" },
             attrs: { placeholder: "input value" },
-            on: { input: "$:(e)=>UPDATE(model, 'obj.text', e)" },
+            on: {
+              input: "$:(e)=>UPDATE(model, 'obj.text', e)",
+              // input: "@model.obj.text:arguments[0]",
+            },
           },
         },
         {
@@ -25,15 +28,8 @@ const configs = reactive({
             props: { value: "$:model.sel" },
             on: { input: "$:(e)=>UPDATE(model, 'sel', e)" },
           },
-          items: [{ value: "xxx" }],
+          items: "$:model.arr",
         },
-        // {
-        //   component: "input",
-        //   options: {
-        //     domProps: { placeholder: "input value", value: "$:model.obj.text" },
-        //     on: { input: "$:(e)=>UPDATE(model, 'obj.text', e.target.value)" },
-        //   },
-        // },
         {
           component: "div",
           children: [
@@ -41,6 +37,13 @@ const configs = reactive({
             { component: "p", options: { domProps: { innerText: "$:model.text" } } },
             // { component: "p", options: { domProps: { innerText: "$:model.obj.text" } } },
           ],
+        },
+        {
+          component: "el-button",
+          options: {
+            domProps: { innerText: "添加" },
+            on: { click: "$:()=>model.arr.push({ value: 'vvv' + model.arr.length })" },
+          },
         },
       ],
     },

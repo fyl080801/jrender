@@ -6,27 +6,10 @@ export const isInjectedProxy = (target: Record<string, unknown>) => {
   return target[ISPROXY];
 };
 
-export const injectProxy = ({ context = {}, functional = {}, proxy = [] }) => {
-  const compute = (value: string) => {
-    const handler = (context: Record<string, unknown>) => {
-      try {
-        const keys = Object.keys(context);
-        const funcKeys = Object.keys(functional);
-        return new Function(...[...keys, ...funcKeys], `return ${value.replace("$:", "")}`)(
-          ...[
-            ...keys.map((key) => context[key]),
-            ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
-          ],
-        );
-      } catch {
-        //
-      }
-    };
+export const injectProxy = (services: Record<string, any>) => {
+  const { context = {}, proxy = [] } = services;
 
-    return typeof value === "string" && value.startsWith("$:") && handler;
-  };
-
-  const handlers = [compute, ...proxy];
+  const handlers = [...proxy];
 
   const inject = (input: Record<string, unknown>): unknown => {
     if (!isObject(input) && !isArray(input)) {
@@ -53,7 +36,7 @@ export const injectProxy = ({ context = {}, functional = {}, proxy = [] }) => {
           }
         }
 
-        return !isDom(value) ? inject(value) : value;
+        return (!isDom(value) && inject(value)) || value;
       },
     });
   };
