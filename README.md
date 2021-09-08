@@ -1,11 +1,67 @@
-# Vue 3 + Typescript + Vite
+# 说明
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+只是一个实验性项目
 
-## Recommended IDE Setup
+## 表达式
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+通过 `$:<path>` 将值绑定到属性上
 
-## Type Support For `.vue` Imports in TS
+```json
+{
+  "text": "$:model.text"
+}
+```
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+支持函数表达式
+
+```json
+{
+  "on": {
+    "click": "$:()=>{ alert('clicked') }"
+  }
+}
+```
+
+## 渲染前处理
+
+通过定义渲染前处理实现改变将要渲染的节点功能
+
+例如：原始定义如下
+
+```json
+{
+  "component": "el-input",
+  "formItem": { "label": "input" },
+  "options": {
+    "props": { "value": "$:model.obj.text" },
+    "attrs": { "placeholder": "input value" },
+    "on": { "input": "$:(e)=>UPDATE(model, 'obj.text', e)" }
+  }
+}
+```
+
+定义一个处理 formItem 的方法
+
+```javascript
+const onSetup = ({ onBeforeRender }) => {
+  onBeforeRender((field) => {
+    if (!field.formItem) {
+      return field;
+    }
+
+    const formItem = field.formItem;
+
+    delete field.formItem;
+
+    return { component: "el-form-item", options: { props: formItem }, children: [field] };
+  });
+};
+```
+
+输出结果
+
+```html
+<el-form-item label="input">
+  <el-input :value="model.obj.text" @input="(e)=>UPDATE(model, 'obj.text', e)" />
+</el-form-item>
+```
