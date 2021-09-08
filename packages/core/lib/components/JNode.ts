@@ -1,4 +1,4 @@
-import { defineComponent, h, getCurrentInstance } from "vue-demi";
+import { defineComponent, h, getCurrentInstance, reactive, ref, watch } from "vue-demi";
 import { assignArray, assignObject, deepClone } from "../utils/helper";
 import { compute, GET, UPDATE } from "../utils/inner";
 import { useJRender } from "../utils/mixins";
@@ -13,17 +13,21 @@ export default defineComponent({
   setup: (props) => {
     const ins = getCurrentInstance();
     const VNodeType: any = ins?.proxy.$createElement("span", "").constructor;
-    const {
-      components,
-      context,
-      beforeRenderHandlers,
-      functional,
-      proxy,
-      slots,
-    }: Record<string, unknown> = useJRender() as Record<string, unknown>;
+    const { context, innerServices, slots }: Record<string, unknown> = useJRender() as Record<
+      string,
+      unknown
+    >;
 
-    const innerFunctional = assignObject({ UPDATE, GET }, functional as Record<string, unknown>);
-    const innerProxy = assignArray([compute({ functional: innerFunctional })], proxy);
+    const innerFunctional = assignObject(
+      { UPDATE, GET },
+      (innerServices as Record<string, unknown>).functional as Record<string, unknown>,
+    );
+
+    const innerProxy = assignArray(
+      [compute({ functional: innerFunctional })],
+      (innerServices as Record<string, unknown>).proxy,
+    );
+
     const injector = injectProxy({
       context: assignObject({}, context as Record<string, unknown>, { scope: props.scope }),
       functional: innerFunctional,
@@ -48,35 +52,49 @@ export default defineComponent({
       return slotChildren;
     };
 
-    return () => {
-      if (!props.field) {
-        return;
-      }
+    const beforeHandlers = assignArray(
+      [],
+      (innerServices as Record<string, unknown>).beforeRenderHandlers,
+    );
 
-      let nodeField = assignObject(deepClone({ ...props.field, children: undefined }), {
+    let nodeField = assignObject(
+      { ...props.field, children: undefined },
+      {
         children: props.field.children,
-      });
+      },
+    );
 
-      const beforeHandlers = assignArray([], beforeRenderHandlers);
-
-      for (let i = 0; i < beforeHandlers.length; i++) {
-        if (nodeField) {
-          nodeField = beforeHandlers[i](nodeField);
-        }
+    for (let i = 0; i < beforeHandlers.length; i++) {
+      if (nodeField) {
+        nodeField = beforeHandlers[i](nodeField);
       }
+    }
 
-      const renderField = injector(nodeField) as any;
+    const renderField = reactive(injector(nodeField) as any);
 
+    const renderChildren = ref([]);
+
+    watch(
+      () => renderField.children?.length,
+      () => {
+        renderChildren.value = getChildren(renderField?.children)?.map((field: any) => {
+          return field instanceof VNodeType
+            ? field
+            : h("JNode", { props: { field, scope: props.scope }, slot: field.options?.slot });
+        }) as any;
+      },
+      { immediate: true },
+    );
+
+    return () => {
       const renderComponent =
-        (components as Record<string, unknown>)[renderField?.component] || renderField?.component;
+        ((innerServices as Record<string, unknown>).components as Record<string, unknown>)[
+          renderField?.component
+        ] || renderField?.component;
 
-      const renderChildren = getChildren(renderField?.children)?.map((field: any) => {
-        return field instanceof VNodeType
-          ? field
-          : h("JNode", { props: { field, scope: props.scope }, slot: field.options?.slot });
-      });
-
-      return renderComponent && h(renderComponent, renderField.options, renderChildren);
+      return (
+        renderComponent && h(renderComponent, deepClone(renderField.options), renderChildren.value)
+      );
     };
   },
 });

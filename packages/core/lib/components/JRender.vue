@@ -2,9 +2,8 @@
 import { Fragment } from "vue-fragment";
 import { computed, isReactive, reactive, watch, useSlots } from "vue-demi";
 import JNode from "./JNode";
-import JRepeat from "./JRepeat";
 import { useJRender } from "../utils/mixins";
-import { isFunction } from "../utils/helper";
+import { createServiceProvider } from "../utils/service";
 
 const props = defineProps({
   fields: { type: [Array, Object], default: () => [] },
@@ -12,17 +11,18 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["setup", "input"]);
-
-const { context, beforeRenderHandlers, components, functional, proxy } = useJRender({
+const provider = createServiceProvider();
+const { context } = useJRender({
   context: reactive({ model: isReactive(props.value) ? props.value : reactive(props.value) }),
-  components: {
-    repeat: JRepeat,
-  },
-  functional: {},
-  beforeRenderHandlers: [],
-  proxy: [],
+  // components: {
+  //   repeat: JRepeat,
+  // },
+  // functional: {},
+  // beforeRenderHandlers: [],
+  // proxy: [],
   slots: useSlots(),
   fields: props.fields,
+  innerServices: provider.getServices(),
 }) as Record<string, unknown>;
 
 const isArrayRoot = computed(() => {
@@ -36,26 +36,7 @@ watch(
   },
 );
 
-emit("setup", {
-  addComponent: (name: string, type: unknown) => {
-    (components as Record<string, unknown>)[name] = type;
-  },
-  addFunction: (name: string, fx: unknown) => {
-    if (isFunction(fx)) {
-      (functional as Record<string, unknown>)[name] = fx;
-    }
-  },
-  onBeforeRender: (handler: (field: unknown) => unknown) => {
-    if (isFunction(handler)) {
-      (beforeRenderHandlers as unknown[]).push(handler);
-    }
-  },
-  addProxy: (handler: unknown) => {
-    if (isFunction(handler)) {
-      (proxy as unknown[]).push(handler);
-    }
-  },
-});
+emit("setup", provider.getSetting());
 </script>
 
 <template>
