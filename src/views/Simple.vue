@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from "@vue/composition-api";
+import { reactive } from "vue-demi";
 import { JRender, useRootRender } from "@jrender/core";
 
 const configs = reactive({
@@ -37,7 +37,7 @@ const configs = reactive({
           component: "div",
           children: [
             { component: "p", options: { domProps: { innerText: "xxx" } } },
-            { component: "p", text: "$:model.text" },
+            { component: "p", domProps: { innerText: "$:model.text" } },
             { component: "h1", children: [{ component: "slot" }] },
             { component: "h2", children: [{ component: "slot", name: "subtitle" }] },
           ],
@@ -55,11 +55,12 @@ const configs = reactive({
 });
 
 const onSetup = ({ onBeforeRender }: any) => {
+  // 没意义，受vue2机制影响
+  // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
   onBeforeRender((field: any) => {
-    if (["span", "p"].indexOf(field.component as string) >= 0 && field.text) {
+    if (["span", "p"].indexOf(field.component as string) >= 0 && field.domProps) {
       field.options ||= {};
-      field.options.domProps ||= {};
-      field.options.domProps.innerText = field.text;
+      field.options.domProps = field.domProps;
     }
 
     return field;

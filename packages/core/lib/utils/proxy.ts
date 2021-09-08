@@ -32,7 +32,6 @@ export const injectProxy = (services: Record<string, any>) => {
         }
 
         if (p === RAW) {
-          debugger;
           return target;
         }
 

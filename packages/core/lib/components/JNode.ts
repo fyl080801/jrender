@@ -1,7 +1,7 @@
 import { defineComponent, h, reactive, ref, watch } from "vue-demi";
-import { assignArray, assignObject, deepClone } from "../utils/helper";
+import { assignObject, deepClone } from "../utils/helper";
 import { useJRender, useRootRender, useVueHelper } from "../utils/mixins";
-import { injectProxy } from "../utils/proxy";
+import { injectProxy, getProxyRaw, isInjectedProxy } from "../utils/proxy";
 import { globalServiceProvider, mergeServices } from "../utils/service";
 
 export default defineComponent({
@@ -46,10 +46,9 @@ export default defineComponent({
             slotChildren.push(node);
           });
         } else {
-          slotChildren.push(child);
+          slotChildren.push(getProxyRaw(child));
         }
       });
-
       return slotChildren;
     };
 
@@ -76,7 +75,10 @@ export default defineComponent({
         renderChildren.value = getChildren(renderField?.children)?.map((field: any) => {
           return isVNode(field)
             ? field
-            : h("JNode", { props: { field, scope: props.scope }, slot: field.options?.slot });
+            : h("JNode", {
+                props: { field, scope: props.scope },
+                slot: field.options?.slot,
+              });
         }) as any;
       },
       { immediate: true },
@@ -87,7 +89,8 @@ export default defineComponent({
         mergedServices.components[renderField?.component] || renderField?.component;
 
       return (
-        renderComponent && h(renderComponent, deepClone(renderField.options), renderChildren.value)
+        renderComponent &&
+        h(renderComponent, assignObject(renderField.options), renderChildren.value)
       );
     };
   },
