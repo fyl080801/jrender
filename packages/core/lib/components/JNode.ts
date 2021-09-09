@@ -1,7 +1,7 @@
 import { defineComponent, h, reactive, ref, watch } from "vue-demi";
-import { assignObject, deepClone } from "../utils/helper";
+import { assignObject } from "../utils/helper";
 import { useJRender, useRootRender, useVueHelper } from "../utils/mixins";
-import { injectProxy, getProxyRaw, isInjectedProxy } from "../utils/proxy";
+import { injectProxy, getProxyRaw } from "../utils/proxy";
 import { globalServiceProvider, mergeServices } from "../utils/service";
 
 export default defineComponent({

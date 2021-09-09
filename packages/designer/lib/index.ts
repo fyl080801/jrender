@@ -1,3 +1,3 @@
 export { JDesigner } from "./components";
 
-import "./scss/index.css";
+import "./styles/index.css";

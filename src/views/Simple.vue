@@ -3,7 +3,7 @@ import { reactive } from "vue-demi";
 import { JRender, useRootRender } from "@jrender/core";
 
 const configs = reactive({
-  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }] },
+  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }], checked: false },
   fields: [
     {
       component: "el-form",
@@ -11,7 +11,7 @@ const configs = reactive({
       children: [
         {
           component: "el-input",
-          formItem: { label: "$:'input:' + GET(model, 'obj.text', '')" },
+          formItem: { props: { label: "$:'input:' + GET(model, 'obj.text', '')" } },
           options: {
             props: { value: "$:model.obj.text" },
             attrs: { placeholder: "input value" },
@@ -25,8 +25,21 @@ const configs = reactive({
           ],
         },
         {
+          component: "el-checkbox",
+          formItem: { props: { label: "checked" } },
+          options: {
+            props: { value: "$:model.checked" },
+            on: { input: "$:(e)=>UPDATE(model, 'checked', e)" },
+          },
+        },
+        {
           component: "el-select",
-          formItem: { label: "select" },
+          formItem: {
+            props: { label: "select" },
+            style: {
+              display: "$:model.checked ? undefined : 'none'",
+            },
+          },
           options: {
             props: { value: "$:model.sel" },
             on: { input: "$:(e)=>UPDATE(model, 'sel', e)" },
@@ -65,6 +78,14 @@ const onSetup = ({ onBeforeRender }: any) => {
 
     return field;
   });
+
+  onBeforeRender((field: any) => {
+    if (field.condition) {
+      //
+    }
+
+    return field;
+  });
 };
 
 useRootRender(({ onBeforeRender }: any) => {
@@ -73,11 +94,11 @@ useRootRender(({ onBeforeRender }: any) => {
       return field;
     }
 
-    const props = field.formItem;
+    const options = field.formItem;
 
     delete field.formItem;
 
-    return { component: "el-form-item", options: { props }, children: [field] };
+    return { component: "el-form-item", options, children: [field] };
   });
 
   onBeforeRender((field: any) => {
