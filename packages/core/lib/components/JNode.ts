@@ -1,8 +1,7 @@
 import { defineComponent, h, ref, watch } from "vue-demi";
 import { assignObject, deepClone } from "../utils/helper";
-import { useJRender, useRootRender, useVueHelper } from "../utils/mixins";
+import { useJRender, useVueHelper } from "../utils/mixins";
 import { injectProxy, getProxyRaw } from "../utils/proxy";
-import { globalServiceProvider, mergeServices } from "../utils/service";
 
 export default defineComponent({
   name: "JNode",
@@ -13,21 +12,13 @@ export default defineComponent({
   setup: (props) => {
     const { isVNode } = useVueHelper();
 
-    const { context, innerServices, slots }: Record<string, unknown> = useJRender() as Record<
+    const { context, mergedServices, slots }: Record<string, unknown> = useJRender() as Record<
       string,
       unknown
     >;
 
-    const rootServices = useRootRender();
-
-    const mergedServices: any = mergeServices(
-      globalServiceProvider.getServices(),
-      rootServices,
-      innerServices,
-    );
-
-    const proxy = mergedServices.proxy.map((p: any) =>
-      p({ functional: mergedServices.functional }),
+    const proxy = (mergedServices as any).proxy.map((p: any) =>
+      p({ functional: (mergedServices as any).functional }),
     );
 
     const injector = injectProxy({
@@ -49,9 +40,9 @@ export default defineComponent({
           },
         );
 
-        for (let i = 0; i < mergedServices.beforeRenderHandlers.length; i++) {
+        for (let i = 0; i < (mergedServices as any).beforeRenderHandlers.length; i++) {
           if (node) {
-            node = mergedServices.beforeRenderHandlers[i](node);
+            node = (mergedServices as any).beforeRenderHandlers[i](node);
           }
         }
 
@@ -92,7 +83,8 @@ export default defineComponent({
 
     return () => {
       const renderComponent =
-        mergedServices.components[renderField.value?.component] || renderField.value?.component;
+        (mergedServices as any).components[renderField.value?.component] ||
+        renderField.value?.component;
 
       let rending = {
         component: renderComponent,
@@ -100,9 +92,9 @@ export default defineComponent({
         children: renderChildren.value,
       };
 
-      for (let i = 0; i < mergedServices.renderHandlers.length; i++) {
+      for (let i = 0; i < (mergedServices as any).renderHandlers.length; i++) {
         if (rending) {
-          rending = mergedServices.renderHandlers[i](rending);
+          rending = (mergedServices as any).renderHandlers[i](rending);
         }
       }
 

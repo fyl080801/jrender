@@ -4,6 +4,16 @@ import { JRender, useRootRender } from "@jrender/core";
 
 const configs = reactive({
   model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }] },
+  listeners: [
+    {
+      watch: "=:model.sel",
+      actions: [
+        {
+          handler: "=:()=>{console.log('xxxx')}",
+        },
+      ],
+    },
+  ],
   fields: [
     {
       component: "el-form",
@@ -16,8 +26,7 @@ const configs = reactive({
             props: { value: "=:model.obj.text" },
             attrs: { placeholder: "input value" },
             on: {
-              input: "=:(e)=>UPDATE(model, 'obj.text', e)",
-              // input: "@model.obj.text:arguments[0]",
+              input: "=model.obj.text:arguments[0]",
             },
           },
           children: [
@@ -120,7 +129,12 @@ useRootRender(({ onBeforeRender }: any) => {
 <template>
   <div>
     <input v-model="configs.model.text" />
-    <JRender :fields="configs.fields" v-model="configs.model" @setup="onSetup">
+    <JRender
+      v-model="configs.model"
+      :fields="configs.fields"
+      :listeners="configs.listeners"
+      @setup="onSetup"
+    >
       <div>inner scope</div>
       <template v-slot:subtitle> subtitle slot </template>
     </JRender>
