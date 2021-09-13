@@ -1,86 +1,46 @@
 <script lang="ts" setup>
-import { reactive } from "vue-demi";
+import { onMounted, reactive } from "vue-demi";
 import { JRender, useRootRender } from "@jrender/core";
+import yaml from "js-yaml";
 
 const configs = reactive({
-  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }] },
-  listeners: [
-    {
-      watch: "=:model.sel",
-      actions: [
-        {
-          handler: "=:()=>{console.log('xxxx')}",
-        },
-      ],
-    },
-  ],
-  fields: [
-    {
-      component: "el-form",
-      options: { props: { labelPosition: "top" } },
-      children: [
-        {
-          component: "el-input",
-          formItem: { props: { label: "=:'input:' + GET(model, 'obj.text', '')" } },
-          options: {
-            props: { value: "=:model.obj.text" },
-            attrs: { placeholder: "input value" },
-            on: {
-              input: "=model.obj.text:arguments[0]",
-            },
-          },
-          children: [
-            { component: "span", options: { slot: "append", domProps: { innerText: "aaaa" } } },
-          ],
-        },
-        {
-          component: "el-checkbox",
-          formItem: { props: { label: "checked" } },
-          options: {
-            props: { value: "=:model.checked" },
-            on: { input: "=model.checked:arguments[0]" },
-          },
-        },
-        {
-          component: "el-select",
-          formItem: {
-            condition: "=:model.checked",
-            props: { label: "select" },
-          },
-          options: {
-            props: { value: "=:model.sel" },
-            on: { input: "=:(e)=>UPDATE(model, 'sel', e)" },
-          },
-          items: "=:model.arr",
-        },
-        {
-          component: "div",
-          children: [
-            { component: "p", options: { domProps: { innerText: "xxx" } } },
-            { component: "p", domProps: { innerText: "=:model.text" } },
-            { component: "h1", children: [{ component: "slot" }] },
-            { component: "h2", children: [{ component: "slot", name: "subtitle" }] },
-          ],
-        },
-        {
-          component: "el-button",
-          options: {
-            domProps: { innerText: "添加" },
-            on: { click: "=:()=>model.arr.push({ value: 'vvv' + model.arr.length })" },
-          },
-        },
-      ],
-    },
-  ],
+  model: { text: "xxxxxxxaaaa", arr: [{ value: "xxx" }] },
+  listeners: [],
+  fields: [],
 });
 
 const onSetup = ({ onBeforeRender, onRender }: any) => {
   // 没意义，受vue2机制影响
   // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
   onBeforeRender((field: any) => {
-    if (["span", "p"].indexOf(field.component as string) >= 0 && field.domProps) {
-      field.options ||= {};
+    field.options ||= {};
+
+    if (field.domProps) {
       field.options.domProps = field.domProps;
+    }
+
+    if (field.props) {
+      field.options.props = field.props;
+    }
+
+    if (field.on) {
+      field.options.on = field.on;
+    }
+
+    if (field.nativeOn) {
+      field.options.nativeOn = field.nativeOn;
+    }
+
+    if (field.class) {
+      field.options.class = field.class;
+    }
+
+    if (field.style) {
+      field.options.style = field.style;
+    }
+
+    if (field.slot) {
+      field.options.slot = field.slot;
     }
 
     return field;
@@ -123,6 +83,15 @@ useRootRender(({ onBeforeRender }: any) => {
 
     return field;
   });
+});
+
+onMounted(async () => {
+  const result = await fetch("data/simple.yaml");
+
+  const data: any = yaml.load(await result.text());
+
+  configs.listeners = data.listeners || [];
+  configs.fields = data.fields || [];
 });
 </script>
 

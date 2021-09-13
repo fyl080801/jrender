@@ -18,10 +18,6 @@ const emit = defineEmits(["setup", "input"]);
 const provider = createServiceProvider();
 const rootServices = useRootRender();
 
-const isArrayRoot = computed(() => {
-  return Array.isArray(props.fields);
-});
-
 emit("setup", provider.getSetting());
 
 const context = reactive({ model: isReactive(props.value) ? props.value : reactive(props.value) });
@@ -44,7 +40,7 @@ const injector = injectProxy({
 useJRender({
   context: context,
   slots: useSlots(),
-  fields: props.fields,
+  // fields: props.fields,
   mergedServices,
 }) as Record<string, unknown>;
 
@@ -54,6 +50,21 @@ watch(
     emit("input", value);
   },
 );
+
+//#region fields
+const roots = ref();
+
+const isArrayRoot = computed(() => {
+  return Array.isArray(roots.value);
+});
+
+watch(
+  () => props.fields,
+  (value) => {
+    roots.value = value;
+  },
+);
+//#endregion
 
 //#region listeners 监听
 const watchs = ref([] as any[]);
@@ -102,17 +113,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Fragment>
+  <Fragment v-if="roots">
     <template v-if="isArrayRoot">
       <JNode
-        v-for="(field, index) in fields"
+        v-for="(field, index) in roots"
         :key="field['key'] || index"
         :field="field"
         :scope="{}"
       />
     </template>
     <template v-else>
-      <JNode :field="fields" :scope="{}" />
+      <JNode :field="roots" :scope="{}" />
     </template>
   </Fragment>
 </template>

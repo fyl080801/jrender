@@ -157,10 +157,15 @@ export const deepGet = (target: Record<string, unknown>, path: string) => {
   }
 
   let prop = (fields as any).shift();
-  let result = target;
+  let result: any = target;
 
   while (prop) {
-    result = result[prop] as any;
+    result = result[prop];
+
+    if (fields.length > 0 && (result === undefined || result === null)) {
+      result = isNumberLike(prop) ? [] : {};
+    }
+
     prop = (fields as any).shift();
   }
 

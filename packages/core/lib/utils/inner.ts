@@ -1,5 +1,24 @@
-import { deepGet, deepSet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
+import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
 import { set } from "vue-demi";
+
+export const getvalue = () => (value: string) => {
+  if (typeof value !== "string" || !value.startsWith("=:")) {
+    return false;
+  }
+
+  const handler = (context: Record<string, unknown>) => {
+    const paths = value.replace("=:", "");
+    const origin = deepGet(context, paths);
+
+    if (origin === undefined) {
+      UPDATE(context, paths, null);
+    }
+
+    return origin;
+  };
+
+  return typeof value === "string" && value.startsWith("=:") && handler;
+};
 
 export const compute =
   ({ functional }: Record<string, unknown>) =>
@@ -8,7 +27,7 @@ export const compute =
       try {
         const keys = Object.keys(context);
         const funcKeys = Object.keys(functional as Record<string, unknown>);
-        return new Function(...[...keys, ...funcKeys], `return ${value.replace("=:", "")}`)(
+        return new Function(...[...keys, ...funcKeys], `return ${value.replace("$:", "")}`)(
           ...[
             ...keys.map((key) => context[key]),
             ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
@@ -19,13 +38,13 @@ export const compute =
       }
     };
 
-    return typeof value === "string" && value.startsWith("=:") && handler;
+    return typeof value === "string" && value.startsWith("$:") && handler;
   };
 
 export const assign =
   ({ functional }: Record<string, unknown>) =>
   (value: string) => {
-    const regx = /^(=[\s\S]+:)/g;
+    const regx = /^(\$[\s\S.]+:)/g;
 
     if (typeof value !== "string" || !regx.test(value)) {
       return false;
@@ -54,7 +73,7 @@ export const assign =
         }
 
         return (...args: any) => {
-          deepSet(context, paths, action(...args));
+          UPDATE(context, paths, action(...args));
         };
       } catch {
         //
@@ -81,5 +100,11 @@ export const UPDATE = (target: Record<string, unknown>, path: string, value: unk
 };
 
 export const GET = (target: Record<string, unknown>, path: string, def: unknown) => {
-  return deepGet(target, path) || def;
+  const origin = deepGet(target, path);
+
+  if (origin === undefined) {
+    UPDATE(target, path, def || null);
+  }
+
+  return origin || def;
 };
