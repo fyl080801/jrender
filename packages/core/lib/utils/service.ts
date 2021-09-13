@@ -6,6 +6,7 @@ export const createServiceProvider = () => {
     components: {},
     functional: {},
     beforeRenderHandlers: [],
+    renderHandlers: [],
     proxy: [],
   };
 
@@ -21,6 +22,11 @@ export const createServiceProvider = () => {
     onBeforeRender: (handler: (field: unknown) => unknown) => {
       if (isFunction(handler)) {
         (services.beforeRenderHandlers as unknown[]).push(handler);
+      }
+    },
+    onRender: (handler: (field: unknown) => unknown) => {
+      if (isFunction(handler)) {
+        (services.renderHandlers as unknown[]).push(handler);
       }
     },
     addProxy: (handler: unknown) => {
@@ -50,6 +56,7 @@ export const mergeServices = (...services: any[]) => {
   const merged: any = {
     functional: { UPDATE, GET },
     proxy: [compute],
+    renderHandlers: [],
   };
 
   services.forEach((service) => {

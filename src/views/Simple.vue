@@ -35,10 +35,8 @@ const configs = reactive({
         {
           component: "el-select",
           formItem: {
+            condition: "$:model.checked",
             props: { label: "select" },
-            style: {
-              display: "$:model.checked ? undefined : 'none'",
-            },
           },
           options: {
             props: { value: "$:model.sel" },
@@ -67,7 +65,7 @@ const configs = reactive({
   ],
 });
 
-const onSetup = ({ onBeforeRender }: any) => {
+const onSetup = ({ onBeforeRender, onRender }: any) => {
   // 没意义，受vue2机制影响
   // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
   onBeforeRender((field: any) => {
@@ -79,11 +77,10 @@ const onSetup = ({ onBeforeRender }: any) => {
     return field;
   });
 
-  onBeforeRender((field: any) => {
-    if (field.condition) {
-      //
+  onRender((field: any) => {
+    if (field?.options?.condition === false) {
+      return null;
     }
-
     return field;
   });
 };

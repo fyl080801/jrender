@@ -1,5 +1,5 @@
-import { defineComponent, h, reactive, ref, watch } from "vue-demi";
-import { assignObject } from "../utils/helper";
+import { defineComponent, h, ref, watch } from "vue-demi";
+import { assignObject, deepClone } from "../utils/helper";
 import { useJRender, useRootRender, useVueHelper } from "../utils/mixins";
 import { injectProxy, getProxyRaw } from "../utils/proxy";
 import { globalServiceProvider, mergeServices } from "../utils/service";
@@ -35,44 +35,50 @@ export default defineComponent({
       proxy,
     });
 
-    const getChildren = (children: unknown[]) => {
-      const slotChildren: unknown[] = [];
-      children?.forEach((child: any) => {
-        if (child.component === "slot") {
-          const slotNodes = (slots as Record<string, any>)[child.name || "default"](
-            assignObject({}, child.props, props.scope),
-          );
-          slotNodes.forEach((node: any) => {
-            slotChildren.push(node);
-          });
-        } else {
-          slotChildren.push(getProxyRaw(child));
-        }
-      });
-      return slotChildren;
-    };
-
-    let nodeField = assignObject(
-      { ...props.field, children: undefined },
-      {
-        children: props.field.children,
-      },
-    );
-
-    for (let i = 0; i < mergedServices.beforeRenderHandlers.length; i++) {
-      if (nodeField) {
-        nodeField = mergedServices.beforeRenderHandlers[i](nodeField);
-      }
-    }
-
-    const renderField = reactive(injector(nodeField) as any);
+    const renderField = ref();
 
     const renderChildren = ref([]);
 
     watch(
-      () => renderField.children?.length,
+      () => props.field,
+      (value) => {
+        let node = assignObject(
+          { ...value, children: undefined },
+          {
+            children: value.children,
+          },
+        );
+
+        for (let i = 0; i < mergedServices.beforeRenderHandlers.length; i++) {
+          if (node) {
+            node = mergedServices.beforeRenderHandlers[i](node);
+          }
+        }
+
+        renderField.value = injector(node);
+      },
+      { immediate: true },
+    );
+
+    watch(
+      () => renderField.value?.children?.length,
       () => {
-        renderChildren.value = getChildren(renderField?.children)?.map((field: any) => {
+        const slotChildren: unknown[] = [];
+
+        renderField.value?.children?.forEach((child: any) => {
+          if (child.component === "slot") {
+            const slotNodes = (slots as Record<string, any>)[child.name || "default"](
+              assignObject({}, child.props, props.scope),
+            );
+            slotNodes.forEach((node: any) => {
+              slotChildren.push(node);
+            });
+          } else {
+            slotChildren.push(getProxyRaw(child));
+          }
+        });
+
+        renderChildren.value = slotChildren?.map((field: any) => {
           return isVNode(field)
             ? field
             : h("JNode", {
@@ -86,11 +92,22 @@ export default defineComponent({
 
     return () => {
       const renderComponent =
-        mergedServices.components[renderField?.component] || renderField?.component;
+        mergedServices.components[renderField.value?.component] || renderField.value?.component;
+
+      let rending = {
+        component: renderComponent,
+        options: deepClone(renderField.value?.options || {}),
+        children: renderChildren.value,
+      };
+
+      for (let i = 0; i < mergedServices.renderHandlers.length; i++) {
+        if (rending) {
+          rending = mergedServices.renderHandlers[i](rending);
+        }
+      }
 
       return (
-        renderComponent &&
-        h(renderComponent, assignObject(renderField.options), renderChildren.value)
+        rending && rending.component && h(rending.component, rending.options, rending.children)
       );
     };
   },
