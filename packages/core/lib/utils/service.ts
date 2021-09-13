@@ -1,5 +1,5 @@
 import { assignArray, assignObject, isArray, isFunction, isObject } from "./helper";
-import { compute, GET, UPDATE } from "./inner";
+import { compute, assign, GET, UPDATE } from "./inner";
 
 export const createServiceProvider = () => {
   const services = {
@@ -55,7 +55,7 @@ export const createServiceProvider = () => {
 export const mergeServices = (...services: any[]) => {
   const merged: any = {
     functional: { UPDATE, GET },
-    proxy: [compute],
+    proxy: [compute, assign],
     renderHandlers: [],
   };
 

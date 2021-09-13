@@ -3,7 +3,7 @@ import { reactive } from "vue-demi";
 import { JRender, useRootRender } from "@jrender/core";
 
 const configs = reactive({
-  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }], checked: false },
+  model: { text: "xxxxxxxaaaa", obj: {}, sel: null, arr: [{ value: "xxx" }] },
   fields: [
     {
       component: "el-form",
@@ -11,12 +11,12 @@ const configs = reactive({
       children: [
         {
           component: "el-input",
-          formItem: { props: { label: "$:'input:' + GET(model, 'obj.text', '')" } },
+          formItem: { props: { label: "=:'input:' + GET(model, 'obj.text', '')" } },
           options: {
-            props: { value: "$:model.obj.text" },
+            props: { value: "=:model.obj.text" },
             attrs: { placeholder: "input value" },
             on: {
-              input: "$:(e)=>UPDATE(model, 'obj.text', e)",
+              input: "=:(e)=>UPDATE(model, 'obj.text', e)",
               // input: "@model.obj.text:arguments[0]",
             },
           },
@@ -28,27 +28,27 @@ const configs = reactive({
           component: "el-checkbox",
           formItem: { props: { label: "checked" } },
           options: {
-            props: { value: "$:model.checked" },
-            on: { input: "$:(e)=>UPDATE(model, 'checked', e)" },
+            props: { value: "=:model.checked" },
+            on: { input: "=model.checked:arguments[0]" },
           },
         },
         {
           component: "el-select",
           formItem: {
-            condition: "$:model.checked",
+            condition: "=:model.checked",
             props: { label: "select" },
           },
           options: {
-            props: { value: "$:model.sel" },
-            on: { input: "$:(e)=>UPDATE(model, 'sel', e)" },
+            props: { value: "=:model.sel" },
+            on: { input: "=:(e)=>UPDATE(model, 'sel', e)" },
           },
-          items: "$:model.arr",
+          items: "=:model.arr",
         },
         {
           component: "div",
           children: [
             { component: "p", options: { domProps: { innerText: "xxx" } } },
-            { component: "p", domProps: { innerText: "$:model.text" } },
+            { component: "p", domProps: { innerText: "=:model.text" } },
             { component: "h1", children: [{ component: "slot" }] },
             { component: "h2", children: [{ component: "slot", name: "subtitle" }] },
           ],
@@ -57,7 +57,7 @@ const configs = reactive({
           component: "el-button",
           options: {
             domProps: { innerText: "添加" },
-            on: { click: "$:()=>model.arr.push({ value: 'vvv' + model.arr.length })" },
+            on: { click: "=:()=>model.arr.push({ value: 'vvv' + model.arr.length })" },
           },
         },
       ],
@@ -78,7 +78,7 @@ const onSetup = ({ onBeforeRender, onRender }: any) => {
   });
 
   onRender((field: any) => {
-    if (field?.options?.condition === false) {
+    if (field?.options?.condition === false || field?.options?.condition === null) {
       return null;
     }
     return field;

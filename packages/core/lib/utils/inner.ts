@@ -1,4 +1,4 @@
-import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
+import { deepGet, deepSet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
 import { set } from "vue-demi";
 
 export const compute =
@@ -8,7 +8,7 @@ export const compute =
       try {
         const keys = Object.keys(context);
         const funcKeys = Object.keys(functional as Record<string, unknown>);
-        return new Function(...[...keys, ...funcKeys], `return ${value.replace("$:", "")}`)(
+        return new Function(...[...keys, ...funcKeys], `return ${value.replace("=:", "")}`)(
           ...[
             ...keys.map((key) => context[key]),
             ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
@@ -19,7 +19,49 @@ export const compute =
       }
     };
 
-    return typeof value === "string" && value.startsWith("$:") && handler;
+    return typeof value === "string" && value.startsWith("=:") && handler;
+  };
+
+export const assign =
+  ({ functional }: Record<string, unknown>) =>
+  (value: string) => {
+    const regx = /^(=[\s\S]+:)/g;
+
+    if (typeof value !== "string" || !regx.test(value)) {
+      return false;
+    }
+
+    const exprs = value.split(":");
+    const paths = exprs[0].substring(1, exprs[0].length);
+
+    const handler = (context: Record<string, unknown>) => {
+      try {
+        const keys = Object.keys(context);
+        const funcKeys = Object.keys(functional as Record<string, unknown>);
+        const action = (...args: any) =>
+          new Function(...[...keys, ...funcKeys], "arguments", `return ${value.replace(regx, "")}`)(
+            ...[
+              ...keys.map((key) => context[key]),
+              ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
+            ],
+            args,
+          );
+
+        const origin = deepGet(context, paths);
+
+        if (origin === undefined) {
+          UPDATE(context, paths, null);
+        }
+
+        return (...args: any) => {
+          deepSet(context, paths, action(...args));
+        };
+      } catch {
+        //
+      }
+    };
+
+    return handler;
   };
 
 export const UPDATE = (target: Record<string, unknown>, path: string, value: unknown) => {
