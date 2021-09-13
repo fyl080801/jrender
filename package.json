@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "husky install",
     "dev": "vite",
-    "build": "vite build",
+    "build": "lerna run build && vite build",
     "lint": "eslint './src/**/*.{js,ts,tsx,vue,md}'",
     "lint:fix": "eslint './src/**/*.{js,ts,tsx,vue,md}' --fix"
   },
