@@ -1,0 +1,14 @@
+fields:
+  - component: p
+    options:
+      domProps:
+        innerText: demo
+  - component: div
+    children:
+      - component: el-input
+        options:
+          attrs:
+            placeholder: 请输入
+          style:
+            width: 150px
+      - component: el-switch
