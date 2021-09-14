@@ -9,6 +9,7 @@ export const createRouter = () => {
     mode: "history",
     routes: [
       { path: "/simple", component: () => import("@/views/Simple.vue") },
+      { path: "/table", component: () => import("@/views/Table.vue") },
       { path: "/designer", component: () => import("@/views/Designer.vue") },
       { path: "/", redirect: "/simple" },
     ],

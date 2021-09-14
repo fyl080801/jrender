@@ -103,7 +103,7 @@ export const GET = (target: Record<string, unknown>, path: string, def: unknown)
   const origin = deepGet(target, path);
 
   if (origin === undefined) {
-    UPDATE(target, path, def || null);
+    UPDATE(target, path, def !== undefined && def !== null ? def : null);
   }
 
   return origin !== undefined ? origin : def;

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, reactive } from "vue-demi";
-import { JRender, useRootRender } from "@jrender/core";
+import { JRender } from "@jrender/core";
 import yaml from "js-yaml";
 
 const configs = reactive({
@@ -9,52 +9,7 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onBeforeRender, onRender }: any) => {
-  // 没意义，受vue2机制影响
-  // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
-  onBeforeRender((field: any) => {
-    field.options ||= {};
-
-    if (field.domProps) {
-      field.options.domProps = field.domProps;
-    }
-
-    if (field.props) {
-      field.options.props = field.props;
-    }
-
-    if (field.on) {
-      field.options.on = field.on;
-    }
-
-    if (field.nativeOn) {
-      field.options.nativeOn = field.nativeOn;
-    }
-
-    if (field.class) {
-      field.options.class = field.class;
-    }
-
-    if (field.style) {
-      field.options.style = field.style;
-    }
-
-    if (field.slot) {
-      field.options.slot = field.slot;
-    }
-
-    return field;
-  });
-
-  onRender((field: any) => {
-    if (field?.options?.condition === false || field?.options?.condition === null) {
-      return null;
-    }
-    return field;
-  });
-};
-
-useRootRender(({ onBeforeRender }: any) => {
+const onSetup = ({ onBeforeRender }: any) => {
   onBeforeRender((field: any) => {
     if (!field.formItem) {
       return field;
@@ -83,10 +38,10 @@ useRootRender(({ onBeforeRender }: any) => {
 
     return field;
   });
-});
+};
 
 onMounted(async () => {
-  const result = await fetch("data/simple.yaml");
+  const result = await fetch("/data/simple.yaml");
 
   const data: any = yaml.load(await result.text());
 

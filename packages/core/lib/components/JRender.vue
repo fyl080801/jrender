@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import { Fragment } from "vue-fragment";
-import { computed, isReactive, reactive, watch, useSlots, ref, onBeforeUnmount } from "vue-demi";
+import {
+  computed,
+  isReactive,
+  reactive,
+  watch,
+  useSlots,
+  ref,
+  onBeforeUnmount,
+  nextTick,
+} from "vue-demi";
 import JNode from "./JNode";
 import { useJRender, useRootRender } from "../utils/mixins";
 import { globalServiceProvider, mergeServices, createServiceProvider } from "../utils/service";
@@ -52,23 +61,26 @@ watch(
 );
 
 //#region fields
-const roots = ref();
-
+const roots = ref(props.fields);
+const updating = ref(false);
 const isArrayRoot = computed(() => {
-  return Array.isArray(roots.value);
+  return isArray(roots.value);
 });
-
 watch(
   () => props.fields,
   (value) => {
-    roots.value = value;
+    updating.value = true;
+
+    nextTick(() => {
+      roots.value = value;
+      updating.value = false;
+    });
   },
 );
 //#endregion
 
 //#region listeners 监听
 const watchs = ref([] as any[]);
-
 watch(
   () => props.listeners,
   (value) => {
@@ -113,17 +125,15 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Fragment v-if="roots">
-    <template v-if="isArrayRoot">
+  <Fragment>
+    <div v-if="isArrayRoot">
       <JNode
         v-for="(field, index) in roots"
         :key="field['key'] || index"
         :field="field"
         :scope="{}"
       />
-    </template>
-    <template v-else>
-      <JNode :field="roots" :scope="{}" />
-    </template>
+    </div>
+    <JNode v-else :field="roots" :scope="{}" />
   </Fragment>
 </template>

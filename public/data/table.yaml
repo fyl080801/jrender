@@ -1,0 +1,17 @@
+fields:
+  - component: div
+    children:
+      - component: el-table
+        options:
+          props:
+            data: $:GET(model, 'data')
+        children:
+          - component: el-table-column
+            options:
+              props:
+                label: aaa
+                prop: title
+          - component: el-table-column
+            options:
+              props:
+                label: bbb
