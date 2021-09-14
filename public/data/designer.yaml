@@ -12,3 +12,22 @@ fields:
           style:
             width: 150px
       - component: el-switch
+  - component: div
+    options:
+      style:
+        width: 300px
+        height: 400px
+    children:
+      - component: el-table
+        options:
+          props:
+            border: true
+        children:
+          - component: el-table-column
+            options:
+              props:
+                label: col1
+          - component: el-table-column
+            options:
+              props:
+                label: col2
