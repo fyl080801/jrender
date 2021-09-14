@@ -65,3 +65,42 @@ const onSetup = ({ onBeforeRender }) => {
   <el-input :value="model.obj.text" @input="(e)=>SET(model, 'obj.text', e)" />
 </el-form-item>
 ```
+
+## 功能函数
+
+可在表达式中使用功能函数
+
+```yaml
+- component: el-checkbox
+  formItem:
+    props:
+      label: checked
+  options:
+    props:
+      value: $:GET(model, 'checked') # GET 深度获取值
+    on:
+      input: $:(e)=>SET(model, 'checked', e) # 深度设置值
+```
+
+可使用 addFunction 添加自定义功能函数
+
+```javascript
+import { nextTick } from "vue-demi";
+
+useRootRender(({ addFunction }: any) => {
+  addFunction("NEXTTICK", (cb: any) => {
+    nextTick(cb);
+  });
+});
+```
+
+```yaml
+listeners:
+  - watch: $:GET(model, 'arr', []).length
+    actions:
+      - handler: |
+          $:() => {
+            SET(model, 'checked', false); 
+            NEXTTICK(() => { SET(model, 'checked', true) }); 
+          }
+```
