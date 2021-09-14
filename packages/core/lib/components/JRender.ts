@@ -14,7 +14,7 @@ import {
 import JNode from "./JNode";
 import { useJRender, useRootRender } from "../utils/mixins";
 import { globalServiceProvider, mergeServices, createServiceProvider } from "../utils/service";
-import { deepClone, isArray, isFunction } from "../utils/helper";
+import { deepClone, isArray, isFunction, assignArray, assignObject } from "../utils/helper";
 import { injectProxy } from "../utils/proxy";
 
 export default defineComponent({
@@ -94,7 +94,7 @@ export default defineComponent({
         updating.value = true;
 
         nextTick(() => {
-          roots.value = value;
+          roots.value = isArray(value) ? assignArray(value) : assignObject(value as any);
           updating.value = false;
         });
       },

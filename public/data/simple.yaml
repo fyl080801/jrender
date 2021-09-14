@@ -52,6 +52,63 @@ fields:
           on:
             input: $:(e)=>SET(model, 'sel', e)
         items: $:model.arr
+      - component: el-radio-group
+        formItem:
+          props:
+            label: radios
+        options:
+          props:
+            value: $:GET(model, 'selects', null)
+          on:
+            input: $:(e) => SET(model, 'selects', e)
+        children:
+          - component: el-radio
+            options:
+              props:
+                label: 1
+            children:
+              - component: span
+                options:
+                  domProps:
+                    innerText: sel1
+          - component: el-radio
+            options:
+              props:
+                label: 2
+            children:
+              - component: span
+                options:
+                  domProps:
+                    innerText: sel2
+      - component: el-checkbox-group
+        formItem:
+          props:
+            label: checks
+        options:
+          props:
+            value: $:GET(model, 'checks', [])
+          on:
+            input: $:(e) => SET(model, 'checks', e)
+        children:
+          - component: el-checkbox
+            options:
+              props:
+                label: 1
+            children:
+              - component: span
+                options:
+                  domProps:
+                    innerText: check1
+          - component: el-checkbox
+            options:
+              props:
+                label: 2
+            children:
+              - component: span
+                options:
+                  domProps:
+                    innerText: check2
+
       - component: div
         children:
           - component: p

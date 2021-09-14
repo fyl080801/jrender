@@ -171,3 +171,12 @@ export const deepGet = (target: Record<string, unknown>, path: string) => {
 
   return result;
 };
+
+export const cleanObject = (input: any) => {
+  return Object.keys(input).reduce((target, key) => {
+    if (target[key] === undefined) {
+      delete target[key];
+    }
+    return target;
+  }, input);
+};
