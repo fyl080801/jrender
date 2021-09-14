@@ -1,5 +1,5 @@
 import { assignArray, assignObject, isArray, isFunction, isObject } from "./helper";
-import { getvalue, compute, assign, GET, UPDATE } from "./inner";
+import { rawdata, getvalue, compute, assign, GET, SET } from "./inner";
 
 export const createServiceProvider = () => {
   const services = {
@@ -8,6 +8,7 @@ export const createServiceProvider = () => {
     beforeRenderHandlers: [],
     renderHandlers: [],
     proxy: [],
+    dataSource: {},
   };
 
   const setting = {
@@ -34,6 +35,11 @@ export const createServiceProvider = () => {
         (services.proxy as unknown[]).push(handler);
       }
     },
+    addDataSource(type: string, provider: unknown) {
+      if (type && isFunction(provider)) {
+        (services.dataSource as Record<string, unknown>)[type] = provider;
+      }
+    },
   };
 
   const instance = {
@@ -54,9 +60,12 @@ export const createServiceProvider = () => {
 
 export const mergeServices = (...services: any[]) => {
   const merged: any = {
-    functional: { UPDATE, GET },
+    functional: { SET, GET },
     proxy: [getvalue, compute, assign],
     renderHandlers: [],
+    dataSource: {
+      default: rawdata,
+    },
   };
 
   services.forEach((service) => {

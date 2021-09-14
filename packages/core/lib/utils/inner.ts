@@ -11,7 +11,7 @@ export const getvalue = () => (value: string) => {
     const origin = deepGet(context, paths);
 
     if (origin === undefined) {
-      UPDATE(context, paths, null);
+      SET(context, paths, null);
     }
 
     return origin;
@@ -69,11 +69,11 @@ export const assign =
         const origin = deepGet(context, paths);
 
         if (origin === undefined) {
-          UPDATE(context, paths, null);
+          SET(context, paths, null);
         }
 
         return (...args: any) => {
-          UPDATE(context, paths, action(...args));
+          SET(context, paths, action(...args));
         };
       } catch {
         //
@@ -83,7 +83,7 @@ export const assign =
     return handler;
   };
 
-export const UPDATE = (target: Record<string, unknown>, path: string, value: unknown) => {
+export const SET = (target: Record<string, unknown>, path: string, value: unknown) => {
   const fields = isArray(path) ? path : toPath(path);
   const prop = (fields as any).shift();
 
@@ -96,15 +96,20 @@ export const UPDATE = (target: Record<string, unknown>, path: string, value: unk
     set(target, prop, objVal);
   }
 
-  UPDATE((target as any)[prop], fields as any, value);
+  SET((target as any)[prop], fields as any, value);
 };
 
 export const GET = (target: Record<string, unknown>, path: string, def: unknown) => {
   const origin = deepGet(target, path);
 
   if (origin === undefined) {
-    UPDATE(target, path, def !== undefined && def !== null ? def : null);
+    SET(target, path, def !== undefined && def !== null ? def : null);
   }
 
   return origin !== undefined ? origin : def;
+};
+
+export const rawdata = (options: any) => {
+  const data = options()?.data;
+  return data !== undefined && data !== null ? data : {};
 };

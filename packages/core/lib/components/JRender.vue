@@ -9,17 +9,19 @@ import {
   ref,
   onBeforeUnmount,
   nextTick,
+  set,
 } from "vue-demi";
 import JNode from "./JNode";
 import { useJRender, useRootRender } from "../utils/mixins";
 import { globalServiceProvider, mergeServices, createServiceProvider } from "../utils/service";
-import { assignObject, deepClone, isArray, isFunction } from "../utils/helper";
+import { deepClone, isArray, isFunction } from "../utils/helper";
 import { injectProxy } from "../utils/proxy";
 
 const props = defineProps({
   fields: { type: [Array, Object], default: () => [] },
   value: { type: Object, default: () => ({}) },
   listeners: { type: Array, default: () => [] },
+  dataSource: { type: Object, default: () => ({}) },
 });
 
 const emit = defineEmits(["setup", "input"]);
@@ -37,17 +39,8 @@ const mergedServices: any = mergeServices(
   provider.getServices(),
 );
 
-const proxy = (mergedServices as any).proxy.map((p: any) =>
-  p({ functional: (mergedServices as any).functional }),
-);
-
-const injector = injectProxy({
-  context: assignObject({}, context as Record<string, unknown>, { scope: {} }),
-  proxy,
-});
-
 useJRender({
-  context: context,
+  context,
   slots: useSlots(),
   // fields: props.fields,
   mergedServices,
@@ -59,6 +52,32 @@ watch(
     emit("input", value);
   },
 );
+
+const injector = injectProxy({
+  context,
+  proxy: mergedServices.proxy.map((p: any) => p({ functional: mergedServices.functional })),
+});
+
+// datasource
+watch(
+  () => props.dataSource,
+  (value) => {
+    Object.keys(value).forEach((key) => {
+      const info = value[key];
+      const provider = mergedServices.dataSource[info.type || "default"];
+
+      if (["model", "scope", "arguments", "refs"].indexOf(key) < 0 && isFunction(provider)) {
+        set(
+          context,
+          key,
+          provider(() => injector(info.options)),
+        );
+      }
+    });
+  },
+  { immediate: true },
+);
+//
 
 //#region fields
 const roots = ref(props.fields);

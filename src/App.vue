@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { useRootRender } from "@jrender/core";
+import { nextTick } from "vue-demi";
 
-useRootRender(({ onBeforeRender, onRender }: any) => {
+useRootRender(({ onBeforeRender, onRender, addFunction }: any) => {
   // 没意义，受vue2机制影响
   // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
   onBeforeRender((field: any) => {
@@ -44,9 +45,19 @@ useRootRender(({ onBeforeRender, onRender }: any) => {
     }
     return field;
   });
+
+  addFunction("NEXTTICK", (cb: any) => {
+    nextTick(cb);
+  });
 });
 </script>
 
 <template>
-  <router-view></router-view>
+  <div>
+    <ul>
+      <li><router-link to="simple">simple</router-link></li>
+      <li><router-link to="table">table</router-link></li>
+    </ul>
+    <router-view></router-view>
+  </div>
 </template>

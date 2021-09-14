@@ -35,7 +35,7 @@
   "options": {
     "props": { "value": "$:model.obj.text" },
     "attrs": { "placeholder": "input value" },
-    "on": { "input": "$:(e)=>UPDATE(model, 'obj.text', e)" }
+    "on": { "input": "$:(e)=>SET(model, 'obj.text', e)" }
   }
 }
 ```
@@ -62,6 +62,6 @@ const onSetup = ({ onBeforeRender }) => {
 
 ```html
 <el-form-item label="input">
-  <el-input :value="model.obj.text" @input="(e)=>UPDATE(model, 'obj.text', e)" />
+  <el-input :value="model.obj.text" @input="(e)=>SET(model, 'obj.text', e)" />
 </el-form-item>
 ```

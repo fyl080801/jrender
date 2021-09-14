@@ -3,6 +3,13 @@ listeners:
   - watch: $:GET(model, 'sel')
     actions:
       - handler: $:()=>{console.log('xxxx')}
+  - watch: $:GET(model, 'arr', []).length
+    actions:
+      - handler: |
+          $:() => {
+            SET(model, 'checked', false); 
+            NEXTTICK(() => { SET(model, 'checked', true) }); 
+          }
 fields:
   - component: el-form
     options:
@@ -19,7 +26,7 @@ fields:
           attrs:
             placeholder: input value
           on:
-            input: $:(e)=>UPDATE(model, 'obj.text', e)
+            input: $:(e)=>SET(model, 'obj.text', e)
         children:
           - component: span
             options:
@@ -34,7 +41,7 @@ fields:
           props:
             value: $:GET(model, 'checked')
           on:
-            input: $:(e)=>UPDATE(model, 'checked', e)
+            input: $:(e)=>SET(model, 'checked', e)
       - component: el-select
         formItem:
           condition: $:GET(model, 'checked')
@@ -44,7 +51,7 @@ fields:
           props:
             value: $:GET(model, 'sel')
           on:
-            input: $:(e)=>UPDATE(model, 'sel', e)
+            input: $:(e)=>SET(model, 'sel', e)
         items: $:model.arr
       - component: div
         children:
