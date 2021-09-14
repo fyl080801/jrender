@@ -1,4 +1,4 @@
-import { getCurrentInstance, inject, provide } from "vue-demi";
+import { getCurrentInstance, inject, provide } from "@vue/composition-api";
 import { createServiceProvider } from "./service";
 
 const serviceToken = Symbol("serviceToken");
@@ -7,14 +7,11 @@ const setupToken = Symbol("setupToken");
 
 export const useJRender = (props?: Record<string, unknown>) => {
   if (props) {
-    const services = Object.keys(props).reduce((target, key) => {
-      target[key] = props[key];
-      return target;
-    }, {} as Record<string, unknown>);
+    const { context, slots, mergedServices } = props;
 
-    provide(serviceToken, services);
+    provide(serviceToken, { context, slots, mergedServices });
 
-    return services;
+    return props;
   } else {
     return inject(serviceToken);
   }

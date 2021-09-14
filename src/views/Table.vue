@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { JRender } from "@jrender/core";
-import { reactive, onMounted } from "vue-demi";
+import { reactive, onMounted } from "@vue/composition-api";
 import yaml from "js-yaml";
 
 const configs = reactive({ fields: [], listeners: [], datasource: {} });

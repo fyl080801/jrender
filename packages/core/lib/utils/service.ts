@@ -69,7 +69,7 @@ export const mergeServices = (...services: any[]) => {
   };
 
   services.forEach((service) => {
-    Object.keys(service).forEach((key) => {
+    Object.keys(service || {}).forEach((key) => {
       if (isObject(service[key])) {
         merged[key] ||= {};
         merged[key] = assignObject(merged[key], service[key]);

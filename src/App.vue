@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useRootRender } from "@jrender/core";
-import { nextTick } from "vue-demi";
+import { nextTick } from "@vue/composition-api";
 
 useRootRender(({ onBeforeRender, onRender, addFunction }: any) => {
   // 没意义，受vue2机制影响

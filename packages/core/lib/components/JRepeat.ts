@@ -1,4 +1,4 @@
-import { defineComponent, h } from "vue-demi";
+import { defineComponent, h } from "@vue/composition-api";
 import JNode from "./JNode";
 
 export default defineComponent({

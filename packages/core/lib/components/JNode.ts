@@ -1,5 +1,5 @@
-import { defineComponent, h, ref, watch } from "vue-demi";
-import { assignObject, deepClone } from "../utils/helper";
+import { defineComponent, h, ref, watch } from "@vue/composition-api";
+import { assignObject, deepClone, isFunction } from "../utils/helper";
 import { useJRender, useVueHelper } from "../utils/mixins";
 import { injectProxy, getProxyRaw } from "../utils/proxy";
 
@@ -58,12 +58,13 @@ export default defineComponent({
 
         renderField.value?.children?.forEach((child: any) => {
           if (child.component === "slot") {
-            const slotNodes = (slots as Record<string, any>)[child.name || "default"](
-              assignObject({}, child.props, props.scope),
-            );
-            slotNodes.forEach((node: any) => {
-              slotChildren.push(node);
-            });
+            const slotRender = (slots as Record<string, any>)[child.name || "default"];
+            if (isFunction(slotRender)) {
+              const slotNodes = slotRender(assignObject({}, child.props, props.scope));
+              slotNodes.forEach((node: any) => {
+                slotChildren.push(node);
+              });
+            }
           } else {
             slotChildren.push(getProxyRaw(child));
           }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { JRender } from "@jrender/core";
-import { reactive } from "vue-demi";
+import { reactive } from "@vue/composition-api";
 
 const config = reactive({
   fields: [

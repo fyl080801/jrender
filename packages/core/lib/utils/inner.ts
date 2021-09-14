@@ -1,5 +1,5 @@
 import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
-import { set } from "vue-demi";
+import { set } from "@vue/composition-api";
 
 export const getvalue = () => (value: string) => {
   if (typeof value !== "string" || !value.startsWith("=:")) {
