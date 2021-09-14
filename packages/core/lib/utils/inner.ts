@@ -106,5 +106,5 @@ export const GET = (target: Record<string, unknown>, path: string, def: unknown)
     UPDATE(target, path, def || null);
   }
 
-  return origin || def;
+  return origin !== undefined ? origin : def;
 };
