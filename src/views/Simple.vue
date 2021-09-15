@@ -9,22 +9,26 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onBeforeRender }: any) => {
-  onBeforeRender((field: any) => {
+const onSetup = ({ onBeforeRender, onRender }) => {
+  let cachedField = null;
+
+  onBeforeRender((field, next) => {
     if (!field.formItem) {
-      return field;
+      next(field);
+      return;
     }
 
     const options = field.formItem;
 
     delete field.formItem;
 
-    return { component: "el-form-item", options, children: [field] };
+    next({ component: "el-form-item", options, children: [field] });
   });
 
-  onBeforeRender((field: any) => {
+  onBeforeRender((field, next) => {
     if (field.component !== "el-select" || !field.items) {
-      return field;
+      next(field);
+      return;
     }
 
     const items = field.items;
@@ -36,7 +40,29 @@ const onSetup = ({ onBeforeRender }: any) => {
       options: { props: { label: item.value, value: item.value } },
     }));
 
-    return field;
+    next(field);
+  });
+
+  onBeforeRender((field, next) => {
+    if (field.options?.rel !== true) {
+      return next(field);
+    }
+
+    cachedField = field;
+
+    next({ component: "p", options: { domProps: { innerText: "Loading (6)" } } });
+
+    let count = 5;
+
+    const timer = setInterval(() => {
+      if (count > 0) {
+        next({ component: "p", options: { domProps: { innerText: `Loading (${count})` } } });
+        count--;
+      } else {
+        clearInterval(timer);
+        next(cachedField);
+      }
+    }, 1000);
   });
 };
 

@@ -2,10 +2,10 @@
 import { useRootRender } from "@jrender/core";
 import { nextTick } from "@vue/composition-api";
 
-useRootRender(({ onBeforeRender, onRender, addFunction }: any) => {
+useRootRender(({ onBeforeRender, onRender, addFunction }) => {
   // 没意义，受vue2机制影响
   // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
-  onBeforeRender((field: any) => {
+  onBeforeRender((field, next) => {
     field.options ||= {};
 
     if (field.domProps) {
@@ -36,7 +36,7 @@ useRootRender(({ onBeforeRender, onRender, addFunction }: any) => {
       field.options.slot = field.slot;
     }
 
-    return field;
+    next(field);
   });
 
   onRender((field: any) => {

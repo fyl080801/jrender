@@ -44,9 +44,10 @@
 
 ```javascript
 const onSetup = ({ onBeforeRender }) => {
-  onBeforeRender((field) => {
+  onBeforeRender((field, next) => {
     if (!field.formItem) {
-      return field;
+      next(field);
+      return;
     }
 
     const formItem = field.formItem;

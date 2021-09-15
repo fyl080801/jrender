@@ -7,7 +7,7 @@ export const isInjectedProxy = (target: Record<string, unknown>) => {
   return target[ISPROXY];
 };
 
-export const getProxyRaw = (target: Record<string, unknown>) => {
+export const getProxyRaw = (target: Record<string, unknown>): any => {
   return isInjectedProxy(target) ? target[RAW] : target;
 };
 

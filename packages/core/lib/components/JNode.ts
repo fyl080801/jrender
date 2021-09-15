@@ -2,6 +2,7 @@ import { defineComponent, h, ref, watch } from "@vue/composition-api";
 import { assignObject, deepClone, isFunction } from "../utils/helper";
 import { useJRender, useVueHelper } from "../utils/mixins";
 import { injectProxy, getProxyRaw } from "../utils/proxy";
+import { pipeline } from "../utils/pipeline";
 
 export default defineComponent({
   name: "JNode",
@@ -12,17 +13,12 @@ export default defineComponent({
   setup: (props) => {
     const { isVNode } = useVueHelper();
 
-    const { context, mergedServices, slots }: Record<string, unknown> = useJRender() as Record<
-      string,
-      unknown
-    >;
+    const { context, mergedServices, slots }: any = useJRender();
 
-    const proxy = (mergedServices as any).proxy.map((p: any) =>
-      p({ functional: (mergedServices as any).functional }),
-    );
+    const proxy = mergedServices.proxy.map((p) => p({ functional: mergedServices.functional }));
 
     const injector = injectProxy({
-      context: assignObject({}, context as Record<string, unknown>, { scope: props.scope }),
+      context: assignObject({}, context, { scope: props.scope }),
       proxy,
     });
 
@@ -33,20 +29,11 @@ export default defineComponent({
     watch(
       () => props.field,
       (value) => {
-        let node = assignObject(
-          { ...value, children: undefined },
-          {
-            children: value.children,
-          },
-        );
-
-        for (let i = 0; i < (mergedServices as any).beforeRenderHandlers.length; i++) {
-          if (node) {
-            node = (mergedServices as any).beforeRenderHandlers[i](node);
-          }
-        }
-
-        renderField.value = injector(node);
+        // 目的是让 beforerender 决定什么时候渲染这个节点
+        pipeline(...mergedServices.beforeRenderHandlers, (field, next) => {
+          renderField.value = injector(field);
+          next(renderField.value);
+        })(assignObject(value));
       },
       { immediate: true },
     );
@@ -56,12 +43,12 @@ export default defineComponent({
       () => {
         const slotChildren: unknown[] = [];
 
-        renderField.value?.children?.forEach((child: any) => {
+        renderField.value?.children?.forEach((child) => {
           if (child.component === "slot") {
             const slotRender = (slots as Record<string, any>)[child.name || "default"];
             if (isFunction(slotRender)) {
               const slotNodes = slotRender(assignObject({}, child.props, props.scope));
-              slotNodes.forEach((node: any) => {
+              slotNodes.forEach((node) => {
                 slotChildren.push(node);
               });
             }
@@ -83,9 +70,12 @@ export default defineComponent({
     );
 
     return () => {
+      if (!renderField.value) {
+        return;
+      }
+
       const renderComponent =
-        (mergedServices as any).components[renderField.value?.component] ||
-        renderField.value?.component;
+        mergedServices.components[renderField.value?.component] || renderField.value?.component;
 
       let rending = {
         component: renderComponent,
@@ -93,9 +83,9 @@ export default defineComponent({
         children: renderChildren.value,
       };
 
-      for (let i = 0; i < (mergedServices as any).renderHandlers.length; i++) {
+      for (let i = 0; i < mergedServices.renderHandlers.length; i++) {
         if (rending) {
-          rending = (mergedServices as any).renderHandlers[i](rending);
+          rending = mergedServices.renderHandlers[i](rending);
         }
       }
 

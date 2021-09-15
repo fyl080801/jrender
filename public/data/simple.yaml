@@ -20,6 +20,7 @@ fields:
           props:
             label: $:'input:' + GET(model, 'obj.text', '')
         options:
+          rel: true
           props:
             value: $:GET(model, 'obj.text')
           attrs:
