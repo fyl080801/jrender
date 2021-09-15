@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive } from "@vue/composition-api";
+import { onMounted, reactive, nextTick } from "@vue/composition-api";
 import { JRender } from "@jrender/core";
 import yaml from "js-yaml";
 
@@ -9,9 +9,7 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onBeforeRender, onRender }) => {
-  let cachedField = null;
-
+const onSetup = ({ onBeforeRender }) => {
   onBeforeRender((field, next) => {
     if (!field.formItem) {
       next(field);
@@ -48,8 +46,6 @@ const onSetup = ({ onBeforeRender, onRender }) => {
       return next(field);
     }
 
-    cachedField = field;
-
     next({ component: "p", options: { domProps: { innerText: "Loading (6)" } } });
 
     let count = 5;
@@ -60,7 +56,7 @@ const onSetup = ({ onBeforeRender, onRender }) => {
         count--;
       } else {
         clearInterval(timer);
-        next(cachedField);
+        next(field);
       }
     }, 1000);
   });

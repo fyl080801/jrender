@@ -4,7 +4,7 @@ import { useJRender, useVueHelper } from "../utils/mixins";
 import { injectProxy, getProxyRaw } from "../utils/proxy";
 import { pipeline } from "../utils/pipeline";
 
-export default defineComponent({
+const JNode = defineComponent({
   name: "JNode",
   props: {
     field: { type: Object, required: true },
@@ -60,10 +60,14 @@ export default defineComponent({
         renderChildren.value = slotChildren?.map((field: any) => {
           return isVNode(field)
             ? field
-            : h("JNode", {
-                props: { field, scope: props.scope },
-                slot: field.options?.slot,
-              });
+            : h(
+                JNode,
+                {
+                  props: { field, scope: props.scope },
+                  slot: field.options?.slot,
+                },
+                null,
+              );
         }) as any;
       },
       { immediate: true },
@@ -95,3 +99,5 @@ export default defineComponent({
     };
   },
 });
+
+export default JNode;
