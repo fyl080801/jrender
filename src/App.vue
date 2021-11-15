@@ -3,48 +3,49 @@ import { useRootRender } from "@jrender/core";
 import { nextTick } from "@vue/composition-api";
 
 useRootRender(({ onBeforeRender, onRender, addFunction }) => {
-  // 没意义，受vue2机制影响
-  // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
-  onBeforeRender((field, next) => {
-    field.options ||= {};
+  // // 没意义，受vue2机制影响
+  // // 根级元素的代理值如果不是一个对象则没法直接赋给另一个属性
+  // onBeforeRender(() => (field, next) => {
+  //   field.options ||= {};
 
-    if (field.domProps) {
-      field.options.domProps = field.domProps;
-    }
+  //   if (field.domProps) {
+  //     field.options.domProps = field.domProps;
+  //   }
 
-    if (field.props) {
-      field.options.props = field.props;
-    }
+  //   if (field.props) {
+  //     field.options.props = field.props;
+  //   }
 
-    if (field.on) {
-      field.options.on = field.on;
-    }
+  //   if (field.on) {
+  //     field.options.on = field.on;
+  //   }
 
-    if (field.nativeOn) {
-      field.options.nativeOn = field.nativeOn;
-    }
+  //   if (field.nativeOn) {
+  //     field.options.nativeOn = field.nativeOn;
+  //   }
 
-    if (field.class) {
-      field.options.class = field.class;
-    }
+  //   if (field.class) {
+  //     field.options.class = field.class;
+  //   }
 
-    if (field.style) {
-      field.options.style = field.style;
-    }
+  //   if (field.style) {
+  //     field.options.style = field.style;
+  //   }
 
-    if (field.slot) {
-      field.options.slot = field.slot;
-    }
+  //   if (field.slot) {
+  //     field.options.slot = field.slot;
+  //   }
 
-    next(field);
-  });
+  //   next(field);
+  // });
 
-  onRender((field: any) => {
-    if (field?.options?.condition === false || field?.options?.condition === null) {
-      return null;
-    }
-    return field;
-  });
+  // onRender(() => (field: any, next) => {
+  //   if (field?.options?.condition === false || field?.options?.condition === null) {
+  //     return next(field);
+  //   }
+
+  //   next(field);
+  // });
 
   addFunction("NEXTTICK", (cb: any) => {
     nextTick(cb);

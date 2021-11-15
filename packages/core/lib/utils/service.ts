@@ -1,5 +1,39 @@
-import { assignArray, assignObject, isArray, isFunction, isObject } from "./helper";
-import { rawdata, getvalue, compute, assign, GET, SET } from "./inner";
+import { assignArray, assignObject, isArray, isFunction, isObject, uuid } from "./helper";
+import { rawData, compute, GET, SET, REF } from "./inner";
+
+const sortHandlers = (handlers) => {
+  const maps = handlers.reduce((target, item) => {
+    target[item.name] = item;
+    return target;
+  }, {});
+  const dependencies = handlers.reduce((target, item) => {
+    target[item.name] = item.dependencies;
+    return target;
+  }, {});
+  const used = new Set();
+  const result = [];
+
+  let keys = Object.keys(dependencies);
+  let items;
+  let length;
+
+  do {
+    length = keys.length;
+    items = [];
+    keys = keys.filter((k) => {
+      if (!dependencies[k].every(Set.prototype.has, used)) {
+        return true;
+      }
+      items.push(k);
+    });
+    result.push(...items);
+    items.forEach(Set.prototype.add, used);
+  } while (keys.length && keys.length !== length);
+
+  result.push(...keys);
+
+  return result.map((key) => maps[key]);
+};
 
 export const createServiceProvider = () => {
   const services = {
@@ -12,39 +46,73 @@ export const createServiceProvider = () => {
   };
 
   const setting = {
-    addComponent: (name: string, type: unknown) => {
-      (services.components as Record<string, unknown>)[name] = type;
+    addComponent: (name, type) => {
+      services.components[name] = type;
     },
-    addFunction: (name: string, fx: unknown) => {
+    addFunction: (name, fx) => {
       if (isFunction(fx)) {
-        (services.functional as Record<string, unknown>)[name] = fx;
+        services.functional[name] = fx;
       }
     },
-    onBeforeRender: (handler: (field: unknown) => unknown) => {
+    onBeforeRender: (handler) => {
+      const hook = { name: `BR_${uuid(5)}`, dependencies: [], handler };
+
       if (isFunction(handler)) {
-        (services.beforeRenderHandlers as unknown[]).push(handler);
+        services.beforeRenderHandlers.push(hook);
       }
+
+      const instance = {
+        name: (name) => {
+          hook.name = name;
+          return instance;
+        },
+        depend: (name) => {
+          if (hook.dependencies.indexOf(name) < 0) {
+            hook.dependencies.push(name);
+          }
+          return instance;
+        },
+      };
+
+      return instance;
     },
-    onRender: (handler: (field: unknown) => unknown) => {
+    onRender: (handler) => {
+      const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
+
       if (isFunction(handler)) {
-        (services.renderHandlers as unknown[]).push(handler);
+        services.renderHandlers.push(hook);
       }
+
+      const instance = {
+        name: (name) => {
+          hook.name = name;
+          return instance;
+        },
+        depend: (name) => {
+          if (hook.dependencies.indexOf(name) < 0) {
+            hook.dependencies.push(name);
+          }
+          return instance;
+        },
+      };
+
+      return instance;
     },
-    addProxy: (handler: unknown) => {
+    addProxy: (handler) => {
       if (isFunction(handler)) {
-        (services.proxy as unknown[]).push(handler);
+        services.proxy.push(handler);
       }
     },
-    addDataSource(type: string, provider: unknown) {
+    addDataSource(type, provider) {
       if (type && isFunction(provider)) {
-        (services.dataSource as Record<string, unknown>)[type] = provider;
+        services.dataSource[type] = provider;
       }
     },
   };
 
   const instance = {
-    setup: (doSetup: any) => {
-      doSetup(setting);
+    setup: (onSetup) => {
+      onSetup(setting);
       return instance;
     },
     getSetting() {
@@ -58,13 +126,14 @@ export const createServiceProvider = () => {
   return instance;
 };
 
-export const mergeServices = (...services: any[]) => {
+export const mergeServices = (...services) => {
   const merged: any = {
-    functional: { SET, GET },
-    proxy: [getvalue, compute, assign],
+    functional: { SET, GET, REF },
+    proxy: [compute],
+    beforeRenderHandlers: [],
     renderHandlers: [],
     dataSource: {
-      default: rawdata,
+      default: rawData,
     },
   };
 
@@ -80,11 +149,15 @@ export const mergeServices = (...services: any[]) => {
     });
   });
 
+  merged.beforeRenderHandlers = sortHandlers(merged.beforeRenderHandlers);
+
+  merged.renderHandlers = sortHandlers(merged.renderHandlers);
+
   return merged;
 };
 
 export const globalServiceProvider = createServiceProvider();
 
-export const useGlobalRender = (setting: any) => {
+export const useGlobalRender = (setting) => {
   globalServiceProvider.setup(setting);
 };

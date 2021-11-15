@@ -1,3 +1,9 @@
+datasource:
+  tabledata:
+    props:
+      - text: aaa
+      - text: bbb
+
 listeners:
   - watch: $:GET(model, 'sel')
     actions:
@@ -10,125 +16,54 @@ listeners:
             NEXTTICK(() => { SET(model, 'checked', true) }); 
           }
 fields:
+  - component: input
+    props:
+      value: $:GET(model, 'text')
+    events:
+      input: $:(e)=>SET(model, 'text', e.target.value)
+
+  - component: el-input
+    props:
+      value: $:GET(model, 'text')
+    events:
+      input: $:(value)=>SET(model, 'text', value)
+    children:
+      - component: text
+        slot: append
+        props:
+          content: $:GET(model, 'text')
+  - component: text
+    props:
+      content: $:GET(model, 'text')
+  - component: el-table
+    props:
+      data: $:tabledata
+    children:
+      - component: el-table-column
+        props:
+          label: col1
+        children:
+          - component: text
+            scopedSlot: default
+            props:
+              content: $:row.text
   - component: el-form
-    options:
-      props:
-        labelPosition: top
+    props:
+      labelWidth: 120px
     children:
       - component: el-input
         formItem:
-          props:
-            label: $:'input:' + GET(model, 'obj.text', '')
-        options:
-          rel: true
-          props:
-            value: $:GET(model, 'obj.text')
-          attrs:
-            placeholder: input value
-          on:
-            input: $:(e)=>SET(model, 'obj.text', e)
-        children:
-          - component: span
-            options:
-              slot: append
-              domProps:
-                innerText: aaaa
-      - component: el-checkbox
-        formItem:
-          props:
-            label: checked
-        options:
-          props:
-            value: $:GET(model, 'checked')
-          on:
-            input: $:(e)=>SET(model, 'checked', e)
+          label: $:GET(model, 'text')
       - component: el-select
         formItem:
-          condition: $:GET(model, 'checked')
-          props:
-            label: select
-        options:
-          props:
-            value: $:GET(model, 'sel')
-          on:
-            input: $:(e)=>SET(model, 'sel', e)
-        items: $:model.arr
-      - component: el-radio-group
-        formItem:
-          props:
-            label: radios
-        options:
-          props:
-            value: $:GET(model, 'selects', null)
-          on:
-            input: $:(e) => SET(model, 'selects', e)
+          label: zzxcc
+        props:
+          value: $:GET(model, 'sel')
+        events:
+          input: $:(e)=>SET(model, 'sel', e)
         children:
-          - component: el-radio
-            options:
-              props:
-                label: 1
-            children:
-              - component: span
-                options:
-                  domProps:
-                    innerText: sel1
-          - component: el-radio
-            options:
-              props:
-                label: 2
-            children:
-              - component: span
-                options:
-                  domProps:
-                    innerText: sel2
-      - component: el-checkbox-group
-        formItem:
-          props:
-            label: checks
-        options:
-          props:
-            value: $:GET(model, 'checks', [])
-          on:
-            input: $:(e) => SET(model, 'checks', e)
-        children:
-          - component: el-checkbox
-            options:
-              props:
-                label: 1
-            children:
-              - component: span
-                options:
-                  domProps:
-                    innerText: check1
-          - component: el-checkbox
-            options:
-              props:
-                label: 2
-            children:
-              - component: span
-                options:
-                  domProps:
-                    innerText: check2
-
-      - component: div
-        children:
-          - component: p
-            options:
-              domProps:
-                innerText: xxx
-          - component: p
-            domProps:
-              innerText: $:model.text
-          - component: h1
-            children:
-              - component: slot
-          - component: h2
-            children:
-              - component: slot
-                name: subtitle
-      - component: el-button
-        options:
-          domProps:
-            innerText: 添加
-          on:
-            click: "$:() => model.arr.push({ value: 'vvv' + model.arr.length })"
+          - component: el-option
+            for: item in tabledata
+            props:
+              label: $:GET(item, 'text')
+              value: $:index

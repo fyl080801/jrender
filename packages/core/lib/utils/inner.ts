@@ -1,5 +1,7 @@
 import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
-import { set } from "@vue/composition-api";
+import { set, reactive, ref } from "@vue/composition-api";
+
+const computeMatch = /^\$:/g;
 
 export const getvalue = () => (value: string) => {
   if (typeof value !== "string" || !value.startsWith("=:")) {
@@ -21,67 +23,64 @@ export const getvalue = () => (value: string) => {
 };
 
 export const compute =
-  ({ functional }: Record<string, unknown>) =>
-  (value: string) => {
-    const handler = (context: Record<string, unknown>) => {
+  ({ functional }) =>
+  (value) => {
+    const handler = (context) => {
       try {
         const keys = Object.keys(context);
-        const funcKeys = Object.keys(functional as Record<string, unknown>);
-        return new Function(...[...keys, ...funcKeys], `return ${value.replace("$:", "")}`)(
-          ...[
-            ...keys.map((key) => context[key]),
-            ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
-          ],
+        const funcKeys = Object.keys(functional);
+        return new Function(...[...keys, ...funcKeys], `return ${value.replace(computeMatch, "")}`)(
+          ...[...keys.map((key) => context[key]), ...funcKeys.map((key) => functional[key])],
         );
       } catch {
         //
       }
     };
 
-    return typeof value === "string" && value.startsWith("$:") && handler;
+    return typeof value === "string" && computeMatch.test(value) && handler;
   };
 
-export const assign =
-  ({ functional }: Record<string, unknown>) =>
-  (value: string) => {
-    const regx = /^(\$[\s\S.]+:)/g;
+// export const assign =
+//   ({ functional }: Record<string, unknown>) =>
+//   (value: string) => {
+//     const regx = /^(\$[\s\S.]+:)/g;
 
-    if (typeof value !== "string" || !regx.test(value)) {
-      return false;
-    }
+//     if (typeof value !== "string" || !regx.test(value)) {
+//       return false;
+//     }
 
-    const exprs = value.split(":");
-    const paths = exprs[0].substring(1, exprs[0].length);
+//     const exprs = value.split(":");
+//     const paths = exprs[0].substring(1, exprs[0].length);
 
-    const handler = (context: Record<string, unknown>) => {
-      try {
-        const keys = Object.keys(context);
-        const funcKeys = Object.keys(functional as Record<string, unknown>);
-        const action = (...args: any) =>
-          new Function(...[...keys, ...funcKeys], "arguments", `return ${value.replace(regx, "")}`)(
-            ...[
-              ...keys.map((key) => context[key]),
-              ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
-            ],
-            args,
-          );
+//     const handler = (context: Record<string, unknown>) => {
+//       try {
+//         const keys = Object.keys(context);
+//         const funcKeys = Object.keys(functional as Record<string, unknown>);
+//         const action = (...args: any) =>
+//           new Function(...[...keys, ...funcKeys], "arguments", `return ${value.replace(regx, "")}`)(
+//             ...[
+//               ...keys.map((key) => context[key]),
+//               ...funcKeys.map((key) => (functional as Record<string, unknown>)[key]),
+//             ],
+//             args,
+//           );
 
-        const origin = deepGet(context, paths);
+//         const origin = deepGet(context, paths);
 
-        if (origin === undefined) {
-          SET(context, paths, null);
-        }
+//         if (origin === undefined) {
+//           SET(context, paths, null);
+//         }
 
-        return (...args: any) => {
-          SET(context, paths, action(...args));
-        };
-      } catch {
-        //
-      }
-    };
+//         return (...args: any) => {
+//           SET(context, paths, action(...args));
+//         };
+//       } catch {
+//         //
+//       }
+//     };
 
-    return handler;
-  };
+//     return handler;
+//   };
 
 export const SET = (target: Record<string, unknown>, path: string, value: unknown) => {
   const fields = isArray(path) ? path : toPath(path);
@@ -109,7 +108,11 @@ export const GET = (target: Record<string, unknown>, path: string, def: unknown)
   return origin !== undefined ? origin : def;
 };
 
-export const rawdata = (options: any) => {
-  const data = options()?.data;
-  return data !== undefined && data !== null ? data : {};
+export const rawData = (options: any) => {
+  const data = options() || {};
+  return reactive(data !== undefined && data !== null ? data : {});
+};
+
+export const REF = (target) => {
+  return ref(target);
 };
