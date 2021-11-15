@@ -1,8 +1,8 @@
-export const isArray = (target: unknown) => {
+export const isArray = (target) => {
   return Array.isArray(target);
 };
 
-export const isObject = (target: unknown) => {
+export const isObject = (target) => {
   return (
     target !== undefined &&
     target !== null &&
@@ -12,15 +12,23 @@ export const isObject = (target: unknown) => {
   );
 };
 
-export const isFunction = (target: unknown) => {
+export const isFunction = (target) => {
   return typeof target === "function";
 };
 
-export const isNumberLike = (value: unknown) => {
+export const isNumberLike = (value) => {
   return String(value).match(/^\d+$/);
 };
 
-export const isDom = (target: unknown) => {
+export const isPromise = (target) => {
+  return (
+    !!target &&
+    (typeof target === "object" || typeof target === "function") &&
+    (isFunction(target.then) || isFunction(target.catch))
+  );
+};
+
+export const isDom = (target) => {
   const expr =
     typeof HTMLElement === "object"
       ? function () {
@@ -30,25 +38,27 @@ export const isDom = (target: unknown) => {
           return (
             target &&
             typeof target === "object" &&
-            (target as HTMLElement).nodeType === 1 &&
-            typeof (target as HTMLElement).nodeName === "string"
+            target.nodeType === 1 &&
+            typeof target.nodeName === "string"
           );
         };
 
   return expr();
 };
 
-export const assignArray = (...targets: any) => {
-  return targets.reduce((pre: any, cur: any) => {
-    return (pre as unknown[]).concat(cur);
+export const isDomElement = (target) => {};
+
+export const assignArray = (...targets) => {
+  return targets.reduce((pre, cur) => {
+    return pre.concat(cur);
   }, []);
 };
 
-export const assignObject = (...targets: Record<string, unknown>[]) => {
+export const assignObject = (...targets) => {
   return Object.assign({}, ...targets);
 };
 
-export const deepClone = (target: unknown) => {
+export const deepClone = (target) => {
   if (!target) {
     return target;
   } // null, undefined values check
@@ -66,32 +76,30 @@ export const deepClone = (target: unknown) => {
   if (typeof result == "undefined") {
     if (isArray(target)) {
       result = [];
-      (target as unknown[]).forEach((child, index) => {
+      target.forEach((child, index) => {
         result[index] = deepClone(child);
       });
     } else if (isObject(target)) {
       // testing that this is DOM
-      if ((target as Node).nodeType && isFunction((target as Node).cloneNode)) {
-        result = (target as Node).cloneNode(true);
-      } else if (!(target as Record<string, unknown>).prototype) {
+      if (target.nodeType && isFunction(target.cloneNode)) {
+        result = target.cloneNode(true);
+      } else if (!target.prototype) {
         // check that this is a literal
         if (target instanceof Date) {
           result = new Date(target);
         } else {
           // it is an object literal
           result = {};
-          for (const i in target as Record<string, unknown>) {
-            (result as Record<string, unknown>)[i] = deepClone(
-              (target as Record<string, unknown>)[i],
-            );
+          for (const i in target) {
+            result[i] = deepClone(target[i]);
           }
         }
       } else {
         // depending what you would like here,
         // just keep the reference, or create new object
-        if ((target as Record<string, unknown>).constructor) {
+        if (target.constructor) {
           // would not advice to do that, reason? Read below
-          result = new (target as any).constructor();
+          result = new target.constructor();
         } else {
           result = target;
         }
@@ -104,7 +112,7 @@ export const deepClone = (target: unknown) => {
   return result;
 };
 
-export const toPath = (pathString: string) => {
+export const toPath = (pathString) => {
   if (isArray(pathString)) {
     return pathString;
   }
@@ -116,25 +124,25 @@ export const toPath = (pathString: string) => {
   // lodash 的实现 - https://github.com/lodash/lodash
   const pathRx =
     /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
-  const pathArray: unknown[] = [];
+  const pathArray = [];
 
-  const replacer = (match: any, num: any, quote: any, str: any) => {
+  const replacer = (match, num, quote, str) => {
     pathArray.push(quote ? str : num !== undefined ? Number(num) : match);
     return pathArray[pathArray.length - 1];
   };
 
-  pathString.replace(pathRx, replacer as any);
+  pathString.replace(pathRx, replacer);
 
   return pathArray;
 };
 
-export const hasOwnProperty = (target: Record<string, unknown>, prop: string) => {
+export const hasOwnProperty = (target, prop) => {
   return Object.prototype.hasOwnProperty.call(target, prop);
 };
 
-export const deepSet = (target: Record<string, unknown>, path: string, value: unknown) => {
+export const deepSet = (target, path, value) => {
   const fields = isArray(path) ? path : toPath(path);
-  const prop = (fields as any).shift();
+  const prop = fields.shift();
 
   if (!fields.length) {
     return (target[prop] = value);
@@ -146,18 +154,18 @@ export const deepSet = (target: Record<string, unknown>, path: string, value: un
     target[prop] = objVal;
   }
 
-  deepSet((target as any)[prop], fields as any, value);
+  deepSet(target[prop], fields, value);
 };
 
-export const deepGet = (target: Record<string, unknown>, path: string) => {
+export const deepGet = (target, path) => {
   const fields = isArray(path) ? path : toPath(path);
 
   if (!fields.length) {
     return target;
   }
 
-  let prop = (fields as any).shift();
-  let result: any = target;
+  let prop = fields.shift();
+  let result = target;
 
   while (prop) {
     result = result[prop];
@@ -166,17 +174,47 @@ export const deepGet = (target: Record<string, unknown>, path: string) => {
       result = isNumberLike(prop) ? [] : {};
     }
 
-    prop = (fields as any).shift();
+    prop = fields.shift();
   }
 
   return result;
 };
 
-export const cleanObject = (input: any) => {
+export const cleanObject = (input) => {
   return Object.keys(input).reduce((target, key) => {
     if (target[key] === undefined) {
       delete target[key];
     }
     return target;
   }, input);
+};
+
+export const uuid = (len, radix?) => {
+  let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+  let uuid = [],
+    i;
+  radix = radix || chars.length;
+
+  if (len) {
+    // Compact form
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | (Math.random() * radix)];
+  } else {
+    // rfc4122, version 4 form
+    let r;
+
+    // rfc4122 requires these characters
+    uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
+    uuid[14] = "4";
+
+    // Fill in random data.  At i==19 set the high bits of clock sequence as
+    // per rfc4122, sec. 4.1.5
+    for (i = 0; i < 36; i++) {
+      if (!uuid[i]) {
+        r = 0 | (Math.random() * 16);
+        uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r];
+      }
+    }
+  }
+
+  return uuid.join("");
 };

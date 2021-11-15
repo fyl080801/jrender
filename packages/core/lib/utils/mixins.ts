@@ -1,23 +1,24 @@
-import { getCurrentInstance, inject, provide } from "@vue/composition-api";
-import { createServiceProvider } from "./service";
+import { inject, provide, reactive, nextTick, onBeforeUnmount, watch } from "@vue/composition-api";
+import { assignObject, deepClone, isArray, isFunction } from "./helper";
+import { createServiceProvider, globalServiceProvider, mergeServices } from "./service";
 
 const serviceToken = Symbol("serviceToken");
 
 const setupToken = Symbol("setupToken");
 
-export const useJRender = (props?: Record<string, unknown>) => {
-  if (props) {
-    const { context, slots, mergedServices } = props;
+const scopeParentToken = Symbol("scopeParentToken");
 
-    provide(serviceToken, { context, slots, mergedServices });
+export const useJRender = (props?) => {
+  if (props) {
+    provide(serviceToken, props);
 
     return props;
   } else {
-    return inject(serviceToken);
+    return inject(serviceToken, {});
   }
 };
 
-export const useRootRender = (setup?: unknown) => {
+export const useRootRender = (setup?) => {
   const provider = createServiceProvider();
 
   if (setup) {
@@ -28,13 +29,82 @@ export const useRootRender = (setup?: unknown) => {
   }
 };
 
-export const useVueHelper = () => {
-  const instance = getCurrentInstance();
-  const VNodeType: any = instance?.proxy.$createElement("span", "").constructor;
+export const useListener = (props, { injector }) => {
+  const watchList = [];
+  watch(
+    [() => props.listeners, () => props.modelValue, () => props.dataSource, () => props.fields],
+    () => {
+      watchList.forEach((watcher) => watcher());
+      watchList.length = 0;
 
-  return {
-    isVNode: (node: any) => {
-      return node instanceof VNodeType;
+      if (!props.listeners || !isArray(props.listeners)) {
+        return;
+      }
+
+      nextTick(() => {
+        props.listeners?.forEach((item) => {
+          const injected = injector(deepClone(item));
+
+          const watcher = isFunction(injected.watch)
+            ? injected.watch
+            : isArray(injected.watch)
+            ? injected.watch.map((sw, index) => (isFunction(sw) ? sw : () => injected.watch[index]))
+            : () => injected.watch;
+
+          watchList.push(
+            watch(
+              watcher,
+              () => {
+                injected.actions?.forEach((action) => {
+                  if (action.condition === undefined || !!action.condition) {
+                    if (isFunction(action.handler)) {
+                      if (action.timeout) {
+                        setTimeout(() => {
+                          action.handler();
+                        }, action.timeout);
+                      } else {
+                        action.handler();
+                      }
+                    }
+                  }
+                });
+              },
+              {
+                deep: injected.deep,
+                immediate: injected.immediate,
+              },
+            ),
+          );
+        });
+      });
     },
-  };
+    { deep: false, immediate: true },
+  );
+
+  onBeforeUnmount(() => {
+    watchList.forEach((watcher) => watcher());
+    watchList.length = 0;
+  });
+};
+
+export const useServices = ({ emit }) => {
+  const provider = createServiceProvider();
+
+  emit("setup", provider.getSetting());
+
+  const rootServices = useRootRender();
+
+  return mergeServices(globalServiceProvider.getServices(), rootServices, provider.getServices());
+};
+
+export const useScope = (scope) => {
+  const { scope: parent } = inject(scopeParentToken, reactive({ scope: {} }));
+
+  const merged = reactive({
+    scope: assignObject(parent, scope),
+  });
+
+  provide(scopeParentToken, merged);
+
+  return merged;
 };
