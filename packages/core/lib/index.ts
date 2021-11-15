@@ -1,6 +1,6 @@
-import { JRender } from "./components";
+import { JRender, JNode } from "./components";
 
-export { JRender };
+export { JRender, JNode };
 export { useRootRender } from "./utils/mixins";
 export { useGlobalRender } from "./utils/service";
 export * from "./utils/helper";

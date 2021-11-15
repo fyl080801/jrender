@@ -63,10 +63,7 @@ fields:
           input: $:(e)=>SET(model, 'sel', e)
         children:
           - component: el-option
+            for: item in tabledata
             props:
-              label: opt1
-              value: 1
-          - component: el-option
-            props:
-              label: opt2
-              value: 2
+              label: $:GET(item, 'text')
+              value: $:index

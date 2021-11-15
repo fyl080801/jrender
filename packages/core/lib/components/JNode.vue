@@ -62,29 +62,6 @@ export default defineComponent({
       };
     });
 
-    // const renderScopedSlots = computed<any>(() => {
-    //   if (!renderField.value) {
-    //     return [];
-    //   }
-
-    //   const result =
-    //     Object.entries(
-    //       renderField.value.children?.reduce((target, child) => {
-    //         if (!child?.scopedSlot) {
-    //           return target;
-    //         }
-    //         const slotName = child?.scopedSlot || "default";
-    //         target[slotName] ||= [];
-    //         target[slotName].push(child);
-    //         return target;
-    //       }, {}) || {},
-    //     ) || [];
-
-    //   console.log(result);
-
-    //   return result.map((item) => ({ name: item[0], children: item[1] }));
-    // });
-
     const render = pipeline(
       ...[
         ...services.beforeRenderHandlers.map((item) => item.handler),
@@ -133,7 +110,6 @@ export default defineComponent({
       renderField,
       services,
       renderSlots,
-      // renderScopedSlots,
       getTemplateScope,
     };
   },

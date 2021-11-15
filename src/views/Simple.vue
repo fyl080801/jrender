@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, reactive, defineComponent, h } from "@vue/composition-api";
-import { JRender } from "@jrender/core";
+import { onMounted, reactive, defineComponent, h, markRaw } from "@vue/composition-api";
+import { JRender, JNode, assignObject, deepGet } from "@jrender/core";
 import yaml from "js-yaml";
 
 const configs = reactive({
@@ -10,7 +10,7 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onBeforeRender, addComponent }) => {
+const onSetup = ({ onRender, onBeforeRender, addComponent }) => {
   onBeforeRender(() => (field, next) => {
     next(field);
   });
@@ -37,6 +37,55 @@ const onSetup = ({ onBeforeRender, addComponent }) => {
     delete field.formItem;
     next({ component: "el-form-item", props, children: [field] });
   });
+
+  const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+
+  // for 表达式，还不知道怎么具体实现vue的for
+  onRender(({ context }) => {
+    return (field, next) => {
+      if (!field) {
+        return next(field);
+      }
+
+      field.children = field?.children?.map((child) => {
+        const matched = forAliasRE.exec(child.for);
+        if (matched) {
+          const [origin, prop, source] = matched;
+          return {
+            component: markRaw(
+              defineComponent({
+                setup() {
+                  return () =>
+                    h(
+                      defineComponent({
+                        setup(props, ctx) {
+                          // 不是个好办法
+                          return () => h("div", null, ctx.slots.default());
+                        },
+                      }),
+                      null,
+                      deepGet(context, source)?.map((item, index) => {
+                        return h(JNode, {
+                          props: {
+                            field: assignObject(child, { for: undefined }),
+                            scope: { [prop]: item, index },
+                          },
+                        });
+                      }),
+                    );
+                },
+              }),
+            ),
+          };
+        } else {
+          return child;
+        }
+      });
+
+      next(field);
+    };
+  });
+
   // onBeforeRender(() => (field, next) => {
   //   if (field.component !== "el-select" || !field.items) {
   //     return next(field);
