@@ -110,14 +110,9 @@ export default defineComponent({
         if (props.field) {
           render(assignObject(getProxyDefine(toRaw(props.field))));
         }
-        console.log('watchexecute')
       },
       { immediate: true },
     );
-
-    onMounted(() => {
-      console.log('mounted')
-    });
 
     return {
       renderField,
