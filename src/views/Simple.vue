@@ -11,7 +11,19 @@ const configs = reactive({
 });
 
 const onSetup = ({ onRender, onBeforeRender, addComponent }) => {
-  onBeforeRender(() => (field, next) => {
+  // innerText
+  onRender(() => (field, next) => {
+    if (field.props?.innerText !== undefined) {
+      const props = { content: field.props?.innerText };
+      const text = { component: "text", props };
+      Object.defineProperty(props, "content", {
+        get() {
+          return field.props?.innerText;
+        },
+      });
+      field.children = [text];
+    }
+
     next(field);
   });
 
@@ -60,7 +72,7 @@ const onSetup = ({ onRender, onBeforeRender, addComponent }) => {
                       defineComponent({
                         setup(props, ctx) {
                           // 不是个好办法
-                          return () => h("div", null, ctx.slots.default());
+                          return () => h("div", null, ctx.slots.default && ctx.slots.default());
                         },
                       }),
                       null,

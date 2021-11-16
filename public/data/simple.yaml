@@ -54,6 +54,10 @@ fields:
       - component: el-input
         formItem:
           label: $:GET(model, 'text')
+        props:
+          value: $:GET(model, 'btntext')
+        events:
+          input: $:(v)=>SET(model, 'btntext', v)
       - component: el-select
         formItem:
           label: zzxcc
@@ -67,3 +71,13 @@ fields:
             props:
               label: $:GET(item, 'text')
               value: $:index
+          - component: el-option
+            for: item in model.arr
+            props:
+              label: $:GET(item, 'value')
+              value: $:index
+      - component: el-button
+        props:
+          innerText: $:GET(model, 'btntext')
+        events:
+          click: $:()=>model.arr.push({value:'aaa'})
