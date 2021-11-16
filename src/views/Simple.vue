@@ -11,36 +11,6 @@ const configs = reactive({
 });
 
 const onSetup = ({ onRender, onBeforeRender, addComponent }) => {
-  // innerText
-  onRender(() => (field, next) => {
-    if (field.props?.innerText !== undefined) {
-      const props = { content: field.props?.innerText };
-      const text = { component: "text", props };
-      Object.defineProperty(props, "content", {
-        get() {
-          return field.props?.innerText;
-        },
-      });
-      field.children = [text];
-    }
-
-    next(field);
-  });
-
-  addComponent(
-    "text",
-    defineComponent({
-      props: {
-        content: String,
-      },
-      setup(props) {
-        return () => {
-          return h("span", { domProps: { innerText: props.content } });
-        };
-      },
-    }),
-  );
-
   onBeforeRender(() => (field, next) => {
     if (!field.formItem) {
       return next(field);
@@ -48,54 +18,6 @@ const onSetup = ({ onRender, onBeforeRender, addComponent }) => {
     const props = field.formItem;
     delete field.formItem;
     next({ component: "el-form-item", props, children: [field] });
-  });
-
-  const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
-
-  // for 表达式，还不知道怎么具体实现vue的for
-  onRender(({ context }) => {
-    return (field, next) => {
-      if (!field) {
-        return next(field);
-      }
-
-      field.children = field?.children?.map((child) => {
-        const matched = forAliasRE.exec(child.for);
-        if (matched) {
-          const [origin, prop, source] = matched;
-          return {
-            component: markRaw(
-              defineComponent({
-                setup() {
-                  return () =>
-                    h(
-                      defineComponent({
-                        setup(props, ctx) {
-                          // 不是个好办法
-                          return () => h("div", null, ctx.slots.default && ctx.slots.default());
-                        },
-                      }),
-                      null,
-                      deepGet(context, source)?.map((item, index) => {
-                        return h(JNode, {
-                          props: {
-                            field: assignObject(child, { for: undefined }),
-                            scope: { [prop]: item, index },
-                          },
-                        });
-                      }),
-                    );
-                },
-              }),
-            ),
-          };
-        } else {
-          return child;
-        }
-      });
-
-      next(field);
-    };
   });
 
   // onBeforeRender(() => (field, next) => {

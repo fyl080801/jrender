@@ -1,5 +1,5 @@
 import path from "path";
-import { mergeConfig, defineConfig } from "vite";
+import { defineConfig, mergeConfig } from "vite";
 import base from "../../build/vite.base";
 import { plugins } from "../../build/vite.plugin";
 
@@ -8,14 +8,16 @@ const config = defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "lib"),
-      name: "@jrender/designer",
+      name: "JRenderExtends",
       fileName: (format) => `index.${format}.js`,
     },
+    sourcemap: true,
     rollupOptions: {
-      external: ["vue", "@vue/composition-api"],
+      external: ["vue", "@vue/composition-api", "@jrender/core"],
       output: {
         globals: {
           vue: "Vue",
+          "@jrender/core": "JRender",
         },
       },
     },

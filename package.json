@@ -8,9 +8,15 @@
   "scripts": {
     "postinstall": "husky install",
     "dev": "vite",
-    "build": "lerna run build && vite build",
+    "build": "vite build",
+    "clean": "yarn workspaces run clean",
+    "dist": "yarn workspaces run dist",
     "lint": "eslint './src/**/*.{js,ts,tsx,vue,md}'",
-    "lint:fix": "eslint './src/**/*.{js,ts,tsx,vue,md}' --fix"
+    "lint:fix": "eslint './src/**/*.{js,ts,tsx,vue,md}' --fix",
+    "publish": "lerna publish",
+    "prepack": "yarn run dist",
+    "postpublish": "yarn run clean",
+    "commit": "git add . && git status && git-cz"
   },
   "dependencies": {
     "@vue/composition-api": "^1.1.4",
@@ -19,38 +25,43 @@
     "element-ui": "^2.15.6",
     "js-yaml": "^4.1.0",
     "vue": "^2.6.14",
-    "vue-demi": "^0.11.4",
+    "vue-demi": "^0.12.1",
     "vue-fragment": "^1.5.2",
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
     "@iconify/json": "^1.1.399",
     "@octokit/core": "3",
-    "@tailwindcss/postcss7-compat": "npm:@tailwindcss/postcss7-compat",
     "@types/js-yaml": "^4.0.3",
     "@types/node": "^16.7.13",
-    "@typescript-eslint/eslint-plugin": "^4.31.0",
-    "@typescript-eslint/parser": "^4.31.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
     "@vitejs/plugin-legacy": "^1.5.3",
     "@vue/eslint-config-prettier": "^6.0.0",
-    "@vue/eslint-config-typescript": "^7.0.0",
+    "@vue/eslint-config-typescript": "^9.0.1",
     "@vue/runtime-dom": "^3.2.10",
     "autoprefixer": "^10.3.4",
-    "eslint": "^7.32.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.2.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-vue": "^7.17.0",
+    "eslint-plugin-vue": "^8.0.3",
     "husky": "^7.0.2",
     "lerna": "^4.0.0",
+    "lint-staged": "^12.0.2",
     "postcss": "^8.3.6",
     "prettier": "^2.3.2",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^4.4.2",
-    "unplugin-vue2-script-setup": "^0.5.8",
+    "unplugin-vue2-script-setup": "^0.6.16",
     "vite": "^2.5.5",
     "vite-plugin-components": "^0.13.3",
     "vite-plugin-icons": "^0.6.5",
     "vite-plugin-vue2": "^1.8.2",
     "vite-plugin-windicss": "^1.4.2",
     "vue-template-compiler": "^2.6.14"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

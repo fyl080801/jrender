@@ -1,5 +1,13 @@
 <script lang="ts">
-import { computed, defineComponent, ref, markRaw, toRaw, watch } from "@vue/composition-api";
+import {
+  computed,
+  defineComponent,
+  ref,
+  markRaw,
+  toRaw,
+  watch,
+  onMounted,
+} from "@vue/composition-api";
 import { assignObject } from "../utils/helper";
 import { useJRender, useScope } from "../utils/mixins";
 import { pipeline } from "../utils/pipeline";
@@ -102,9 +110,14 @@ export default defineComponent({
         if (props.field) {
           render(assignObject(getProxyDefine(toRaw(props.field))));
         }
+        console.log('watchexecute')
       },
       { immediate: true },
     );
+
+    onMounted(() => {
+      console.log('mounted')
+    });
 
     return {
       renderField,

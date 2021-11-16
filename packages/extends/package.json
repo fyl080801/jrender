@@ -1,9 +1,9 @@
 {
-  "name": "@jrender/core",
+  "name": "@jrender/extends",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
-  "homepage": "",
+  "homepage": "https://github.com/fyl080801/jrender#readme",
   "license": "ISC",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -20,13 +20,20 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "http://registry.m.jd.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fyl080801/jrender.git"
   },
   "scripts": {
     "clean": "rimraf dist",
     "dist": "vite build"
   },
+  "bugs": {
+    "url": "https://github.com/fyl080801/jrender/issues"
+  },
   "dependencies": {
-    "@vue/composition-api": "^1.4.0"
+    "@jrender/core": "^0.0.0"
   }
 }

@@ -8,7 +8,7 @@ const config = defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "lib"),
-      name: "@jrender/core",
+      name: "JRender",
       fileName: (format) => `index.${format}.js`,
     },
     sourcemap: true,

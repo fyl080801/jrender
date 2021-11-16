@@ -13,7 +13,6 @@ listeners:
       - handler: |
           $:() => {
             SET(model, 'checked', false); 
-            NEXTTICK(() => { SET(model, 'checked', true) }); 
           }
 fields:
   - component: input

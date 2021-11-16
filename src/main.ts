@@ -6,8 +6,13 @@ import Element from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import { createRouter } from "./router";
 
+import { useGlobalRender } from "@jrender/core";
+import JRenderExtends from "@jrender/extends";
+
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
+
+useGlobalRender(JRenderExtends);
 
 const app = createApp({
   router: createRouter(),
