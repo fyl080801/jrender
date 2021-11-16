@@ -38,7 +38,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
   onRender(() => (field, next) => {
     if (field.props?.innerText !== undefined) {
       const props = { content: field.props?.innerText };
-      const text = { component: "text", props };
+      const text = { component: "textbox", props };
       Object.defineProperty(props, "content", {
         get() {
           return field.props?.innerText;
@@ -134,7 +134,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
   });
 
   addComponent(
-    "text",
+    "textbox",
     defineComponent({
       props: {
         content: String,

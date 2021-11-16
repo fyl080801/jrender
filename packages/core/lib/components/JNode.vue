@@ -8,6 +8,7 @@ import {
   watch,
   onMounted,
 } from "@vue/composition-api";
+import { isOriginTag } from "../utils/domTags";
 import { assignObject } from "../utils/helper";
 import { useJRender, useScope } from "../utils/mixins";
 import { pipeline } from "../utils/pipeline";
@@ -51,7 +52,7 @@ export default defineComponent({
       const scoped = {};
       const named = {};
 
-      renderField.value.children
+      renderField.value?.children
         ?.filter((child) => child)
         .forEach((child) => {
           if (child.scopedSlot) {
@@ -68,6 +69,10 @@ export default defineComponent({
         scoped: Object.entries(scoped).map((item) => ({ name: item[0], children: item[1] })),
         named: Object.entries(named).map((item) => ({ name: item[0], children: item[1] })),
       };
+    });
+
+    const isDom = computed(() => {
+      return isOriginTag(renderField.value?.component);
     });
 
     const render = pipeline(
@@ -118,6 +123,7 @@ export default defineComponent({
       renderField,
       services,
       renderSlots,
+      isDom,
       getTemplateScope,
     };
   },
@@ -126,7 +132,20 @@ export default defineComponent({
 
 <template>
   <component
-    v-if="renderField && renderField.component && renderSlots.scoped.length"
+    v-if="isDom"
+    :is="renderField.component"
+    v-bind="renderField.props"
+    v-on="renderField.events"
+  >
+    <JNode
+      v-for="(child, index) in renderField.children || []"
+      :key="child.key || index"
+      :field="child"
+      :scope="scope"
+    />
+  </component>
+  <component
+    v-else-if="renderField && renderField.component && renderSlots.scoped.length > 0"
     :is="services.components[renderField.component] || renderField.component"
     v-bind="renderField.props"
     v-on="renderField.events"

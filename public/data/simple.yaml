@@ -15,41 +15,73 @@ listeners:
             SET(model, 'checked', false); 
           }
 fields:
+  - component: p
+    children:
+      - component: el-button
+        props:
+          type: text
+          innerText: click
   - component: input
     props:
       value: $:GET(model, 'text')
+      style:
+        border: 1px solid red
     events:
       input: $:(e)=>SET(model, 'text', e.target.value)
 
-  - component: el-input
-    props:
-      value: $:GET(model, 'text')
-    events:
-      input: $:(value)=>SET(model, 'text', value)
-    children:
-      - component: text
-        slot: append
-        props:
-          content: $:GET(model, 'text')
-  - component: text
+  - component: textbox
     props:
       content: $:GET(model, 'text')
   - component: el-table
     props:
       data: $:tabledata
+      border: true
+      style:
+        width: 400px
+        margin: 10px 20px
     children:
       - component: el-table-column
         props:
           label: col1
         children:
-          - component: text
+          - component: textbox
             scopedSlot: default
             props:
-              content: $:row.text
+              content: $:`col-${row.text}`
+      - component: el-table-column
+        props:
+          label: col2
+          prop: text
+      - component: el-table-column
+        props:
+          label: operate
+        children:
+          - component: div
+            scopedSlot: default
+            children:
+              - component: el-button
+                props:
+                  type: text
+                  innerText: $:row.text
+                events:
+                  click: $:()=>alert(row.text)
+
   - component: el-form
     props:
       labelWidth: 120px
     children:
+      - component: el-input
+        formItem:
+          label: isinform
+        props:
+          value: $:GET(model, 'text')
+        events:
+          input: $:(value)=>SET(model, 'text', value)
+        children:
+          - component: textbox
+            slot: append
+            props:
+              content: $:GET(model, 'text')
       - component: el-input
         formItem:
           label: $:GET(model, 'text')
