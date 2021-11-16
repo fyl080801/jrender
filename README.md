@@ -16,7 +16,7 @@
 
 ```json
 {
-  "on": {
+  "events": {
     "click": "$:()=>{ alert('clicked') }"
   }
 }
@@ -32,11 +32,8 @@
 {
   "component": "el-input",
   "formItem": { "label": "input" },
-  "options": {
-    "props": { "value": "$:model.obj.text" },
-    "attrs": { "placeholder": "input value" },
-    "on": { "input": "$:(e)=>SET(model, 'obj.text', e)" }
-  }
+  "props": { "value": "$:model.obj.text", "placeholder": "input value" },
+  "events": { "input": "$:(e)=>SET(model, 'obj.text', e)" }
 }
 ```
 
@@ -54,7 +51,7 @@ const onSetup = ({ onBeforeRender }) => {
 
     delete field.formItem;
 
-    return { component: "el-form-item", options: { props: formItem }, children: [field] };
+    return { component: "el-form-item", props: formItem, children: [field] };
   });
 };
 ```
@@ -74,13 +71,11 @@ const onSetup = ({ onBeforeRender }) => {
 ```yaml
 - component: el-checkbox
   formItem:
-    props:
-      label: checked
-  options:
-    props:
-      value: $:GET(model, 'checked') # GET 深度获取值
-    on:
-      input: $:(e)=>SET(model, 'checked', e) # 深度设置值
+    label: checked
+  props:
+    value: $:GET(model, 'checked') # GET 深度获取值
+  events:
+    input: $:(e)=>SET(model, 'checked', e) # 深度设置值
 ```
 
 可使用 addFunction 添加自定义功能函数
@@ -94,6 +89,8 @@ useRootRender(({ addFunction }: any) => {
   });
 });
 ```
+
+支持设置监听，实现数据发生变化后触发操作
 
 ```yaml
 listeners:
