@@ -23,6 +23,7 @@
     }
   },
   "include": [
+    "node_modules/unplugin-vue2-script-setup/**/*.d.ts",
     "packages/*/lib/**/*.ts",
     "packages/*/lib/**/*.tsx",
     "packages/*/lib/**/*.vue",

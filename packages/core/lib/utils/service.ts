@@ -150,7 +150,6 @@ export const mergeServices = (...services) => {
   });
 
   merged.beforeRenderHandlers = sortHandlers(merged.beforeRenderHandlers);
-
   merged.renderHandlers = sortHandlers(merged.renderHandlers);
 
   return merged;

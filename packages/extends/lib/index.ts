@@ -1,17 +1,40 @@
 import { watch, reactive, nextTick, defineComponent, h, markRaw } from "@vue/composition-api";
-import { JNode, deepGet, assignObject } from "@jrender/core";
+import { JNode, deepGet, assignObject, toPath } from "@jrender/core";
 
 export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
   // type 简写
+  onBeforeRender(({ props }) => {
+    if (props.field?.type !== undefined) {
+      props.field.component = props.field.type;
+    }
+
+    return (field, next) => {
+      next(field);
+    };
+  }).name("typeToComponent");
+
   onBeforeRender(() => (field, next) => {
-    if (field.type !== undefined) {
-      field.component = field.type;
+    if (typeof field.value === "string") {
+      const source = toPath(field.value);
+      const arr = field.value.replace(source[0], "");
+      field.props ||= {};
+      field.props.value = `$:GET(${source[0]}, '${arr}')`;
+      field.events ||= {};
+      field.events.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
     }
 
     next(field);
   });
 
   // 条件显示
+  onBeforeRender(() => (field, next) => {
+    if (typeof field?.condition === "string") {
+      field.condition = `$:()=>${field?.condition}`;
+    }
+
+    next(field);
+  }).name("condition");
+
   onRender(() => {
     let watcher = null;
 
@@ -20,23 +43,27 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
         watcher();
       }
 
-      watcher = watch(
-        () => field.condition,
-        (value) => {
-          if (value !== undefined && !value) {
-            next();
-          } else {
-            next(field);
-          }
-        },
-        { immediate: true },
-      );
+      if (typeof field?.condition === "function") {
+        watcher = watch(
+          field?.condition,
+          (value) => {
+            if (value !== undefined && !value) {
+              next({});
+            } else {
+              next(field);
+            }
+          },
+          { immediate: true },
+        );
+      } else {
+        next(field);
+      }
     };
   }).name("condition");
 
   // innerText
   onRender(() => (field, next) => {
-    if (field.props?.innerText !== undefined) {
+    if (field?.props?.innerText !== undefined) {
       const props = { content: field.props?.innerText };
       const text = { component: "textbox", props };
       Object.defineProperty(props, "content", {

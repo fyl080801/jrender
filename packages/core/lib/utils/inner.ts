@@ -82,9 +82,9 @@ export const compute =
 //     return handler;
 //   };
 
-export const SET = (target: Record<string, unknown>, path: string, value: unknown) => {
+export const SET = (target, path: string, value: unknown) => {
   const fields = isArray(path) ? path : toPath(path);
-  const prop = (fields as any).shift();
+  const prop = fields.shift();
 
   if (!fields.length) {
     return set(target, prop, value);
@@ -95,20 +95,20 @@ export const SET = (target: Record<string, unknown>, path: string, value: unknow
     set(target, prop, objVal);
   }
 
-  SET((target as any)[prop], fields as any, value);
+  SET(target[prop], fields, value);
 };
 
 export const GET = (target: Record<string, unknown>, path: string, def: unknown) => {
   const origin = deepGet(target, path);
 
-  if (origin === undefined) {
+  if (origin === undefined || origin === null) {
     SET(target, path, def !== undefined && def !== null ? def : null);
   }
 
   return origin !== undefined ? origin : def;
 };
 
-export const rawData = (options: any) => {
+export const rawData = (options) => {
   const data = options() || {};
   return reactive(data !== undefined && data !== null ? data : {});
 };

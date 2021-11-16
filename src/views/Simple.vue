@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, reactive, provide, inject } from "@vue/composition-api";
-import { JRender } from "@jrender/core";
+import { onMounted, reactive, provide, inject, set } from "@vue/composition-api";
+import { JRender, toPath } from "@jrender/core";
 import yaml from "js-yaml";
 
 const configs = reactive({
@@ -10,30 +10,53 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onBeforeRender }) => {
+const onSetup = ({ onRender, onBeforeRender }) => {
   const formToken = Symbol("form");
 
   onBeforeRender(() => {
-    const { inform } = inject(formToken, { inform: false });
-
     return (field, next) => {
-      if (!inform || !field.formItem) {
+      const { inform } = inject(formToken, { inform: false });
+
+      if (!inform || !field?.formItem) {
         return next(field);
       }
 
       const props = field.formItem;
       delete field.formItem;
 
-      next({ component: "el-form-item", props, children: [field] });
+      next({ component: "el-form-item", condition: field.condition, props, children: [field] });
     };
   });
 
-  onBeforeRender(({ props }) => {
-    if (props.field.component === "el-form") {
-      provide(formToken, { inform: true });
-    }
-
+  onBeforeRender(() => {
     return (field, next) => {
+      if (field?.component === "el-form") {
+        provide(formToken, { inform: true });
+      }
+
+      next(field);
+    };
+  }).depend("typeToComponent");
+
+  onRender(() => {
+    return (field, next) => {
+      if (typeof field?.model === "string") {
+        const source = toPath(field.model);
+        const arr = field.model.replace(source[0], "");
+
+        if (!field.props) {
+          set(field, "props", {});
+        }
+
+        field.props.value = `$:GET(${source[0]}, '${arr}', ${field.defaultValue})`;
+
+        if (!field.events) {
+          set(field, "events", {});
+        }
+
+        field.events.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
+      }
+
       next(field);
     };
   });

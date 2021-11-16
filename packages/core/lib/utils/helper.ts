@@ -46,8 +46,6 @@ export const isDom = (target) => {
   return expr();
 };
 
-export const isDomElement = (target) => {};
-
 export const assignArray = (...targets) => {
   return targets.reduce((pre, cur) => {
     return pre.concat(cur);
@@ -190,9 +188,10 @@ export const cleanObject = (input) => {
 };
 
 export const uuid = (len, radix?) => {
-  let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
-  let uuid = [],
-    i;
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+  const uuid = [];
+  let i;
+
   radix = radix || chars.length;
 
   if (len) {

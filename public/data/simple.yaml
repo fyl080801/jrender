@@ -15,24 +15,22 @@ listeners:
             SET(model, 'checked', false); 
           }
 fields:
-  - component: p
+  - type: p
     children:
-      - component: el-button
+      - type: el-button
         props:
           type: text
           innerText: click
-  - component: input
+  - type: input
+    value: model.text
     props:
-      value: $:GET(model, 'text')
       style:
         border: 1px solid red
-    events:
-      input: $:(e)=>SET(model, 'text', e.target.value)
 
-  - component: textbox
+  - type: textbox
     props:
       content: $:GET(model, 'text')
-  - component: el-table
+  - type: el-table
     props:
       data: $:tabledata
       border: true
@@ -40,75 +38,85 @@ fields:
         width: 400px
         margin: 10px 20px
     children:
-      - component: el-table-column
+      - type: el-table-column
         props:
           label: col1
         children:
-          - component: textbox
+          - type: textbox
             scopedSlot: default
             props:
               content: $:`col-${row.text}`
-      - component: el-table-column
+      - type: el-table-column
         props:
           label: col2
           prop: text
-      - component: el-table-column
+      - type: el-table-column
         props:
           label: operate
         children:
-          - component: div
+          - type: div
             scopedSlot: default
             children:
-              - component: el-button
+              - type: el-button
                 props:
                   type: text
                   innerText: $:row.text
                 events:
                   click: $:()=>alert(row.text)
 
-  - component: el-form
+  - type: el-form
     props:
       labelWidth: 120px
     children:
-      - component: el-input
+      - type: el-input
+        model: model.text
         formItem:
           label: isinform
-        props:
-          value: $:GET(model, 'text')
-        events:
-          input: $:(value)=>SET(model, 'text', value)
         children:
-          - component: textbox
+          - type: textbox
             slot: append
             props:
               content: $:GET(model, 'text')
-      - component: el-input
+
+      - type: el-input
+        model: model.btntext
         formItem:
           label: $:GET(model, 'text')
-        props:
-          value: $:GET(model, 'btntext')
-        events:
-          input: $:(v)=>SET(model, 'btntext', v)
-      - component: el-select
+
+      - type: el-select
+        model: model.sel
         formItem:
           label: zzxcc
-        props:
-          value: $:GET(model, 'sel')
-        events:
-          input: $:(e)=>SET(model, 'sel', e)
         children:
-          - component: el-option
+          - type: el-option
             for: item in tabledata
             props:
               label: $:GET(item, 'text')
               value: $:index
-          - component: el-option
+          - type: el-option
             for: item in model.arr
             props:
               label: $:GET(item, 'value')
               value: $:index
-      - component: el-button
+      - type: el-button
         props:
-          innerText: $:GET(model, 'btntext')
+          innerText: $:'text:' + GET(model, 'btntext', '')
         events:
           click: $:()=>model.arr.push({value:'aaa'})
+      - type: el-checkbox
+        model: model.checked
+        formItem:
+          label: checked
+        props:
+          label: isChecked
+      - type: el-radio-group
+        condition: model.checked===true
+        model: model.radiosel
+        formItem:
+          label: radios
+        children:
+          - type: el-radio
+            for: item in tabledata
+            props:
+              label: $:index
+              innerText: $:item.text

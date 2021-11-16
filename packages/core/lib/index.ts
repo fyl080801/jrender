@@ -4,13 +4,14 @@ export { JRender, JNode };
 export { useRootRender } from "./utils/mixins";
 export { useGlobalRender } from "./utils/service";
 export * from "./utils/helper";
+export * from "./utils/proxy";
 
 const install: any = function (Vue: any) {
   if (install.installed) {
     return;
   }
 
-  Vue.component("jrender", JRender);
+  Vue.component(JRender.name, JRender);
 };
 
 if (typeof window !== "undefined" && window.Vue) {

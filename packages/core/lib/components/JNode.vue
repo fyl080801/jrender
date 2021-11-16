@@ -1,13 +1,5 @@
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  ref,
-  markRaw,
-  toRaw,
-  watch,
-  onMounted,
-} from "@vue/composition-api";
+import { computed, defineComponent, ref, markRaw, toRaw, watch } from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
 import { assignObject } from "../utils/helper";
 import { useJRender, useScope } from "../utils/mixins";

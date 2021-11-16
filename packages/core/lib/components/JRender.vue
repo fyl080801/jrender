@@ -11,7 +11,7 @@ export default defineComponent({
     JNode,
   },
   props: {
-    modelValue: { type: Object, default: () => ({}) },
+    value: { type: Object, default: () => ({}) },
     fields: { type: [Array, Object], default: () => [] },
     listeners: { type: Array, default: () => [] },
     dataSource: { type: Object, default: () => ({}) },
@@ -22,7 +22,7 @@ export default defineComponent({
     });
 
     const context = reactive({
-      model: props.modelValue,
+      model: props.value,
       refs: {},
     });
 
