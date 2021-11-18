@@ -36,7 +36,6 @@ export default defineComponent({
     });
 
     useJRender({
-      context,
       services,
       props,
       slots: ctx.slots,
@@ -75,6 +74,7 @@ export default defineComponent({
 
     return {
       isArrayRoot,
+      context,
     };
   },
 });
@@ -82,7 +82,12 @@ export default defineComponent({
 
 <template>
   <div v-if="isArrayRoot">
-    <JNode v-for="(field, index) in fields" :key="field.key || index" :field="field" />
+    <JNode
+      v-for="(field, index) in fields"
+      :key="field.key || index"
+      :field="field"
+      :context="context"
+    />
   </div>
-  <JNode v-else :field="fields" />
+  <JNode v-else :field="fields" :context="context" />
 </template>

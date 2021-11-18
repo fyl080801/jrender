@@ -13,14 +13,15 @@ export default defineComponent({
     field: Object,
     scope: Object,
     temp: { type: Object, default: () => ({}) },
+    context: { type: Object, required: true },
   },
   setup(props) {
-    const { context, services, slots } = useJRender();
+    const { services, slots } = useJRender();
 
     const { scope } = useScope(assignObject(props.scope || {}, props.temp));
 
     const sharedServices = {
-      context,
+      context: props.context,
       scope,
       props,
       render: () => {
@@ -29,7 +30,7 @@ export default defineComponent({
     };
 
     const injector = injectProxy({
-      context,
+      context: props.context,
       scope,
       proxy: services.proxy.map((p) => p({ functional: services.functional })),
     });
@@ -134,6 +135,7 @@ export default defineComponent({
       :key="child.key || index"
       :field="child"
       :scope="scope"
+      :context="context"
     />
   </component>
   <component
@@ -149,6 +151,7 @@ export default defineComponent({
         :field="child"
         :scope="scope"
         :temp="getTemplateScope(temp)"
+        :context="context"
       />
     </template>
   </component>
@@ -164,6 +167,7 @@ export default defineComponent({
         :key="child.key || index"
         :field="child"
         :scope="scope"
+        :context="context"
       />
     </template>
   </component>

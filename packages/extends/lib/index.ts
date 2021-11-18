@@ -125,6 +125,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
                           props: {
                             field: assignObject(child, { for: undefined }),
                             scope: { [prop]: item, index },
+                            context,
                           },
                         });
                       }),
