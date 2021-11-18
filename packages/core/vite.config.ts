@@ -1,10 +1,10 @@
 import path from "path";
 import { defineConfig, mergeConfig } from "vite";
 import base from "../../build/vite.base";
-import { plugins } from "../../build/vite.plugin";
+// import { plugins } from "../../build/vite.plugin";
 
 const config = defineConfig({
-  plugins,
+  // plugins,
   build: {
     lib: {
       entry: path.resolve(__dirname, "lib"),
@@ -17,6 +17,7 @@ const config = defineConfig({
       output: {
         globals: {
           vue: "Vue",
+          // "@vue/composition-api": "VueCompositionAPI",
         },
       },
     },
