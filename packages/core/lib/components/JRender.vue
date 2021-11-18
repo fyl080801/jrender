@@ -1,5 +1,5 @@
 <script lang="ts">
-import { watch, computed, defineComponent, reactive } from "@vue/composition-api";
+import { watch, computed, defineComponent, reactive, set } from "@vue/composition-api";
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useScope, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
@@ -32,6 +32,7 @@ export default defineComponent({
 
     const injector = injectProxy({
       context,
+      scope: {},
       proxy: services.proxy.map((p) => p({ functional: services.functional })),
     });
 
@@ -56,7 +57,11 @@ export default defineComponent({
           const provider = services.dataSource[info.type || "default"];
 
           if (["model", "scope", "arguments", "refs"].indexOf(key) < 0 && isFunction(provider)) {
-            context[key] = provider(() => injector(info.props));
+            set(
+              context,
+              key,
+              provider(() => injector(info.props)),
+            );
           }
         });
       },
@@ -68,6 +73,7 @@ export default defineComponent({
       (value) => {
         ctx.emit("input", value);
       },
+      { deep: false },
     );
 
     useListener(props, { injector });

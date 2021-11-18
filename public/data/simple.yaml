@@ -114,7 +114,7 @@ fields:
               innerText: getdata
             events:
               click: $:()=>fetchdata.fetch()
-      
+
       - type: el-table
         formItem:
           label: table sample
@@ -134,11 +134,14 @@ fields:
               prop: remark
 
       - type: el-checkbox
-        model: model.checked
+        # model: model.checked
         formItem:
           label: checked
         props:
+          value: $:GET(model, 'checked')
           label: isChecked
+        events:
+          input: $:(v)=>SET(model, 'checked', v)
       - type: el-radio-group
         condition: model.checked===true
         model: model.radiosel

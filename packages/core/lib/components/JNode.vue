@@ -1,13 +1,5 @@
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  ref,
-  markRaw,
-  toRaw,
-  watch,
-  onMounted,
-} from "@vue/composition-api";
+import { computed, defineComponent, ref, markRaw, toRaw, watch } from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
 import { assignObject } from "../utils/helper";
 import { useJRender, useScope } from "../utils/mixins";
@@ -32,9 +24,10 @@ export default defineComponent({
       context: props.context,
       scope,
       props,
-      render: () => {
-        render(assignObject(getProxyDefine(toRaw(props.field))));
-      },
+      // 之后考虑重新赋值field实现强制刷新
+      // render: () => {
+      //   render(assignObject(getProxyDefine(toRaw(props.field))));
+      // },
     };
 
     const injector = injectProxy({
@@ -110,6 +103,7 @@ export default defineComponent({
       return Object.keys(s || {}).length ? s : undefined;
     };
 
+    // 此处不要动
     watch(
       () => props.field,
       () => {
@@ -117,13 +111,8 @@ export default defineComponent({
           render(assignObject(getProxyDefine(toRaw(props.field))));
         }
       },
+      { immediate: true },
     );
-
-    onMounted(() => {
-      if (props.field) {
-        render(assignObject(getProxyDefine(toRaw(props.field))));
-      }
-    });
 
     return {
       renderField,

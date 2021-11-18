@@ -12,9 +12,7 @@ export const getProxyDefine = (target) => {
   return isInjectedProxy(target) ? target[RAW] : target;
 };
 
-export const injectProxy = (services) => {
-  const { context = {}, scope = {}, proxy = [] } = services;
-
+export const injectProxy = ({ context, scope, proxy }) => {
   const handlers = [...proxy];
 
   const inject = (input) => {

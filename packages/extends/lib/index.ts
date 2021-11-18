@@ -1,4 +1,12 @@
-import { watch, reactive, nextTick, defineComponent, h, markRaw } from "@vue/composition-api";
+import {
+  watch,
+  reactive,
+  nextTick,
+  defineComponent,
+  h,
+  markRaw,
+  onBeforeUnmount,
+} from "@vue/composition-api";
 import { JNode, deepGet, assignObject, toPath } from "@jrender-legacy/core";
 
 export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
@@ -38,14 +46,16 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
   onRender(() => {
     let watcher = null;
 
+    onBeforeUnmount(() => {
+      watcher && watcher();
+    });
+
     return (field, next) => {
-      if (watcher) {
-        watcher();
-      }
+      watcher && watcher();
 
       if (typeof field?.condition === "function") {
         watcher = watch(
-          field?.condition,
+          field.condition,
           (value) => {
             if (value !== undefined && !value) {
               next({});
