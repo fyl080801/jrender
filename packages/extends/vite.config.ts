@@ -18,7 +18,7 @@ const config = defineConfig({
         globals: {
           vue: "Vue",
           "@jrender/core": "JRender",
-          // "@vue/composition-api": "VueCompositionAPI",
+          "@vue/composition-api": "VueCompositionAPI",
         },
       },
     },

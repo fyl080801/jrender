@@ -17,7 +17,7 @@ const config = defineConfig({
       output: {
         globals: {
           vue: "Vue",
-          // "@vue/composition-api": "VueCompositionAPI",
+          "@vue/composition-api": "VueCompositionAPI",
         },
       },
     },
