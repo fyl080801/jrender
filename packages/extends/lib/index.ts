@@ -1,5 +1,5 @@
 import { watch, reactive, nextTick, defineComponent, h, markRaw } from "@vue/composition-api";
-import { JNode, deepGet, assignObject, toPath } from "@jrender/core";
+import { JNode, deepGet, assignObject, toPath } from "@jrender-legacy/core";
 
 export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
   // type 简写

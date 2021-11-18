@@ -1,5 +1,5 @@
 {
-  "name": "@jrender/extends",
+  "name": "@jrender-legacy/extends",
   "version": "0.1.0",
   "description": "> TODO: description",
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
@@ -34,6 +34,6 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@jrender/core": "^0.1.0"
+    "@jrender-legacy/core": "^0.1.0"
   }
 }

@@ -1,11 +1,11 @@
-# `@jrender/extends`
+# `@jrender-legacy/extends`
 
 > TODO: description
 
 ## Usage
 
 ```
-const extends = require('@jrender/extends');
+const extends = require('@jrender-legacy/extends');
 
 // TODO: DEMONSTRATE API
 ```
