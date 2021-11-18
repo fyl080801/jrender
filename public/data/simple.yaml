@@ -3,6 +3,10 @@ datasource:
     props:
       - text: aaa
       - text: bbb
+  fetchdata:
+    type: fetch
+    props:
+      url: /json/tabledata.json
 
 listeners:
   - watch: $:GET(model, 'sel')
@@ -92,17 +96,43 @@ fields:
             for: item in tabledata
             props:
               label: $:GET(item, 'text')
-              value: $:index
+              value: $:GET(item, 'text')
           - type: el-option
             for: item in model.arr
             props:
               label: $:GET(item, 'value')
-              value: $:index
-      - type: el-button
+              value: $:`${index}`
+      - type: el-form-item
+        children:
+          - type: el-button
+            props:
+              innerText: $:'text:' + GET(model, 'btntext', '')
+            events:
+              click: $:()=>model.arr.push({value:'aaa'})
+          - type: el-button
+            props:
+              innerText: getdata
+            events:
+              click: $:()=>fetchdata.fetch()
+      
+      - type: el-table
+        formItem:
+          label: table sample
         props:
-          innerText: $:'text:' + GET(model, 'btntext', '')
-        events:
-          click: $:()=>model.arr.push({value:'aaa'})
+          data: $:fetchdata.data
+          border: true
+          style:
+            width: 400px
+        children:
+          - component: el-table-column
+            props:
+              label: title
+              prop: title
+          - component: el-table-column
+            props:
+              label: remark
+              prop: remark
+
       - type: el-checkbox
         model: model.checked
         formItem:

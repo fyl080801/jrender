@@ -11,7 +11,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
     return (field, next) => {
       next(field);
     };
-  }).name("typeToComponent");
+  }).name("type");
 
   onBeforeRender(() => (field, next) => {
     if (typeof field.value === "string") {
@@ -75,6 +75,23 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
     }
 
     next(field);
+  });
+
+  onRender(() => {
+    return (field, next) => {
+      if (typeof field?.model === "string") {
+        const source = toPath(field.model);
+        const arr = field.model.replace(source[0], "");
+
+        field.props ||= {};
+        field.props.value = `$:GET(${source[0]}, '${arr}', ${field.defaultValue})`;
+
+        field.events ||= {};
+        field.events.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
+      }
+
+      next(field);
+    };
   });
 
   const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;

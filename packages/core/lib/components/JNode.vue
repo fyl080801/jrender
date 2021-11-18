@@ -71,19 +71,19 @@ export default defineComponent({
       ...[
         ...services.beforeRenderHandlers.map((item) => item.handler),
         () => (field, next) => {
-          if (field?.component === "slot") {
-            next({
-              component: markRaw(JSlot),
-              props: {
-                renderSlot: () => {
-                  const renderer = slots[field.name || "default"];
-                  return renderer && renderer(field.props || {});
-                },
-              },
-            });
+          if (field?.component !== "slot") {
+            return next(field);
           }
 
-          next(field);
+          next({
+            component: markRaw(JSlot),
+            props: {
+              renderSlot: () => {
+                const renderer = slots[field.name || "default"];
+                return renderer && renderer(field.props || {});
+              },
+            },
+          });
         },
         () => (field, next) => {
           renderField.value = injector(getProxyDefine(field));

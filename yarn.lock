@@ -375,10 +375,10 @@
   resolved "https://registry.yarnpkg.com/@iconify/json-tools/-/json-tools-1.0.10.tgz#d9a7050dbbe8bb29d684d4b3f9446ed2d0bea3cc"
   integrity sha512-LFelJDOLZ6JHlmlAkgrvmcu4hpNPB91KYcr4f60D/exzU1eNOb4/KCVHIydGHIQFaOacIOD+Xy+B7P1z812cZg==
 
-"@iconify/json@^1.1.399":
-  version "1.1.428"
-  resolved "https://registry.yarnpkg.com/@iconify/json/-/json-1.1.428.tgz#6bc6a1daf717c96f5604330f0fbf958fc435e513"
-  integrity sha512-86b4F345feBxH4vP4r0DSM/c5Qw/uVUU7oecWc3xz4dIOV4ALmS6l4y8uHIEhmuMDX8iDMlegH4cVUtK42Bnwg==
+"@iconify/json@^1.1.430":
+  version "1.1.430"
+  resolved "https://registry.npmmirror.com/@iconify/json/download/@iconify/json-1.1.430.tgz#dfe67196601085672403fab2f0629cec9f364e86"
+  integrity sha1-3+ZxlmAQhWckA/qy8GKc7J82ToY=
 
 "@lerna/add@4.0.0":
   version "4.0.0"
@@ -1483,9 +1483,9 @@
   optionalDependencies:
     prettier "^1.18.2 || ^2.0.0"
 
-"@vue/composition-api@^1.1.4", "@vue/composition-api@^1.4.0":
+"@vue/composition-api@^1.4.0":
   version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.4.0.tgz#784450d0da1ecfd82f4094053ca593849cbd2e37"
+  resolved "https://registry.npmmirror.com/@vue/composition-api/download/@vue/composition-api-1.4.0.tgz?cache=0&sync_timestamp=1636878040289&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40vue%2Fcomposition-api%2Fdownload%2F%40vue%2Fcomposition-api-1.4.0.tgz#784450d0da1ecfd82f4094053ca593849cbd2e37"
   integrity sha512-fanqJw1cqhkfS1dcpFY52CeR0aWDBr7ub/0ObPWqMnNPdRsMi1gX04Q3aLeRtJEuVeCFewNbqvkPskkSPTVaXQ==
   dependencies:
     tslib "^2.3.1"
@@ -6798,10 +6798,15 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.4.2, typescript@^4.4.3:
+typescript@^4.4.3:
   version "4.4.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.4.tgz#2cd01a1a1f160704d3101fd5a58ff0f9fcb8030c"
   integrity sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==
+
+typescript@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.npmmirror.com/typescript/download/typescript-4.5.2.tgz#8ac1fba9f52256fdb06fb89e4122fa6a346c2998"
+  integrity sha1-isH7qfUiVv2wb7ieQSL6ajRsKZg=
 
 uglify-js@^3.1.4:
   version "3.14.3"

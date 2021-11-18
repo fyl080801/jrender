@@ -7,16 +7,43 @@ import yaml from "js-yaml";
 useRootRender(ElementExtends);
 
 const configs = reactive({
-  model: { text: "xxxxxxxaaaa", arr: [{ value: "xxx" }] },
+  model: { text: "" },
   datasource: {},
   listeners: [],
   fields: [],
 });
 
-const onSetup = () => {};
+const onSetup = ({ onRender }) => {
+  onRender(() => (field, next) => {
+    if (field.component !== "template" || !field.url) {
+      return next(field);
+    }
+
+    fetch(field.url).then(async (response) => {
+      const result: any = yaml.load(await response.text());
+
+      const template = {
+        component: JRender,
+        props: {
+          fields: result.fields || [],
+          dataSource: {
+            props: {
+              props: field.props,
+            },
+          },
+        },
+        children: field.children,
+      };
+
+      next(template);
+    });
+
+    next(field);
+  });
+};
 
 onMounted(async () => {
-  const result = await fetch("/data/simple.yaml");
+  const result = await fetch("/data/nest.yaml");
 
   const data: any = yaml.load(await result.text());
 
@@ -35,6 +62,6 @@ onMounted(async () => {
       :data-source="configs.datasource"
       @setup="onSetup"
     />
-    <p>{{ JSON.stringify(configs.model) }}</p>
+    <!-- <p>{{ JSON.stringify(configs.model) }}</p> -->
   </div>
 </template>

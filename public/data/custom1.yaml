@@ -1,0 +1,18 @@
+datasource:
+
+listeners:
+
+fields:
+  - type: p
+    props:
+      innerText: custom component
+  - type: p
+    props:
+      innerText: $:props.value
+  - type: el-form
+    children:
+      - type: el-input
+        formItem:
+          label: export
+        model: props.value
+  - type: slot
