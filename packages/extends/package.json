@@ -1,6 +1,6 @@
 {
   "name": "@jrender/extends",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "> TODO: description",
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
   "homepage": "https://github.com/fyl080801/jrender#readme",
@@ -34,6 +34,6 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@jrender/core": "^0.0.0"
+    "@jrender/core": "^0.1.0"
   }
 }
