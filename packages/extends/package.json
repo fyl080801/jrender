@@ -20,7 +20,7 @@
     "dist"
   ],
   "publishConfig": {
-    "registry": "http://registry.m.jd.com/"
+    "access": "public"
   },
   "repository": {
     "type": "git",
