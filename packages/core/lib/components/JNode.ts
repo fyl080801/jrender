@@ -1,5 +1,4 @@
-<script lang="ts">
-import { computed, defineComponent, ref, markRaw, toRaw, watch } from "@vue/composition-api";
+import { computed, defineComponent, ref, markRaw, toRaw, watch, h } from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
 import { assignObject } from "../utils/helper";
 import { useJRender, useScope } from "../utils/mixins";
@@ -7,27 +6,22 @@ import { pipeline } from "../utils/pipeline";
 import { getProxyDefine, injectProxy } from "../utils/proxy";
 import JSlot from "./JSlot";
 
-export default defineComponent({
+const JNode = defineComponent({
   name: "JNode",
   props: {
     field: Object,
-    scope: Object,
-    temp: { type: Object, default: () => ({}) },
+    scope: { type: Object, default: () => ({}) },
     context: { type: Object, required: true },
   },
   setup(props) {
     const { services, slots } = useJRender();
 
-    const { scope } = useScope(assignObject(props.scope || {}, props.temp));
+    const { scope } = useScope(props.scope);
 
     const sharedServices = {
       context: props.context,
       scope,
       props,
-      // 之后考虑重新赋值field实现强制刷新
-      // render: () => {
-      //   render(assignObject(getProxyDefine(toRaw(props.field))));
-      // },
     };
 
     const injector = injectProxy({
@@ -99,10 +93,6 @@ export default defineComponent({
       ].map((provider) => provider(sharedServices)),
     );
 
-    const getTemplateScope = (s) => {
-      return Object.keys(s || {}).length ? s : undefined;
-    };
-
     // 此处不要动
     watch(
       () => props.field,
@@ -114,63 +104,69 @@ export default defineComponent({
       { immediate: true },
     );
 
-    return {
-      renderField,
-      services,
-      renderSlots,
-      isDom,
-      getTemplateScope,
+    return () => {
+      if (isDom.value) {
+        return h(
+          renderField.value.component,
+          {
+            props: renderField.value.props,
+            domProps: renderField.value.domProps,
+            on: renderField.value.on,
+            nativeOn: renderField.value.nativeOn,
+            style: renderField.value.style,
+            class: renderField.value.class,
+          },
+          (renderField.value.children || []).map((child, index) => {
+            return h(JNode, {
+              key: child.key || index,
+              props: { field: child, scope, context: props.context },
+            });
+          }),
+        );
+      } else if (renderField && renderField.value.component) {
+        return h(
+          renderField.value.component,
+          {
+            props: renderField.value.props,
+            domProps: renderField.value.domProps,
+            on: renderField.value.on,
+            nativeOn: renderField.value.nativeOn,
+            scopedSlots: renderSlots.value.scoped.length
+              ? renderSlots.value.scoped.reduce((target, item) => {
+                  target[item.name] = (s) => {
+                    return (item.children || []).map((field, index) => {
+                      return h(JNode, {
+                        key: field.key || index,
+                        props: {
+                          field,
+                          scope: assignObject(scope, s),
+                          context: props.context,
+                        },
+                      });
+                    });
+                  };
+                  return target;
+                }, {})
+              : null,
+            style: renderField.value.style,
+            ["class"]: renderField.value.class,
+          },
+          renderSlots.value.named.reduce((target, item) => {
+            item.children.forEach((field, index) => {
+              target.push(
+                h(JNode, {
+                  key: field.key || index,
+                  slot: item.name,
+                  props: { field, scope, context: props.context },
+                }),
+              );
+            });
+            return target;
+          }, []),
+        );
+      }
     };
   },
 });
-</script>
 
-<template>
-  <component
-    v-if="isDom"
-    :is="renderField.component"
-    v-bind="renderField.props"
-    v-on="renderField.events"
-  >
-    <JNode
-      v-for="(child, index) in renderField.children || []"
-      :key="child.key || index"
-      :field="child"
-      :scope="scope"
-      :context="context"
-    />
-  </component>
-  <component
-    v-else-if="renderField && renderField.component && renderSlots.scoped.length > 0"
-    :is="services.components[renderField.component] || renderField.component"
-    v-bind="renderField.props"
-    v-on="renderField.events"
-  >
-    <template v-for="slot in renderSlots.scoped" #[slot.name]="temp">
-      <JNode
-        v-for="(child, index) in slot.children"
-        :key="child.key || index"
-        :field="child"
-        :scope="scope"
-        :temp="getTemplateScope(temp)"
-        :context="context"
-      />
-    </template>
-  </component>
-  <component
-    v-else-if="renderField && renderField.component"
-    :is="services.components[renderField.component] || renderField.component"
-    v-bind="renderField.props"
-    v-on="renderField.events"
-  >
-    <template v-for="slot in renderSlots.named" #[slot.name]>
-      <JNode
-        v-for="(child, index) in slot.children"
-        :key="child.key || index"
-        :field="child"
-        :scope="scope"
-        :context="context"
-      />
-    </template>
-  </component>
-</template>
+export default JNode;

@@ -3,7 +3,7 @@ import { watch, computed, defineComponent, reactive, set } from "@vue/compositio
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useScope, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
-import JNode from "./JNode.vue";
+import JNode from "./JNode";
 
 export default defineComponent({
   name: "JRender",

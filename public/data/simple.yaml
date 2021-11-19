@@ -24,32 +24,32 @@ fields:
       - type: el-button
         props:
           type: text
+        domProps:
           innerText: click
   - type: input
+    style:
+      border: 1px solid red
     value: model.text
-    props:
-      style:
-        border: 1px solid red
 
-  - type: textbox
-    props:
-      content: $:GET(model, 'text')
+  - type: span
+    domProps:
+      innerText: $:GET(model, 'text')
   - type: el-table
     props:
       data: $:tabledata
       border: true
-      style:
-        width: 400px
-        margin: 10px 20px
+    style:
+      width: 400px
+      margin: 10px 20px
     children:
       - type: el-table-column
         props:
           label: col1
         children:
-          - type: textbox
+          - type: span
             scopedSlot: default
-            props:
-              content: $:`col-${row.text}`
+            domProps:
+              innerText: $:`col-${row.text}`
       - type: el-table-column
         props:
           label: col2
@@ -64,8 +64,9 @@ fields:
               - type: el-button
                 props:
                   type: text
+                domProps:
                   innerText: $:row.text
-                events:
+                on:
                   click: $:()=>alert(row.text)
 
   - type: el-form
@@ -77,10 +78,10 @@ fields:
         formItem:
           label: isinform
         children:
-          - type: textbox
+          - type: span
             slot: append
-            props:
-              content: $:GET(model, 'text')
+            domProps:
+              innerText: $:GET(model, 'text')
 
       - type: el-input
         model: model.btntext
@@ -105,14 +106,14 @@ fields:
       - type: el-form-item
         children:
           - type: el-button
-            props:
+            domProps:
               innerText: $:'text:' + GET(model, 'btntext', '')
-            events:
+            on:
               click: $:()=>model.arr.push({value:'aaa'})
           - type: el-button
-            props:
+            domProps:
               innerText: getdata
-            events:
+            on:
               click: $:()=>fetchdata.fetch()
 
       - type: el-table
@@ -121,8 +122,8 @@ fields:
         props:
           data: $:fetchdata.data
           border: true
-          style:
-            width: 400px
+        style:
+          width: 400px
         children:
           - component: el-table-column
             props:
@@ -134,14 +135,18 @@ fields:
               prop: remark
 
       - type: el-checkbox
-        # model: model.checked
+        model: model.checked
         formItem:
           label: checked
         props:
-          value: $:GET(model, 'checked')
           label: isChecked
-        events:
-          input: $:(v)=>SET(model, 'checked', v)
+      - type: span
+        class: 
+          # class 要么数组要么对象
+          aaa: $:model.checked===true
+          bbb: $:model.checked!==true
+        domProps:
+          innerText: asdasds
       - type: el-radio-group
         condition: model.checked===true
         model: model.radiosel
@@ -152,4 +157,7 @@ fields:
             for: item in tabledata
             props:
               label: $:index
-              innerText: $:item.text
+            children:
+              - type: span
+                domProps:
+                  innerText: $:item.text

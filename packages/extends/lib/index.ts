@@ -21,14 +21,15 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
     };
   }).name("type");
 
-  onBeforeRender(() => (field, next) => {
-    if (typeof field.value === "string") {
+  // value
+  onRender(() => (field, next) => {
+    if (typeof field?.value === "string") {
       const source = toPath(field.value);
       const arr = field.value.replace(source[0], "");
-      field.props ||= {};
-      field.props.value = `$:GET(${source[0]}, '${arr}')`;
-      field.events ||= {};
-      field.events.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+      field.domProps ||= {};
+      field.domProps.value = `$:GET(${source[0]}, '${arr}')`;
+      field.on ||= {};
+      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
     }
 
     next(field);
@@ -71,22 +72,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
     };
   }).name("condition");
 
-  // innerText
-  onRender(() => (field, next) => {
-    if (field?.props?.innerText !== undefined) {
-      const props = { content: field.props?.innerText };
-      const text = { component: "textbox", props };
-      Object.defineProperty(props, "content", {
-        get() {
-          return field.props?.innerText;
-        },
-      });
-      field.children = [text];
-    }
-
-    next(field);
-  });
-
+  // model
   onRender(() => {
     return (field, next) => {
       if (typeof field?.model === "string") {
@@ -96,8 +82,8 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
         field.props ||= {};
         field.props.value = `$:GET(${source[0]}, '${arr}', ${field.defaultValue})`;
 
-        field.events ||= {};
-        field.events.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
+        field.on ||= {};
+        field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
       }
 
       next(field);

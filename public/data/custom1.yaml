@@ -4,10 +4,10 @@ listeners:
 
 fields:
   - type: p
-    props:
+    domProps:
       innerText: custom component
   - type: p
-    props:
+    domProps:
       innerText: $:props.value
   - type: el-form
     children:

@@ -7,9 +7,8 @@ fields:
     children:
       - type: el-input
         model: model.text
-        props:
-          style:
-            width: auto
+        style:
+          width: auto
   - type: template
     url: /data/custom1.yaml
     props:
@@ -18,8 +17,8 @@ fields:
       - type: div
         children:
           - type: p
-            props:
+            domProps:
               innerText: solt content
           - type: p
-            props:
+            domProps:
               innerText: $:model.text
