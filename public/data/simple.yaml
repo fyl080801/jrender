@@ -39,7 +39,7 @@ fields:
       data: $:tabledata
       border: true
     style:
-      width: 400px
+      width: 700px
       margin: 10px 20px
     children:
       - type: el-table-column
@@ -54,24 +54,24 @@ fields:
         props:
           label: col2
           prop: text
+
       - type: el-table-column
         props:
           label: operate
         children:
-          - type: div
+          - type: el-button
             scopedSlot: default
-            children:
-              - type: el-button
-                props:
-                  type: text
-                domProps:
-                  innerText: $:row.text
-                on:
-                  click: $:()=>alert(row.text)
+            props:
+              type: text
+            domProps:
+              innerText: $:row.text
+            on:
+              click: $:()=>alert(row.text)
 
   - type: el-form
     props:
       labelWidth: 120px
+      model: $:model
     children:
       - type: el-input
         model: model.text
@@ -87,6 +87,9 @@ fields:
         model: model.btntext
         formItem:
           label: $:GET(model, 'text')
+          prop: btntext
+          rules:
+            - required: true
 
       - type: el-select
         model: model.sel
@@ -107,7 +110,7 @@ fields:
         children:
           - type: el-button
             domProps:
-              innerText: $:'text:' + GET(model, 'btntext', '')
+              innerText: $:'text:' + model.btntext
             on:
               click: $:()=>model.arr.push({value:'aaa'})
           - type: el-button
@@ -128,11 +131,27 @@ fields:
           - component: el-table-column
             props:
               label: title
-              prop: title
+            children:
+              - type: el-button
+                scopedSlot: default
+                props:
+                  type: text
+                domProps:
+                  innerText: $:row.title
+                on:
+                  click: $:()=>alert(row.title)
           - component: el-table-column
             props:
               label: remark
               prop: remark
+          - type: el-table-column
+            props:
+              label: coledit
+            children:
+              - type: el-input
+                scopedSlot: default
+                formItem:
+                model: row.title
 
       - type: el-checkbox
         model: model.checked
@@ -141,7 +160,7 @@ fields:
         props:
           label: isChecked
       - type: span
-        class: 
+        class:
           # class 要么数组要么对象
           aaa: $:model.checked===true
           bbb: $:model.checked!==true

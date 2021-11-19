@@ -1,7 +1,7 @@
 import { computed, defineComponent, ref, markRaw, toRaw, watch, h } from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
-import { assignObject } from "../utils/helper";
-import { useJRender, useScope } from "../utils/mixins";
+import { assignObject, deepClone } from "../utils/helper";
+import { useJRender } from "../utils/mixins";
 import { pipeline } from "../utils/pipeline";
 import { getProxyDefine, injectProxy } from "../utils/proxy";
 import JSlot from "./JSlot";
@@ -16,17 +16,15 @@ const JNode = defineComponent({
   setup(props) {
     const { services, slots } = useJRender();
 
-    const { scope } = useScope(props.scope);
-
     const sharedServices = {
       context: props.context,
-      scope,
+      scope: props.scope,
       props,
     };
 
     const injector = injectProxy({
       context: props.context,
-      scope,
+      scope: props.scope,
       proxy: services.proxy.map((p) => p({ functional: services.functional })),
     });
 
@@ -34,28 +32,27 @@ const JNode = defineComponent({
 
     const renderSlots = computed<any>(() => {
       if (!renderField.value) {
-        return [];
+        return { scoped: {}, named: {} };
       }
 
-      const scoped = {};
-      const named = {};
-
-      renderField.value?.children
+      const { scoped, named } = renderField.value?.children
         ?.filter((child) => child)
-        .forEach((child) => {
-          if (child.scopedSlot) {
-            scoped[child.scopedSlot] ||= [];
-            scoped[child.scopedSlot].push(child);
-          } else {
-            const slotName = child?.slot || "default";
-            named[slotName] ||= [];
-            named[slotName].push(child);
-          }
-        });
+        .reduce(
+          ({ scoped, named }, child) => {
+            if (child.scopedSlot) {
+              scoped[child.scopedSlot] = [...(scoped[child.scopedSlot] || []), child];
+            } else {
+              const slotName = child?.slot || "default";
+              named[slotName] = [...(named[slotName] || []), child];
+            }
+            return { scoped, named };
+          },
+          { scoped: {}, named: {} },
+        ) || { scoped: {}, named: {} };
 
       return {
-        scoped: Object.entries(scoped).map((item) => ({ name: item[0], children: item[1] })),
-        named: Object.entries(named).map((item) => ({ name: item[0], children: item[1] })),
+        scoped: Object.keys(scoped).map((key) => ({ name: key, children: scoped[key] })),
+        named: Object.keys(named).map((key) => ({ name: key, children: named[key] })),
       };
     });
 
@@ -76,7 +73,7 @@ const JNode = defineComponent({
             props: {
               renderSlot: () => {
                 const renderer = slots[field.name || "default"];
-                return renderer && renderer(field.props || {});
+                return typeof renderer === "function" && renderer(field.scope || {});
               },
             },
           });
@@ -119,11 +116,11 @@ const JNode = defineComponent({
           (renderField.value.children || []).map((child, index) => {
             return h(JNode, {
               key: child.key || index,
-              props: { field: child, scope, context: props.context },
+              props: { field: getProxyDefine(child), scope: props.scope, context: props.context },
             });
           }),
         );
-      } else if (renderField && renderField.value.component) {
+      } else if (renderField.value && renderField.value.component) {
         return h(
           renderField.value.component,
           {
@@ -131,25 +128,23 @@ const JNode = defineComponent({
             domProps: renderField.value.domProps,
             on: renderField.value.on,
             nativeOn: renderField.value.nativeOn,
-            scopedSlots: renderSlots.value.scoped.length
-              ? renderSlots.value.scoped.reduce((target, item) => {
-                  target[item.name] = (s) => {
-                    return (item.children || []).map((field, index) => {
-                      return h(JNode, {
-                        key: field.key || index,
-                        props: {
-                          field,
-                          scope: assignObject(scope, s),
-                          context: props.context,
-                        },
-                      });
-                    });
-                  };
-                  return target;
-                }, {})
-              : null,
+            scopedSlots: renderSlots.value.scoped.reduce((target, item) => {
+              target[item.name] = (s) => {
+                return (item.children || []).map((field, index) => {
+                  return h(JNode, {
+                    key: field.key || index,
+                    props: {
+                      field: getProxyDefine(field),
+                      scope: assignObject(props.scope, s),
+                      context: props.context,
+                    },
+                  });
+                });
+              };
+              return target;
+            }, {}),
             style: renderField.value.style,
-            ["class"]: renderField.value.class,
+            class: renderField.value.class,
           },
           renderSlots.value.named.reduce((target, item) => {
             item.children.forEach((field, index) => {
@@ -157,7 +152,11 @@ const JNode = defineComponent({
                 h(JNode, {
                   key: field.key || index,
                   slot: item.name,
-                  props: { field, scope, context: props.context },
+                  props: {
+                    field: getProxyDefine(field),
+                    scope: props.scope,
+                    context: props.context,
+                  },
                 }),
               );
             });

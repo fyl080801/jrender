@@ -27,7 +27,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
       const source = toPath(field.value);
       const arr = field.value.replace(source[0], "");
       field.domProps ||= {};
-      field.domProps.value = `$:GET(${source[0]}, '${arr}')`;
+      field.domProps.value = `$:${field.value}`;
       field.on ||= {};
       field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
     }
@@ -80,7 +80,7 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
         const arr = field.model.replace(source[0], "");
 
         field.props ||= {};
-        field.props.value = `$:GET(${source[0]}, '${arr}', ${field.defaultValue})`;
+        field.props.value = `$:${field.model}`;
 
         field.on ||= {};
         field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;

@@ -9,7 +9,7 @@ export default ({ onBeforeRender }) => {
         ? inject(formToken, { inform: false }) || {}
         : { inform: false };
 
-      if (!inform || !field?.formItem) {
+      if (!inform || field?.formItem === undefined) {
         return next(field);
       }
 
