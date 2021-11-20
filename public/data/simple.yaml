@@ -19,164 +19,201 @@ listeners:
             SET(model, 'checked', false); 
           }
 fields:
-  - type: p
-    children:
-      - type: el-button
-        props:
-          type: text
-        domProps:
-          innerText: click
-  - type: input
-    style:
-      border: 1px solid red
-    value: model.text
-
-  - type: span
+  - type: style
     domProps:
-      innerText: $:GET(model, 'text')
-  - type: el-table
-    props:
-      data: $:tabledata
-      border: true
-    style:
-      width: 700px
-      margin: 10px 20px
-    children:
-      - type: el-table-column
-        props:
-          label: col1
-        children:
-          - type: span
-            scopedSlot: default
-            domProps:
-              innerText: $:`col-${row.text}`
-      - type: el-table-column
-        props:
-          label: col2
-          prop: text
+      innerText: |
+        .aaa {
+          color: red
+        }
 
-      - type: el-table-column
-        props:
-          label: operate
+        .bbb {
+          color: blue
+        }
+
+  - type: div
+    style:
+      marginBottom: 20px
+    children:
+      - type: p
         children:
           - type: el-button
-            scopedSlot: default
             props:
               type: text
             domProps:
-              innerText: $:row.text
-            on:
-              click: $:()=>alert(row.text)
-
-  - type: el-form
-    props:
-      labelWidth: 120px
-      model: $:model
-    children:
-      - type: el-input
-        model: model.text
-        formItem:
-          label: isinform
-        children:
-          - type: span
-            slot: append
-            domProps:
-              innerText: $:GET(model, 'text')
-
-      - type: el-input
-        model: model.btntext
-        formItem:
-          label: $:GET(model, 'text')
-          prop: btntext
-          rules:
-            - required: true
-
-      - type: el-select
-        model: model.sel
-        formItem:
-          label: zzxcc
-        children:
-          - type: el-option
-            for: item in tabledata
-            props:
-              label: $:GET(item, 'text')
-              value: $:GET(item, 'text')
-          - type: el-option
-            for: item in model.arr
-            props:
-              label: $:GET(item, 'value')
-              value: $:`${index}`
-      - type: el-form-item
-        children:
-          - type: el-button
-            domProps:
-              innerText: $:`text:${model.btntext || ''}`
-            on:
-              click: $:()=>model.arr.push({value:'aaa'})
-          - type: el-button
-            domProps:
-              innerText: getdata
-            on:
-              click: $:()=>fetchdata.fetch()
-
-      - type: el-table
-        formItem:
-          label: table sample
-        props:
-          data: $:fetchdata.data
-          border: true
+              innerText: click
+      - type: input
         style:
-          width: 400px
+          border: 1px solid red
+        domValue: model.text
+
+      - type: span
+        domProps:
+          innerText: $:GET(model, 'text')
+
+  - type: el-tabs
+    props:
+      type: card
+      value: $:GET(model, 'activeTab', 't1')
+    on:
+      input: $:(v)=>SET(model, 'activeTab', v)
+    children:
+      - component: el-tab-pane
+        props:
+          label: tab1
+          name: t1
         children:
-          - component: el-table-column
+          - type: el-table
             props:
-              label: title
+              data: $:tabledata
+              border: true
+            style:
+              width: 700px
             children:
-              - type: el-button
-                scopedSlot: default
+              - type: el-table-column
                 props:
-                  type: text
-                domProps:
-                  innerText: $:row.title
-                on:
-                  click: $:()=>alert(row.title)
-          - component: el-table-column
+                  label: col1
+                children:
+                  - type: span
+                    scopedSlot: default
+                    domProps:
+                      innerText: $:`col-${row.text}`
+              - type: el-table-column
+                props:
+                  label: col2
+                  prop: text
+
+              - type: el-table-column
+                props:
+                  label: operate
+                children:
+                  - type: el-button
+                    scopedSlot: default
+                    props:
+                      type: text
+                    domProps:
+                      innerText: $:row.text
+                    on:
+                      click: $:()=>alert(row.text)
+      - component: el-tab-pane
+        props:
+          label: tab2
+          name: t2
+        children:
+          - type: el-form
             props:
-              label: remark
-              prop: remark
-          - type: el-table-column
-            props:
-              label: coledit
+              labelWidth: 120px
+              model: $:model
             children:
               - type: el-input
-                scopedSlot: default
+                model: model.text
+                style:
+                  width: auto
                 formItem:
-                model: row.title
+                  label: isinform
+                children:
+                  - type: span
+                    slot: append
+                    domProps:
+                      innerText: $:GET(model, 'text')
 
-      - type: el-checkbox
-        model: model.checked
-        formItem:
-          label: checked
-        props:
-          label: isChecked
-      - type: span
-        class:
-          # class 要么数组要么对象
-          aaa: $:model.checked===true
-          bbb: $:model.checked!==true
-        domProps:
-          innerText: asdasds
-      - type: el-radio-group
-        condition: GET(model, 'checked')===true
-        model: model.radiosel
-        formItem:
-          label: radios
-        children:
-          - type: el-radio
-            for: item in tabledata
-            props:
-              label: $:index
-            children:
+              - type: el-input
+                model: model.btntext
+                style:
+                  width: auto
+                formItem:
+                  label: $:GET(model, 'text')
+                  prop: btntext
+                  rules:
+                    - required: true
+                      message: 不可为空
+
+              - type: el-select
+                model: model.sel
+                formItem:
+                  label: zzxcc
+                children:
+                  - type: el-option
+                    for: item in tabledata
+                    props:
+                      label: $:GET(item, 'text')
+                      value: $:GET(item, 'text')
+                  - type: el-option
+                    for: item in model.arr
+                    props:
+                      label: $:GET(item, 'value')
+                      value: $:`${index}`
+              - type: el-form-item
+                children:
+                  - type: el-button
+                    domProps:
+                      innerText: $:`text:${model.btntext || ''}`
+                    on:
+                      click: $:()=>model.arr.push({value:'aaa'})
+                  - type: el-button
+                    domProps:
+                      innerText: getdata
+                    on:
+                      click: $:()=>fetchdata.fetch()
+
+              - type: el-table
+                formItem:
+                  label: table sample
+                props:
+                  data: $:fetchdata.data
+                  border: true
+                style:
+                  width: 400px
+                children:
+                  - component: el-table-column
+                    props:
+                      label: title
+                    children:
+                      - type: el-button
+                        scopedSlot: default
+                        props:
+                          type: text
+                        domProps:
+                          innerText: $:row.title
+                        on:
+                          click: $:()=>alert(row.title)
+                  - component: el-table-column
+                    props:
+                      label: remark
+                      prop: remark
+                  - type: el-table-column
+                    props:
+                      label: coledit
+                    children:
+                      - type: el-input
+                        scopedSlot: default
+                        formItem:
+                        model: row.title
+
+              - type: el-checkbox
+                model: model.checked
+                formItem:
+                  label: checked
+                props:
+                  label: isChecked
               - type: span
+                class:
+                  - $:!!model.checked && 'aaa'
+                  - $:!model.checked && 'bbb'
+                formItem:
+                  label: 样式变色
                 domProps:
-                  innerText: $:item.text
+                  innerText: asdasds
+              - type: el-radio-group
+                condition: GET(model, 'checked')===true
+                model: model.radiosel
+                formItem:
+                  label: radios
+                children:
+                  - type: el-radio
+                    for: item in tabledata
+                    props:
+                      label: $:index
+                    children:
+                      - type: span
+                        domProps:
+                          innerText: $:item.text

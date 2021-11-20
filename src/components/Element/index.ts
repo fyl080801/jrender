@@ -1,4 +1,6 @@
+import { JNode, getProxyDefine } from "@jrender-legacy/core";
 import { inject, provide, getCurrentInstance } from "@vue/composition-api";
+import { defineComponent, h } from "@vue/composition-api";
 
 export default ({ onBeforeRender }) => {
   const formToken = Symbol("form");
@@ -29,4 +31,39 @@ export default ({ onBeforeRender }) => {
       next(field);
     };
   }).depend("type");
+
+  onBeforeRender(({ context, scope, injector }) => {
+    return (field, next) => {
+      if (field.component === "el-tabs") {
+        next({
+          component: defineComponent({
+            setup() {
+              return () =>
+                h(
+                  field.component,
+                  {
+                    ...injector(field),
+                  },
+                  field.children?.map((child) => {
+                    return h(
+                      child.component,
+                      {
+                        ...injector(child),
+                      },
+                      child.children?.map((tab) => {
+                        return h(JNode, {
+                          props: { field: getProxyDefine(tab), context, scope },
+                        });
+                      }),
+                    );
+                  }),
+                );
+            },
+          }),
+        });
+      } else {
+        next(field);
+      }
+    };
+  });
 };

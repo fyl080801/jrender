@@ -16,10 +16,19 @@ const JNode = defineComponent({
   setup(props) {
     const { services, slots } = useJRender();
 
+    // 共享给中间件的资源
     const sharedServices = {
       context: props.context,
       scope: props.scope,
       props,
+      injector: (target) => {
+        return injector(target);
+      },
+      render: () => {
+        if (props.field) {
+          render(assignObject(getProxyDefine(toRaw(props.field))));
+        }
+      },
     };
 
     const injector = injectProxy({

@@ -35,6 +35,6 @@ onMounted(async () => {
       :data-source="configs.datasource"
       @setup="onSetup"
     />
-    <p>{{ JSON.stringify(configs.model) }}</p>
+    <!-- <p>{{ JSON.stringify(configs.model) }}</p> -->
   </div>
 </template>

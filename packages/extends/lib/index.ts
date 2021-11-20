@@ -9,7 +9,7 @@ import {
 } from "@vue/composition-api";
 import { JNode, deepGet, assignObject, toPath } from "@jrender-legacy/core";
 
-export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
+export default ({ onBeforeRender, onRender, addDataSource }) => {
   // type 简写
   onBeforeRender(({ props }) => {
     if (props.field?.type !== undefined) {
@@ -20,20 +20,6 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
       next(field);
     };
   }).name("type");
-
-  // value
-  onRender(() => (field, next) => {
-    if (typeof field?.value === "string") {
-      const source = toPath(field.value);
-      const arr = field.value.replace(source[0], "");
-      field.domProps ||= {};
-      field.domProps.value = `$:${field.value}`;
-      field.on ||= {};
-      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
-    }
-
-    next(field);
-  });
 
   // 条件显示
   onBeforeRender(() => (field, next) => {
@@ -88,6 +74,34 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
 
       next(field);
     };
+  });
+
+  // domvalue
+  onRender(() => (field, next) => {
+    if (typeof field?.domValue === "string") {
+      const source = toPath(field.domValue);
+      const arr = field.domValue.replace(source[0], "");
+      field.domProps ||= {};
+      field.domProps.value = `$:${field.domValue}`;
+      field.on ||= {};
+      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+    }
+
+    next(field);
+  });
+
+  // propValue
+  onRender(() => (field, next) => {
+    if (typeof field.propValue === "string") {
+      const source = toPath(field.propValue);
+      const arr = field.propValue.replace(source[0], "");
+      field.props ||= {};
+      field.props.value = `$:${field.propValue}`;
+      field.on ||= {};
+      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+    }
+
+    next(field);
   });
 
   const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
@@ -173,18 +187,4 @@ export default ({ onBeforeRender, onRender, addDataSource, addComponent }) => {
 
     return instance;
   });
-
-  addComponent(
-    "textbox",
-    defineComponent({
-      props: {
-        content: String,
-      },
-      setup(props) {
-        return () => {
-          return h("span", { domProps: { innerText: props.content } });
-        };
-      },
-    }),
-  );
 };
