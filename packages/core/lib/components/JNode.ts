@@ -108,8 +108,8 @@ const JNode = defineComponent({
           {
             props: renderField.value.props,
             domProps: renderField.value.domProps,
-            on: renderField.value.on,
-            nativeOn: renderField.value.nativeOn,
+            on: injector(deepClone(getProxyDefine(renderField.value.on))),
+            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
             style: renderField.value.style,
             class: renderField.value.class,
           },
@@ -126,8 +126,8 @@ const JNode = defineComponent({
           {
             props: renderField.value.props,
             domProps: renderField.value.domProps,
-            on: renderField.value.on,
-            nativeOn: renderField.value.nativeOn,
+            on: injector(deepClone(getProxyDefine(renderField.value.on))),
+            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
             scopedSlots: renderSlots.value.scoped.reduce((target, item) => {
               target[item.name] = (s) => {
                 return (item.children || []).map((field, index) => {

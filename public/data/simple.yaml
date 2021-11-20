@@ -110,7 +110,7 @@ fields:
         children:
           - type: el-button
             domProps:
-              innerText: $:'text:' + model.btntext
+              innerText: $:`text:${model.btntext || ''}`
             on:
               click: $:()=>model.arr.push({value:'aaa'})
           - type: el-button
@@ -167,7 +167,7 @@ fields:
         domProps:
           innerText: asdasds
       - type: el-radio-group
-        condition: model.checked===true
+        condition: GET(model, 'checked')===true
         model: model.radiosel
         formItem:
           label: radios
