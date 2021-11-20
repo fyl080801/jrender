@@ -34,6 +34,6 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@jrender-legacy/core": "^0.1.3"
+    "@jrender-legacy/core": "^0.2.0"
   }
 }
