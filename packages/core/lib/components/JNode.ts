@@ -122,7 +122,7 @@ const JNode = defineComponent({
         );
       } else if (renderField.value && renderField.value.component) {
         return h(
-          renderField.value.component,
+          services.components[renderField.value.component] || renderField.value.component,
           {
             props: renderField.value.props,
             domProps: renderField.value.domProps,
