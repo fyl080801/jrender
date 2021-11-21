@@ -115,6 +115,7 @@ const JNode = defineComponent({
         return h(
           renderField.value.component,
           {
+            attrs: renderField.value.attrs,
             props: renderField.value.props,
             domProps: renderField.value.domProps,
             on: injector(deepClone(getProxyDefine(renderField.value.on))),
@@ -133,6 +134,7 @@ const JNode = defineComponent({
         return h(
           services.components[renderField.value.component] || renderField.value.component,
           {
+            attrs: renderField.value.attrs,
             props: renderField.value.props,
             domProps: renderField.value.domProps,
             on: injector(deepClone(getProxyDefine(renderField.value.on))),
