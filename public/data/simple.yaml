@@ -101,9 +101,16 @@ fields:
         children:
           - type: el-form
             props:
-              labelWidth: 120px
+              labelWidth: $:`${GET(model, 'labelwidth', 120)}px`
               model: $:model
             children:
+              - type: el-slider
+                formItem:
+                  label: lw
+                  labelWidth: 120px
+                props:
+                  max: 300
+                model: model.labelwidth
               - type: el-input
                 model: model.text
                 style:
