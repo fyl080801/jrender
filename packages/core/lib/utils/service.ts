@@ -46,8 +46,12 @@ export const createServiceProvider = () => {
   };
 
   const setting = {
-    addComponent: (name, type) => {
-      services.components[name] = type;
+    addComponent: (name, type?) => {
+      if (type !== undefined) {
+        services.components[name] = type;
+      } else if (name?.name) {
+        services.components[name.name] = name;
+      }
     },
     addFunction: (name, fx) => {
       if (isFunction(fx)) {

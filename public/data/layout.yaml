@@ -1,0 +1,46 @@
+fields:
+  - type: div
+    container:
+      type: abs
+    style:
+      width: 500px
+      height: 500px
+      border: 1px solid red
+    children:
+      - type: span
+        layout:
+          x: 133
+          y: 100
+          diaplay: block
+        domProps:
+          innerText: display text
+      - type: el-input
+        layout:
+          x: -100
+          y: -230
+        style:
+          width: 300px
+        attrs:
+          placeholder: input2
+      - type: div
+        container:
+          flex: true
+        layout:
+          x: -70
+          y: -20
+        style:
+          width: 900px
+          border: 1px solid blue
+        children:
+          - type: el-input
+            layout:
+              flex: 1
+            style:
+              width: auto
+            attrs:
+              placeholder: input1
+          - type: el-button
+            layout:
+              flex: 1
+            domProps:
+              innerText: btn

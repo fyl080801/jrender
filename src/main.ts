@@ -9,6 +9,8 @@ import { createRouter } from "./router";
 import { useGlobalRender } from "@jrender-legacy/core";
 import JRenderExtends from "@jrender-legacy/extends";
 
+import "virtual:windi.css";
+
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
