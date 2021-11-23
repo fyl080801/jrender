@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { onMounted, reactive } from "@vue/composition-api";
-import { JRender } from "@jrender-legacy/core";
+import { onMounted, reactive, ref, provide } from "@vue/composition-api";
+import { JRender, uuid } from "@jrender-legacy/core";
 import yaml from "js-yaml";
-import { Container, Layout } from "../components";
+import { Container, Layout, designerToken } from "../components";
 
 const configs = reactive<any>({
   model: {},
@@ -11,11 +11,27 @@ const configs = reactive<any>({
   fields: [],
 });
 
+const selected = ref(null);
+
 const onSetup = ({ onBeforeRender, addComponent }) => {
+  const state = reactive({
+    selected: null,
+  });
+
+  provide(designerToken, { state });
+
   const containers = ["div"];
 
   addComponent(Container);
   addComponent(Layout);
+
+  onBeforeRender(({ props }) => {
+    props.field.id = props.field.id || uuid(10);
+
+    return (field, next) => {
+      next(field);
+    };
+  });
 
   onBeforeRender(() => (field, next) => {
     if (
@@ -28,7 +44,16 @@ const onSetup = ({ onBeforeRender, addComponent }) => {
 
     field.layouted = true;
 
-    next({ component: Layout.name, props: field.layout, children: [field] });
+    next({
+      component: Layout.name,
+      props: { ...field.layout, id: field.id },
+      on: {
+        select: () => {
+          state.selected = state.selected === field.id ? null : field.id;
+        },
+      },
+      children: [field],
+    });
   })
     .name("layout")
     .depend("container");
