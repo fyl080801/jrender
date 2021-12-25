@@ -120,6 +120,9 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
           return {
             component: markRaw(
               defineComponent({
+                components: {
+                  "inner-node": JNode,
+                },
                 setup() {
                   return () =>
                     h(
@@ -131,7 +134,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
                       }),
                       null,
                       deepGet(context, source)?.map((item, index) => {
-                        return h(JNode, {
+                        return h("inner-node", {
                           props: {
                             field: assignObject(child, { for: undefined }),
                             scope: { [prop]: item, index },

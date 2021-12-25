@@ -13,7 +13,9 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = () => {};
+const onSetup = () => {
+  //
+};
 
 onMounted(async () => {
   const result = await fetch("/data/simple.yaml");
