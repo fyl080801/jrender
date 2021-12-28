@@ -155,7 +155,7 @@ fields:
                     domProps:
                       innerText: $:`text:${model.btntext || ''}`
                     on:
-                      click: $:()=>model.arr.push({value:'aaa'})
+                      click: $:()=>model.arr.push({value:model.btntext||'aaa'})
                   - type: el-button
                     domProps:
                       innerText: getdata

@@ -6,8 +6,9 @@ import {
   h,
   markRaw,
   onBeforeUnmount,
+  computed,
 } from "@vue/composition-api";
-import { JNode, deepGet, assignObject, toPath } from "@jrender-legacy/core";
+import { JNode, deepGet, assignObject, toPath, compute } from "@jrender-legacy/core";
 
 export default ({ onBeforeRender, onRender, addDataSource }) => {
   // type 简写
@@ -107,7 +108,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
 
   // for 表达式，还不知道怎么具体实现vue的for
-  onRender(({ context }) => {
+  onRender(({ context, services }) => {
     return (field, next) => {
       if (!field) {
         return next(field);
@@ -124,6 +125,10 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
                   "inner-node": JNode,
                 },
                 setup() {
+                  const forList = computed(() => {
+                    return compute({ functional: services.functional })(`$:${source}`)(context);
+                  });
+
                   return () =>
                     h(
                       defineComponent({
@@ -133,7 +138,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
                         },
                       }),
                       null,
-                      deepGet(context, source)?.map((item, index) => {
+                      forList.value?.map((item, index) => {
                         return h("inner-node", {
                           props: {
                             field: assignObject(child, { for: undefined }),

@@ -21,6 +21,7 @@ const JNode = defineComponent({
       context: props.context,
       scope: props.scope,
       props,
+      services,
       injector: (target) => {
         return injector(target);
       },
