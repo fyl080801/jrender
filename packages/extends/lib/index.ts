@@ -8,7 +8,7 @@ import {
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, deepGet, assignObject, toPath, compute } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath } from "@jrender-legacy/core";
 
 export default ({ onBeforeRender, onRender, addDataSource }) => {
   // type 简写
@@ -125,8 +125,31 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
                   "inner-node": JNode,
                 },
                 setup() {
+                  const compute = (value) => {
+                    const handler = (context) => {
+                      try {
+                        const keys = Object.keys(context);
+                        const funcKeys = Object.keys(services.functional);
+                        return new Function(...[...keys, ...funcKeys], `return ${value}`)(
+                          ...[
+                            ...keys.map((key) => context[key]),
+                            ...funcKeys.map((key) => services.functional[key]),
+                          ],
+                        );
+                      } catch {
+                        //
+                      }
+                    };
+
+                    return typeof value === "string" && handler;
+                  };
+
                   const forList = computed(() => {
-                    return compute({ functional: services.functional })(`$:${source}`)(context);
+                    try {
+                      return compute(source)(context);
+                    } catch {
+                      return [];
+                    }
                   });
 
                   return () =>

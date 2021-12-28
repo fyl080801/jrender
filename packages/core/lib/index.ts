@@ -5,7 +5,6 @@ export { useRootRender } from "./utils/mixins";
 export { useGlobalRender } from "./utils/service";
 export * from "./utils/helper";
 export * from "./utils/proxy";
-export { compute } from "./utils/inner";
 
 const install: any = function (Vue: any) {
   if (install.installed) {
