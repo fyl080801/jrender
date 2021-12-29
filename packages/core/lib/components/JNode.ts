@@ -1,6 +1,16 @@
-import { computed, defineComponent, ref, markRaw, toRaw, watch, h } from "@vue/composition-api";
+import {
+  computed,
+  defineComponent,
+  ref,
+  markRaw,
+  toRaw,
+  watch,
+  h,
+  onMounted,
+  getCurrentInstance,
+} from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
-import { assignObject, deepClone } from "../utils/helper";
+import { assignObject, deepClone, isArray } from "../utils/helper";
 import { useJRender } from "../utils/mixins";
 import { pipeline } from "../utils/pipeline";
 import { getProxyDefine, injectProxy } from "../utils/proxy";
@@ -14,6 +24,7 @@ const JNode = defineComponent({
     context: { type: Object, required: true },
   },
   setup(props) {
+    const { proxy } = getCurrentInstance();
     const { services, slots } = useJRender();
 
     // 共享给中间件的资源
@@ -111,11 +122,28 @@ const JNode = defineComponent({
       { immediate: true },
     );
 
+    onMounted(() => {
+      if (renderField.value.ref) {
+        if (props.context.refs[renderField.value.ref]) {
+          // eslint-disable-next-line vue/no-mutating-props
+          props.context.refs[renderField.value.ref] = isArray(
+            props.context.refs[renderField.value.ref],
+          )
+            ? [...props.context.refs[renderField.value.ref]]
+            : [props.context.refs[renderField.value.ref]];
+        } else {
+          // eslint-disable-next-line vue/no-mutating-props
+          props.context.refs[renderField.value.ref] = proxy.$refs[renderField.value.ref];
+        }
+      }
+    });
+
     return () => {
       if (isDom.value) {
         return h(
           renderField.value.component,
           {
+            ref: renderField.value.ref,
             attrs: renderField.value.attrs,
             props: renderField.value.props,
             domProps: renderField.value.domProps,
@@ -135,6 +163,7 @@ const JNode = defineComponent({
         return h(
           services.components[renderField.value.component] || renderField.value.component,
           {
+            ref: renderField.value.ref,
             attrs: renderField.value.attrs,
             props: renderField.value.props,
             domProps: renderField.value.domProps,

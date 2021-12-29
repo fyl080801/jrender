@@ -100,6 +100,7 @@ fields:
           name: t2
         children:
           - type: el-form
+            ref: formRef
             props:
               labelWidth: $:`${GET(model, 'labelwidth', 120)}px`
               model: $:model
@@ -224,3 +225,13 @@ fields:
                       - type: span
                         domProps:
                           innerText: $:item.text
+
+              - type: el-button
+                formItem:
+                  label:
+                props:
+                  type: primary
+                domProps:
+                  innerText: 提交
+                on:
+                  click: $:()=>refs.formRef.validate().catch(()=>{})
