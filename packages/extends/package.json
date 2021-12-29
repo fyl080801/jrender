@@ -1,6 +1,6 @@
 {
   "name": "@jrender-legacy/extends",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "> TODO: description",
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
   "homepage": "https://github.com/fyl080801/jrender#readme",
@@ -34,6 +34,6 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@jrender-legacy/core": "^0.3.0"
+    "@jrender-legacy/core": "^0.3.1"
   }
 }
