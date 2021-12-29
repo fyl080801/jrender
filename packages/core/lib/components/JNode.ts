@@ -6,11 +6,12 @@ import {
   toRaw,
   watch,
   h,
-  onMounted,
   getCurrentInstance,
+  onMounted,
+  onUpdated,
 } from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
-import { assignObject, deepClone, isArray } from "../utils/helper";
+import { assignObject, deepClone } from "../utils/helper";
 import { useJRender } from "../utils/mixins";
 import { pipeline } from "../utils/pipeline";
 import { getProxyDefine, injectProxy } from "../utils/proxy";
@@ -46,7 +47,7 @@ const JNode = defineComponent({
     const injector = injectProxy({
       context: props.context,
       scope: props.scope,
-      proxy: services.proxy.map((p) => p({ functional: services.functional })),
+      proxy: services?.proxy?.map((p) => p({ functional: services.functional })),
     });
 
     const renderField = ref();
@@ -123,18 +124,16 @@ const JNode = defineComponent({
     );
 
     onMounted(() => {
-      if (renderField.value.ref) {
-        if (props.context.refs[renderField.value.ref]) {
-          // eslint-disable-next-line vue/no-mutating-props
-          props.context.refs[renderField.value.ref] = isArray(
-            props.context.refs[renderField.value.ref],
-          )
-            ? [...props.context.refs[renderField.value.ref]]
-            : [props.context.refs[renderField.value.ref]];
-        } else {
-          // eslint-disable-next-line vue/no-mutating-props
-          props.context.refs[renderField.value.ref] = proxy.$refs[renderField.value.ref];
-        }
+      if (renderField.value?.ref) {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.context.refs[renderField.value.ref] = proxy.$refs[renderField.value.ref];
+      }
+    });
+
+    onUpdated(() => {
+      if (renderField.value?.ref) {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.context.refs[renderField.value.ref] = proxy.$refs[renderField.value.ref];
       }
     });
 
