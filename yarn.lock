@@ -3251,6 +3251,11 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
+es6-proxy-polyfill@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/es6-proxy-polyfill/-/es6-proxy-polyfill-2.1.1.tgz#0f16e326d83bd2779a56200baf12390dcdda325d"
+  integrity sha512-xSFe1PWX+8mTuRSuM6B2sykUBuxFFBjQqdIH1gLWs0fPTLMlu4uX6v63fQFvN4m+f++CKudax8MzxbR8+BoB3g==
+
 esbuild-android-arm64@0.13.15:
   version "0.13.15"
   resolved "https://registry.yarnpkg.com/esbuild-android-arm64/-/esbuild-android-arm64-0.13.15.tgz#3fc3ff0bab76fe35dd237476b5d2b32bb20a3d44"

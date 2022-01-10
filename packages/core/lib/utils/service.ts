@@ -80,28 +80,28 @@ export const createServiceProvider = () => {
 
       return instance;
     },
-    onRender: (handler) => {
-      const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
+    // onRender: (handler) => {
+    //   const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
 
-      if (isFunction(handler)) {
-        services.renderHandlers.push(hook);
-      }
+    //   if (isFunction(handler)) {
+    //     services.renderHandlers.push(hook);
+    //   }
 
-      const instance = {
-        name: (name) => {
-          hook.name = name;
-          return instance;
-        },
-        depend: (name) => {
-          if (hook.dependencies.indexOf(name) < 0) {
-            hook.dependencies.push(name);
-          }
-          return instance;
-        },
-      };
+    //   const instance = {
+    //     name: (name) => {
+    //       hook.name = name;
+    //       return instance;
+    //     },
+    //     depend: (name) => {
+    //       if (hook.dependencies.indexOf(name) < 0) {
+    //         hook.dependencies.push(name);
+    //       }
+    //       return instance;
+    //     },
+    //   };
 
-      return instance;
-    },
+    //   return instance;
+    // },
     addProxy: (handler) => {
       if (isFunction(handler)) {
         services.proxy.push(handler);

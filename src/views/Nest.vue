@@ -13,33 +13,29 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = ({ onRender }) => {
-  onRender(() => (field, next) => {
-    if (field.component !== "template" || !field.url) {
-      return next(field);
-    }
-
-    fetch(field.url).then(async (response) => {
-      const result: any = yaml.load(await response.text());
-
-      const template = {
-        component: JRender,
-        props: {
-          fields: result.fields || [],
-          dataSource: {
-            props: {
-              props: field.props,
-            },
-          },
-        },
-        children: field.children,
-      };
-
-      next(template);
-    });
-
-    next(field);
-  });
+const onSetup = ({ onBeforeRender }) => {
+  // onRender(() => (field, next) => {
+  //   if (field.component !== "template" || !field.url) {
+  //     return next(field);
+  //   }
+  //   fetch(field.url).then(async (response) => {
+  //     const result: any = yaml.load(await response.text());
+  //     const template = {
+  //       component: JRender,
+  //       props: {
+  //         fields: result.fields || [],
+  //         dataSource: {
+  //           props: {
+  //             props: field.props,
+  //           },
+  //         },
+  //       },
+  //       children: field.children,
+  //     };
+  //     next(template);
+  //   });
+  //   next(field);
+  // });
 };
 
 onMounted(async () => {

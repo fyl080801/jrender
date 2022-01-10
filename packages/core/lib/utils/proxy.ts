@@ -1,5 +1,6 @@
 import { assignObject } from "./helper";
 import { isArray, isDom, isFunction, isObject } from "./helper";
+import ProxyPolyfill from "es6-proxy-polyfill";
 
 const PROXY = "__j_proxy";
 const RAW = "__j_raw";
@@ -24,29 +25,33 @@ export const injectProxy = ({ context, scope, proxy }) => {
       return input;
     }
 
-    return new Proxy(input, {
-      get: (target, p) => {
-        if (p === PROXY) {
-          return true;
-        }
+    const injectObject = isObject(input) ? {} : [];
 
-        if (p === RAW) {
-          return input;
-        }
+    return injectObject;
 
-        const value = target[p];
+    // return new ProxyPolyfill(input, {
+    //   get: (target, p) => {
+    //     if (p === PROXY) {
+    //       return true;
+    //     }
 
-        for (const f of handlers) {
-          const handler = f(value);
+    //     if (p === RAW) {
+    //       return input;
+    //     }
 
-          if (handler && isFunction(handler)) {
-            return inject(getProxyDefine(handler(assignObject(context, scope || {}))));
-          }
-        }
+    //     const value = target[p];
 
-        return (isDom(value) && value) || inject(getProxyDefine(value));
-      },
-    });
+    //     for (const f of handlers) {
+    //       const handler = f(value);
+
+    //       if (handler && isFunction(handler)) {
+    //         return inject(getProxyDefine(handler(assignObject(context, scope || {}))));
+    //       }
+    //     }
+
+    //     return (isDom(value) && value) || inject(getProxyDefine(value));
+    //   },
+    // });
   };
 
   return inject;

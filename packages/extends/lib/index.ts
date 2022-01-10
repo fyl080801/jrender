@@ -31,158 +31,158 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
     next(field);
   }).name("condition");
 
-  onRender(() => {
-    let watcher = null;
+  // onRender(() => {
+  //   let watcher = null;
 
-    onBeforeUnmount(() => {
-      watcher && watcher();
-    });
+  //   onBeforeUnmount(() => {
+  //     watcher && watcher();
+  //   });
 
-    return (field, next) => {
-      watcher && watcher();
+  //   return (field, next) => {
+  //     watcher && watcher();
 
-      if (typeof field?.condition === "function") {
-        watcher = watch(
-          field.condition,
-          (value) => {
-            if (value !== undefined && !value) {
-              next({});
-            } else {
-              next(field);
-            }
-          },
-          { immediate: true },
-        );
-      } else {
-        next(field);
-      }
-    };
-  }).name("condition");
+  //     if (typeof field?.condition === "function") {
+  //       watcher = watch(
+  //         field.condition,
+  //         (value) => {
+  //           if (value !== undefined && !value) {
+  //             next({});
+  //           } else {
+  //             next(field);
+  //           }
+  //         },
+  //         { immediate: true },
+  //       );
+  //     } else {
+  //       next(field);
+  //     }
+  //   };
+  // }).name("condition");
 
-  // model
-  onRender(() => {
-    return (field, next) => {
-      if (typeof field?.model === "string") {
-        const source = toPath(field.model);
-        const arr = field.model.replace(source[0], "");
+  // // model
+  // onRender(() => {
+  //   return (field, next) => {
+  //     if (typeof field?.model === "string") {
+  //       const source = toPath(field.model);
+  //       const arr = field.model.replace(source[0], "");
 
-        field.props ||= {};
-        field.props.value = `$:${field.model}`;
+  //       field.props ||= {};
+  //       field.props.value = `$:${field.model}`;
 
-        field.on ||= {};
-        field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
-      }
+  //       field.on ||= {};
+  //       field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
+  //     }
 
-      next(field);
-    };
-  });
+  //     next(field);
+  //   };
+  // });
 
-  // domvalue
-  onRender(() => (field, next) => {
-    if (typeof field?.domValue === "string") {
-      const source = toPath(field.domValue);
-      const arr = field.domValue.replace(source[0], "");
-      field.domProps ||= {};
-      field.domProps.value = `$:${field.domValue}`;
-      field.on ||= {};
-      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
-    }
+  // // domvalue
+  // onRender(() => (field, next) => {
+  //   if (typeof field?.domValue === "string") {
+  //     const source = toPath(field.domValue);
+  //     const arr = field.domValue.replace(source[0], "");
+  //     field.domProps ||= {};
+  //     field.domProps.value = `$:${field.domValue}`;
+  //     field.on ||= {};
+  //     field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+  //   }
 
-    next(field);
-  });
+  //   next(field);
+  // });
 
-  // propValue
-  onRender(() => (field, next) => {
-    if (typeof field.propValue === "string") {
-      const source = toPath(field.propValue);
-      const arr = field.propValue.replace(source[0], "");
-      field.props ||= {};
-      field.props.value = `$:${field.propValue}`;
-      field.on ||= {};
-      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
-    }
+  // // propValue
+  // onRender(() => (field, next) => {
+  //   if (typeof field.propValue === "string") {
+  //     const source = toPath(field.propValue);
+  //     const arr = field.propValue.replace(source[0], "");
+  //     field.props ||= {};
+  //     field.props.value = `$:${field.propValue}`;
+  //     field.on ||= {};
+  //     field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+  //   }
 
-    next(field);
-  });
+  //   next(field);
+  // });
 
-  const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+  // const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
 
-  // for 表达式，还不知道怎么具体实现vue的for
-  onRender(({ context, services }) => {
-    return (field, next) => {
-      if (!field) {
-        return next(field);
-      }
+  // // for 表达式，还不知道怎么具体实现vue的for
+  // onRender(({ context, services }) => {
+  //   return (field, next) => {
+  //     if (!field) {
+  //       return next(field);
+  //     }
 
-      field.children = field?.children?.map((child) => {
-        const matched = forAliasRE.exec(child.for);
-        if (matched) {
-          const [origin, prop, source] = matched;
-          return {
-            component: markRaw(
-              defineComponent({
-                components: {
-                  "inner-node": JNode,
-                },
-                setup() {
-                  const compute = (value) => {
-                    const handler = (context) => {
-                      try {
-                        const keys = Object.keys(context);
-                        const funcKeys = Object.keys(services.functional);
-                        return new Function(...[...keys, ...funcKeys], `return ${value}`)(
-                          ...[
-                            ...keys.map((key) => context[key]),
-                            ...funcKeys.map((key) => services.functional[key]),
-                          ],
-                        );
-                      } catch {
-                        //
-                      }
-                    };
+  //     field.children = field?.children?.map((child) => {
+  //       const matched = forAliasRE.exec(child.for);
+  //       if (matched) {
+  //         const [origin, prop, source] = matched;
+  //         return {
+  //           component: markRaw(
+  //             defineComponent({
+  //               components: {
+  //                 "inner-node": JNode,
+  //               },
+  //               setup() {
+  //                 const compute = (value) => {
+  //                   const handler = (context) => {
+  //                     try {
+  //                       const keys = Object.keys(context);
+  //                       const funcKeys = Object.keys(services.functional);
+  //                       return new Function(...[...keys, ...funcKeys], `return ${value}`)(
+  //                         ...[
+  //                           ...keys.map((key) => context[key]),
+  //                           ...funcKeys.map((key) => services.functional[key]),
+  //                         ],
+  //                       );
+  //                     } catch {
+  //                       //
+  //                     }
+  //                   };
 
-                    return typeof value === "string" && handler;
-                  };
+  //                   return typeof value === "string" && handler;
+  //                 };
 
-                  const forList = computed(() => {
-                    try {
-                      return compute(source)(context);
-                    } catch {
-                      return [];
-                    }
-                  });
+  //                 const forList = computed(() => {
+  //                   try {
+  //                     return compute(source)(context);
+  //                   } catch {
+  //                     return [];
+  //                   }
+  //                 });
 
-                  return () =>
-                    h(
-                      defineComponent({
-                        setup(props, ctx) {
-                          // 不是个好办法
-                          return () => h("div", null, ctx.slots.default && ctx.slots.default());
-                        },
-                      }),
-                      null,
-                      forList.value?.map((item, index) => {
-                        return h("inner-node", {
-                          props: {
-                            field: assignObject(child, { for: undefined }),
-                            scope: { [prop]: item, index },
-                            context,
-                          },
-                        });
-                      }),
-                    );
-                },
-              }),
-            ),
-          };
-        } else {
-          return child;
-        }
-      });
+  //                 return () =>
+  //                   h(
+  //                     defineComponent({
+  //                       setup(props, ctx) {
+  //                         // 不是个好办法
+  //                         return () => h("div", null, ctx.slots.default && ctx.slots.default());
+  //                       },
+  //                     }),
+  //                     null,
+  //                     forList.value?.map((item, index) => {
+  //                       return h("inner-node", {
+  //                         props: {
+  //                           field: assignObject(child, { for: undefined }),
+  //                           scope: { [prop]: item, index },
+  //                           context,
+  //                         },
+  //                       });
+  //                     }),
+  //                   );
+  //               },
+  //             }),
+  //           ),
+  //         };
+  //       } else {
+  //         return child;
+  //       }
+  //     });
 
-      next(field);
-    };
-  });
+  //     next(field);
+  //   };
+  // });
 
   addDataSource("fetch", (opt) => {
     const { autoLoad } = opt();
