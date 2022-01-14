@@ -144,7 +144,7 @@ const JNode = defineComponent({
           {
             ref: renderField.value.ref,
             attrs: deepClone(renderField.value.attrs),
-            props: deepClone(renderField.value.props),
+            props: renderField.value.props,
             domProps: deepClone(renderField.value.domProps),
             on: deepClone(renderField.value.on),
             nativeOn: deepClone(renderField.value.nativeOn),
@@ -164,7 +164,7 @@ const JNode = defineComponent({
           {
             ref: renderField.value.ref,
             attrs: deepClone(renderField.value.attrs),
-            props: deepClone(renderField.value.props),
+            props: renderField.value.props, // 考虑到可能嵌套组件，如果深度克隆会出问题
             domProps: deepClone(renderField.value.domProps),
             on: deepClone(renderField.value.on),
             nativeOn: deepClone(renderField.value.nativeOn),

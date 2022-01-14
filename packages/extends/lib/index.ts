@@ -8,7 +8,7 @@ import {
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, assignObject, toPath } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath, isArray } from "@jrender-legacy/core";
 
 export default ({ onBeforeBind, onBind, addDataSource }) => {
   // type 简写
@@ -192,9 +192,14 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
 
           const response: any = await fetch(options.url, options.props);
           const result = await response[options.type || "json"]();
+
           setTimeout(() => {
-            instance.data = result;
-            instance.loading = false;
+            instance.data = isArray(options.defaultData) ? [] : options.defaultData;
+
+            nextTick(() => {
+              instance.data = result;
+              instance.loading = false;
+            });
           }, options.fakeTimeout || 0);
         } catch {
           instance.data = options.defaultData || [];
