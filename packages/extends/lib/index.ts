@@ -2,6 +2,7 @@ import {
   watch,
   reactive,
   nextTick,
+  set,
   defineComponent,
   h,
   markRaw,
@@ -10,7 +11,7 @@ import {
 } from "@vue/composition-api";
 import { JNode, assignObject, toPath } from "@jrender-legacy/core";
 
-export default ({ onBeforeRender, onRender, addDataSource }) => {
+export default ({ onBeforeRender, addDataSource }) => {
   // type 简写
   onBeforeRender(({ props }) => {
     if (props.field?.type !== undefined) {
@@ -59,51 +60,49 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   //   };
   // }).name("condition");
 
-  // // model
-  // onRender(() => {
-  //   return (field, next) => {
-  //     if (typeof field?.model === "string") {
-  //       const source = toPath(field.model);
-  //       const arr = field.model.replace(source[0], "");
+  // model
+  onBeforeRender(() => {
+    return (field, next) => {
+      if (typeof field?.model === "string") {
+        const source = toPath(field.model);
+        const arr = field.model.replace(source[0], "");
+        field.props ||= {};
+        field.props.value = `$:${field.model}`;
+        field.on ||= {};
+        field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
+      }
 
-  //       field.props ||= {};
-  //       field.props.value = `$:${field.model}`;
+      next(field);
+    };
+  });
 
-  //       field.on ||= {};
-  //       field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
-  //     }
+  // domvalue
+  onBeforeRender(() => (field, next) => {
+    if (typeof field?.domValue === "string") {
+      const source = toPath(field.domValue);
+      const arr = field.domValue.replace(source[0], "");
+      field.domProps ||= {};
+      field.domProps.value = `$:${field.domValue}`;
+      field.on ||= {};
+      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+    }
 
-  //     next(field);
-  //   };
-  // });
+    next(field);
+  });
 
-  // // domvalue
-  // onRender(() => (field, next) => {
-  //   if (typeof field?.domValue === "string") {
-  //     const source = toPath(field.domValue);
-  //     const arr = field.domValue.replace(source[0], "");
-  //     field.domProps ||= {};
-  //     field.domProps.value = `$:${field.domValue}`;
-  //     field.on ||= {};
-  //     field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
-  //   }
+  // propValue
+  onBeforeRender(() => (field, next) => {
+    if (typeof field.propValue === "string") {
+      const source = toPath(field.propValue);
+      const arr = field.propValue.replace(source[0], "");
+      field.props ||= {};
+      field.props.value = `$:${field.propValue}`;
+      field.on ||= {};
+      field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
+    }
 
-  //   next(field);
-  // });
-
-  // // propValue
-  // onRender(() => (field, next) => {
-  //   if (typeof field.propValue === "string") {
-  //     const source = toPath(field.propValue);
-  //     const arr = field.propValue.replace(source[0], "");
-  //     field.props ||= {};
-  //     field.props.value = `$:${field.propValue}`;
-  //     field.on ||= {};
-  //     field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e.target.value)`;
-  //   }
-
-  //   next(field);
-  // });
+    next(field);
+  });
 
   // const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
 

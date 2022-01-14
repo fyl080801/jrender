@@ -39,7 +39,7 @@ const JNode = defineComponent({
       },
       render: () => {
         if (props.field) {
-          render(assignObject(getProxyDefine(toRaw(props.field))));
+          render(props.field);
         }
       },
     };
@@ -101,12 +101,7 @@ const JNode = defineComponent({
           });
         },
         () => (field, next) => {
-          renderField.value = injector(getProxyDefine(field));
-          next(renderField.value);
-        },
-        ...services.renderHandlers.map((item) => item.handler),
-        () => (field, next) => {
-          renderField.value = field;
+          renderField.value = injector(field);
           next(renderField.value);
         },
       ].map((provider) => provider(sharedServices)),
@@ -117,7 +112,7 @@ const JNode = defineComponent({
       () => props.field,
       () => {
         if (props.field) {
-          render(assignObject(getProxyDefine(toRaw(props.field))));
+          render(props.field);
         }
       },
       { immediate: true },
@@ -145,9 +140,9 @@ const JNode = defineComponent({
             ref: renderField.value.ref,
             attrs: renderField.value.attrs,
             props: renderField.value.props,
-            domProps: renderField.value.domProps,
-            on: injector(deepClone(getProxyDefine(renderField.value.on))),
-            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
+            domProps: deepClone(renderField.value.domProps),
+            on: deepClone(renderField.value.on),
+            nativeOn: deepClone(renderField.value.nativeOn),
             style: renderField.value.style,
             class: renderField.value.class,
           },
@@ -165,9 +160,9 @@ const JNode = defineComponent({
             ref: renderField.value.ref,
             attrs: renderField.value.attrs,
             props: renderField.value.props,
-            domProps: renderField.value.domProps,
-            on: injector(deepClone(getProxyDefine(renderField.value.on))),
-            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
+            domProps: deepClone(renderField.value.domProps),
+            on: deepClone(renderField.value.on),
+            nativeOn: deepClone(renderField.value.nativeOn),
             scopedSlots: renderSlots.value.scoped.reduce((target, item) => {
               target[item.name] = (s) => {
                 return (item.children || []).map((field, index) => {
