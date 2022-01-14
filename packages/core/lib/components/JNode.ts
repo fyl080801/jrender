@@ -39,7 +39,7 @@ const JNode = defineComponent({
       },
       render: () => {
         if (props.field) {
-          render(assignObject(getProxyDefine(toRaw(props.field))));
+          render(props.field);
         }
       },
     };
@@ -84,7 +84,7 @@ const JNode = defineComponent({
 
     const render = pipeline(
       ...[
-        ...services.beforeRenderHandlers.map((item) => item.handler),
+        ...services.beforeBindHandlers.map((item) => item.handler),
         () => (field, next) => {
           if (field?.component !== "slot") {
             return next(field);
@@ -101,10 +101,10 @@ const JNode = defineComponent({
           });
         },
         () => (field, next) => {
-          renderField.value = injector(getProxyDefine(field));
+          renderField.value = injector(field);
           next(renderField.value);
         },
-        ...services.renderHandlers.map((item) => item.handler),
+        ...services.bindHandlers.map((item) => item.handler),
         () => (field, next) => {
           renderField.value = field;
           next(renderField.value);
@@ -117,7 +117,7 @@ const JNode = defineComponent({
       () => props.field,
       () => {
         if (props.field) {
-          render(assignObject(getProxyDefine(toRaw(props.field))));
+          render(props.field);
         }
       },
       { immediate: true },
@@ -143,13 +143,13 @@ const JNode = defineComponent({
           renderField.value.component,
           {
             ref: renderField.value.ref,
-            attrs: renderField.value.attrs,
+            attrs: deepClone(renderField.value.attrs),
             props: renderField.value.props,
-            domProps: renderField.value.domProps,
-            on: injector(deepClone(getProxyDefine(renderField.value.on))),
-            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
-            style: renderField.value.style,
-            class: renderField.value.class,
+            domProps: deepClone(renderField.value.domProps),
+            on: deepClone(renderField.value.on),
+            nativeOn: deepClone(renderField.value.nativeOn),
+            style: deepClone(renderField.value.style),
+            class: deepClone(renderField.value.class),
           },
           (renderField.value.children || []).map((child, index) => {
             return h(JNode, {
@@ -163,11 +163,11 @@ const JNode = defineComponent({
           services.components[renderField.value.component] || renderField.value.component,
           {
             ref: renderField.value.ref,
-            attrs: renderField.value.attrs,
-            props: renderField.value.props,
-            domProps: renderField.value.domProps,
-            on: injector(deepClone(getProxyDefine(renderField.value.on))),
-            nativeOn: injector(deepClone(getProxyDefine(renderField.value.nativeOn))),
+            attrs: deepClone(renderField.value.attrs),
+            props: renderField.value.props, // 考虑到可能嵌套组件，如果深度克隆会出问题
+            domProps: deepClone(renderField.value.domProps),
+            on: deepClone(renderField.value.on),
+            nativeOn: deepClone(renderField.value.nativeOn),
             scopedSlots: renderSlots.value.scoped.reduce((target, item) => {
               target[item.name] = (s) => {
                 return (item.children || []).map((field, index) => {
@@ -183,8 +183,8 @@ const JNode = defineComponent({
               };
               return target;
             }, {}),
-            style: renderField.value.style,
-            class: renderField.value.class,
+            style: deepClone(renderField.value.style),
+            class: deepClone(renderField.value.class),
           },
           renderSlots.value.named.reduce((target, item) => {
             item.children.forEach((field, index) => {

@@ -24,29 +24,46 @@ export const injectProxy = ({ context, scope, proxy }) => {
       return input;
     }
 
-    return new Proxy(input, {
-      get: (target, p) => {
-        if (p === PROXY) {
-          return true;
-        }
+    const injectObject = isObject(input) ? {} : [];
 
-        if (p === RAW) {
-          return input;
-        }
-
-        const value = target[p];
-
-        for (const f of handlers) {
-          const handler = f(value);
-
-          if (handler && isFunction(handler)) {
-            return inject(getProxyDefine(handler(assignObject(context, scope || {}))));
-          }
-        }
-
-        return (isDom(value) && value) || inject(getProxyDefine(value));
+    Object.defineProperty(injectObject, PROXY, {
+      get() {
+        return true;
       },
+      enumerable: false,
     });
+
+    Object.defineProperty(injectObject, RAW, {
+      get() {
+        return input;
+      },
+      enumerable: false,
+    });
+
+    Object.keys(input).forEach((key) => {
+      Object.defineProperty(injectObject, key, {
+        get() {
+          const value = input[key];
+
+          for (const f of handlers) {
+            const handler = f(value);
+
+            if (handler && isFunction(handler)) {
+              return inject(handler(assignObject(context, scope || {})));
+            }
+          }
+
+          return (isDom(value) && value) || inject(value);
+        },
+        set(value) {
+          input[key] = value;
+        },
+        enumerable: true,
+        configurable: true,
+      });
+    });
+
+    return injectObject;
   };
 
   return inject;

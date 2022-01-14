@@ -8,11 +8,11 @@ import {
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, assignObject, toPath } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath, isArray } from "@jrender-legacy/core";
 
-export default ({ onBeforeRender, onRender, addDataSource }) => {
+export default ({ onBeforeBind, onBind, addDataSource }) => {
   // type 简写
-  onBeforeRender(({ props }) => {
+  onBeforeBind(({ props }) => {
     if (props.field?.type !== undefined) {
       props.field.component = props.field.type;
     }
@@ -23,7 +23,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   }).name("type");
 
   // 条件显示
-  onBeforeRender(() => (field, next) => {
+  onBeforeBind(() => (field, next) => {
     if (typeof field?.condition === "string") {
       field.condition = `$:()=>${field?.condition}`;
     }
@@ -31,7 +31,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
     next(field);
   }).name("condition");
 
-  onRender(() => {
+  onBind(() => {
     let watcher = null;
 
     onBeforeUnmount(() => {
@@ -60,15 +60,13 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   }).name("condition");
 
   // model
-  onRender(() => {
+  onBeforeBind(() => {
     return (field, next) => {
       if (typeof field?.model === "string") {
         const source = toPath(field.model);
         const arr = field.model.replace(source[0], "");
-
         field.props ||= {};
         field.props.value = `$:${field.model}`;
-
         field.on ||= {};
         field.on.input = `$:(e)=>SET(${source[0]}, '${arr}', e)`;
       }
@@ -78,7 +76,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   });
 
   // domvalue
-  onRender(() => (field, next) => {
+  onBeforeBind(() => (field, next) => {
     if (typeof field?.domValue === "string") {
       const source = toPath(field.domValue);
       const arr = field.domValue.replace(source[0], "");
@@ -92,7 +90,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   });
 
   // propValue
-  onRender(() => (field, next) => {
+  onBeforeBind(() => (field, next) => {
     if (typeof field.propValue === "string") {
       const source = toPath(field.propValue);
       const arr = field.propValue.replace(source[0], "");
@@ -108,7 +106,7 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
   const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
 
   // for 表达式，还不知道怎么具体实现vue的for
-  onRender(({ context, services }) => {
+  onBeforeBind(({ context, services }) => {
     return (field, next) => {
       if (!field) {
         return next(field);
@@ -194,9 +192,14 @@ export default ({ onBeforeRender, onRender, addDataSource }) => {
 
           const response: any = await fetch(options.url, options.props);
           const result = await response[options.type || "json"]();
+
           setTimeout(() => {
-            instance.data = result;
-            instance.loading = false;
+            instance.data = isArray(options.defaultData) ? [] : options.defaultData;
+
+            nextTick(() => {
+              instance.data = result;
+              instance.loading = false;
+            });
           }, options.fakeTimeout || 0);
         } catch {
           instance.data = options.defaultData || [];
