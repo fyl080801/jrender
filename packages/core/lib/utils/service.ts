@@ -39,8 +39,8 @@ export const createServiceProvider = () => {
   const services = {
     components: {},
     functional: {},
-    beforeRenderHandlers: [],
-    renderHandlers: [],
+    beforeBindHandlers: [],
+    bindHandlers: [],
     proxy: [],
     dataSource: {},
   };
@@ -58,11 +58,11 @@ export const createServiceProvider = () => {
         services.functional[name] = fx;
       }
     },
-    onBeforeRender: (handler) => {
+    onBeforeBind: (handler) => {
       const hook = { name: `BR_${uuid(5)}`, dependencies: [], handler };
 
       if (isFunction(handler)) {
-        services.beforeRenderHandlers.push(hook);
+        services.beforeBindHandlers.push(hook);
       }
 
       const instance = {
@@ -80,28 +80,28 @@ export const createServiceProvider = () => {
 
       return instance;
     },
-    // onRender: (handler) => {
-    //   const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
+    onBind: (handler) => {
+      const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
 
-    //   if (isFunction(handler)) {
-    //     services.renderHandlers.push(hook);
-    //   }
+      if (isFunction(handler)) {
+        services.bindHandlers.push(hook);
+      }
 
-    //   const instance = {
-    //     name: (name) => {
-    //       hook.name = name;
-    //       return instance;
-    //     },
-    //     depend: (name) => {
-    //       if (hook.dependencies.indexOf(name) < 0) {
-    //         hook.dependencies.push(name);
-    //       }
-    //       return instance;
-    //     },
-    //   };
+      const instance = {
+        name: (name) => {
+          hook.name = name;
+          return instance;
+        },
+        depend: (name) => {
+          if (hook.dependencies.indexOf(name) < 0) {
+            hook.dependencies.push(name);
+          }
+          return instance;
+        },
+      };
 
-    //   return instance;
-    // },
+      return instance;
+    },
     addProxy: (handler) => {
       if (isFunction(handler)) {
         services.proxy.push(handler);
@@ -134,8 +134,8 @@ export const mergeServices = (...services) => {
   const merged: any = {
     functional: { SET, GET, REF },
     proxy: [compute],
-    beforeRenderHandlers: [],
-    renderHandlers: [],
+    beforeBindHandlers: [],
+    bindHandlers: [],
     dataSource: {
       default: rawData,
     },
@@ -153,8 +153,8 @@ export const mergeServices = (...services) => {
     });
   });
 
-  merged.beforeRenderHandlers = sortHandlers(merged.beforeRenderHandlers);
-  merged.renderHandlers = sortHandlers(merged.renderHandlers);
+  merged.beforeBindHandlers = sortHandlers(merged.beforeBindHandlers);
+  merged.bindHandlers = sortHandlers(merged.bindHandlers);
 
   return merged;
 };

@@ -2,10 +2,10 @@ import { JNode, getProxyDefine } from "@jrender-legacy/core";
 import { inject, provide, getCurrentInstance } from "@vue/composition-api";
 import { defineComponent, h } from "@vue/composition-api";
 
-export const ElementExtends = ({ onBeforeRender }) => {
+export const ElementExtends = ({ onBeforeBind }) => {
   const formToken = Symbol("form");
 
-  onBeforeRender(() => {
+  onBeforeBind(() => {
     return (field, next) => {
       const { inform } = getCurrentInstance()
         ? inject(formToken, { inform: false }) || {}
@@ -22,7 +22,7 @@ export const ElementExtends = ({ onBeforeRender }) => {
     };
   });
 
-  onBeforeRender(() => {
+  onBeforeBind(() => {
     return (field, next) => {
       if (field?.component === "el-form") {
         provide(formToken, { inform: true });
@@ -32,7 +32,7 @@ export const ElementExtends = ({ onBeforeRender }) => {
     };
   }).depend("type");
 
-  onBeforeRender(({ context, scope, injector }) => {
+  onBeforeBind(({ context, scope, injector }) => {
     return (field, next) => {
       if (field?.component === "el-tabs") {
         next({

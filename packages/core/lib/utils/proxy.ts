@@ -1,7 +1,5 @@
 import { assignObject } from "./helper";
 import { isArray, isDom, isFunction, isObject } from "./helper";
-import { set } from "@vue/composition-api";
-// import ProxyPolyfill from "es6-proxy-polyfill";
 
 const PROXY = "__j_proxy";
 const RAW = "__j_raw";
@@ -66,30 +64,6 @@ export const injectProxy = ({ context, scope, proxy }) => {
     });
 
     return injectObject;
-
-    // return new ProxyPolyfill(input, {
-    //   get: (target, p) => {
-    //     if (p === PROXY) {
-    //       return true;
-    //     }
-
-    //     if (p === RAW) {
-    //       return input;
-    //     }
-
-    //     const value = target[p];
-
-    //     for (const f of handlers) {
-    //       const handler = f(value);
-
-    //       if (handler && isFunction(handler)) {
-    //         return inject(getProxyDefine(handler(assignObject(context, scope || {}))));
-    //       }
-    //     }
-
-    //     return (isDom(value) && value) || inject(getProxyDefine(value));
-    //   },
-    // });
   };
 
   return inject;

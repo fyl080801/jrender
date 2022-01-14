@@ -84,7 +84,7 @@ const JNode = defineComponent({
 
     const render = pipeline(
       ...[
-        ...services.beforeRenderHandlers.map((item) => item.handler),
+        ...services.beforeBindHandlers.map((item) => item.handler),
         () => (field, next) => {
           if (field?.component !== "slot") {
             return next(field);
@@ -102,6 +102,11 @@ const JNode = defineComponent({
         },
         () => (field, next) => {
           renderField.value = injector(field);
+          next(renderField.value);
+        },
+        ...services.bindHandlers.map((item) => item.handler),
+        () => (field, next) => {
+          renderField.value = field;
           next(renderField.value);
         },
       ].map((provider) => provider(sharedServices)),
@@ -138,13 +143,13 @@ const JNode = defineComponent({
           renderField.value.component,
           {
             ref: renderField.value.ref,
-            attrs: renderField.value.attrs,
-            props: renderField.value.props,
+            attrs: deepClone(renderField.value.attrs),
+            props: deepClone(renderField.value.props),
             domProps: deepClone(renderField.value.domProps),
             on: deepClone(renderField.value.on),
             nativeOn: deepClone(renderField.value.nativeOn),
-            style: renderField.value.style,
-            class: renderField.value.class,
+            style: deepClone(renderField.value.style),
+            class: deepClone(renderField.value.class),
           },
           (renderField.value.children || []).map((child, index) => {
             return h(JNode, {
@@ -158,8 +163,8 @@ const JNode = defineComponent({
           services.components[renderField.value.component] || renderField.value.component,
           {
             ref: renderField.value.ref,
-            attrs: renderField.value.attrs,
-            props: renderField.value.props,
+            attrs: deepClone(renderField.value.attrs),
+            props: deepClone(renderField.value.props),
             domProps: deepClone(renderField.value.domProps),
             on: deepClone(renderField.value.on),
             nativeOn: deepClone(renderField.value.nativeOn),
@@ -178,8 +183,8 @@ const JNode = defineComponent({
               };
               return target;
             }, {}),
-            style: renderField.value.style,
-            class: renderField.value.class,
+            style: deepClone(renderField.value.style),
+            class: deepClone(renderField.value.class),
           },
           renderSlots.value.named.reduce((target, item) => {
             item.children.forEach((field, index) => {

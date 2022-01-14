@@ -13,7 +13,7 @@ const configs = reactive<any>({
 
 const selected = ref(null);
 
-const onSetup = ({ onBeforeRender, addComponent }) => {
+const onSetup = ({ onBeforeBind, addComponent }) => {
   const state = reactive({
     selected: null,
   });
@@ -25,7 +25,7 @@ const onSetup = ({ onBeforeRender, addComponent }) => {
   addComponent(Container);
   addComponent(Layout);
 
-  onBeforeRender(({ props }) => {
+  onBeforeBind(({ props }) => {
     props.field.id = props.field.id || uuid(10);
 
     return (field, next) => {
@@ -33,7 +33,7 @@ const onSetup = ({ onBeforeRender, addComponent }) => {
     };
   });
 
-  onBeforeRender(() => (field, next) => {
+  onBeforeBind(() => (field, next) => {
     if (
       field.component === Container.name ||
       field.component === Layout.name ||
@@ -58,7 +58,7 @@ const onSetup = ({ onBeforeRender, addComponent }) => {
     .name("layout")
     .depend("container");
 
-  onBeforeRender(() => (field, next) => {
+  onBeforeBind(() => (field, next) => {
     if (
       field.component === Container.name ||
       field.component === Layout.name ||
