@@ -68,3 +68,23 @@ export const injectProxy = ({ context, scope, proxy }) => {
 
   return inject;
 };
+
+export const compute = ({ functional }) => {
+  const computeMatch = /^\$:/g;
+
+  return (value) => {
+    const handler = (context) => {
+      try {
+        const keys = Object.keys(context);
+        const funcKeys = Object.keys(functional);
+        return new Function(...[...keys, ...funcKeys], `return ${value.replace(computeMatch, "")}`)(
+          ...[...keys.map((key) => context[key]), ...funcKeys.map((key) => functional[key])],
+        );
+      } catch {
+        //
+      }
+    };
+
+    return typeof value === "string" && computeMatch.test(value) && handler;
+  };
+};

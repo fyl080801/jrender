@@ -3,6 +3,7 @@ import { onMounted, reactive } from "@vue/composition-api";
 import { JRender, useRootRender } from "@jrender-legacy/core";
 import { ElementExtends } from "../components";
 import yaml from "js-yaml";
+import request from "@/utils/request";
 
 useRootRender(ElementExtends);
 
@@ -18,9 +19,9 @@ const onSetup = () => {
 };
 
 onMounted(async () => {
-  const result = await fetch("/data/simple.yaml");
+  const result = await request({ url: "/data/simple.yaml" });
 
-  const data: any = yaml.load(await result.text());
+  const data: any = yaml.load(result.data);
 
   configs.datasource = data.datasource || {};
   configs.listeners = data.listeners || [];

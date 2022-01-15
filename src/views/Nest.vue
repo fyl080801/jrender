@@ -2,6 +2,7 @@
 import { onMounted, reactive } from "@vue/composition-api";
 import { JRender, useRootRender } from "@jrender-legacy/core";
 import { ElementExtends } from "../components";
+import request from "@/utils/request";
 import yaml from "js-yaml";
 
 useRootRender(ElementExtends);
@@ -19,8 +20,8 @@ const onSetup = ({ onBind }) => {
       return next(field);
     }
 
-    fetch(field.url).then(async (response) => {
-      const result: any = yaml.load(await response.text());
+    request({ url: field.url }).then(async (response) => {
+      const result: any = yaml.load(response.data);
       const template = {
         component: JRender,
         props: {
@@ -40,9 +41,11 @@ const onSetup = ({ onBind }) => {
 };
 
 onMounted(async () => {
-  const result = await fetch("/data/nest.yaml");
+  const result = await request({
+    url: "/data/nest.yaml",
+  });
 
-  const data: any = yaml.load(await result.text());
+  const data: any = yaml.load(result.data);
 
   configs.datasource = data.datasource || {};
   configs.listeners = data.listeners || [];

@@ -1,5 +1,6 @@
 import { assignArray, assignObject, isArray, isFunction, isObject, uuid } from "./helper";
-import { rawData, compute, GET, SET, REF } from "./inner";
+import { rawData, GET, SET, REF } from "./inner";
+import { compute } from "./proxy";
 
 const sortHandlers = (handlers) => {
   const maps = handlers.reduce((target, item) => {

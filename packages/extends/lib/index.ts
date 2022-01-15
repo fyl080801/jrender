@@ -1,16 +1,14 @@
 import {
   watch,
-  reactive,
-  nextTick,
   defineComponent,
   h,
   markRaw,
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, assignObject, toPath, isArray } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath, compute } from "@jrender-legacy/core";
 
-export default ({ onBeforeBind, onBind, addDataSource }) => {
+export default ({ onBeforeBind, onBind }) => {
   // type 简写
   onBeforeBind(({ props }) => {
     if (props.field?.type !== undefined) {
@@ -124,28 +122,11 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
                   "inner-node": JNode,
                 },
                 setup() {
-                  const compute = (value) => {
-                    const handler = (context) => {
-                      try {
-                        const keys = Object.keys(context);
-                        const funcKeys = Object.keys(services.functional);
-                        return new Function(...[...keys, ...funcKeys], `return ${value}`)(
-                          ...[
-                            ...keys.map((key) => context[key]),
-                            ...funcKeys.map((key) => services.functional[key]),
-                          ],
-                        );
-                      } catch {
-                        //
-                      }
-                    };
-
-                    return typeof value === "string" && handler;
-                  };
+                  const computeProxy = compute(services);
 
                   const forList = computed(() => {
                     try {
-                      return compute(source)(assignObject({}, context, scope));
+                      return computeProxy(`$:${source}`)(assignObject(context, scope));
                     } catch {
                       return [];
                     }
@@ -181,45 +162,5 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
 
       next(field);
     };
-  });
-
-  addDataSource("fetch", (opt) => {
-    const { autoLoad } = opt();
-    const instance = reactive({
-      fetch: async () => {
-        const options: any = opt();
-        try {
-          instance.loading = true;
-
-          const response: any = await fetch(options.url, options.props);
-          const result = await response[options.type || "json"]();
-
-          setTimeout(() => {
-            instance.data = (isArray(options.defaultData) ? [] : options.defaultData) || {};
-
-            nextTick(() => {
-              instance.data = result;
-              instance.loading = false;
-            });
-          }, options.fakeTimeout || 0);
-        } catch {
-          instance.data = options.defaultData || [];
-          instance.loading = false;
-        }
-      },
-      clear: () => {
-        instance.data = opt()?.defaultData || [];
-      },
-      loading: false,
-      data: opt()?.defaultData || [],
-    });
-
-    if (autoLoad) {
-      nextTick(() => {
-        instance.fetch();
-      });
-    }
-
-    return instance;
   });
 };

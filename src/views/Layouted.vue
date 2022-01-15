@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, provide } from "@vue/composition-api";
 import { JRender, uuid } from "@jrender-legacy/core";
+import request from "../utils/request";
 import yaml from "js-yaml";
 import { Container, Layout, designerToken } from "../components";
 
@@ -79,9 +80,9 @@ const onSetup = ({ onBeforeBind, addComponent }) => {
 };
 
 onMounted(async () => {
-  const result = await fetch("/data/layout.yaml");
+  const result = await request({ url: "/data/layout.yaml" });
 
-  const data: any = yaml.load(await result.text());
+  const data: any = yaml.load(result.data);
 
   configs.datasource = data.datasource || {};
   configs.listeners = data.listeners || [];

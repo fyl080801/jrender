@@ -20,6 +20,7 @@
   "dependencies": {
     "@vue/composition-api": "1.4.3",
     "@vueuse/core": "^7.5.3",
+    "axios": "^0.24.0",
     "core-js": "^3.20.2",
     "element-ui": "^2.15.6",
     "js-yaml": "^4.1.0",

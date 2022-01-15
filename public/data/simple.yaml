@@ -4,9 +4,10 @@ datasource:
       - text: aaa
       - text: bbb
   fetchdata:
-    type: fetch
+    type: axios
     props:
-      url: /json/tabledata.json
+      config:
+        url: /json/tabledata.json
 
 listeners:
   - watch: $:GET(model, 'sel')
@@ -161,7 +162,7 @@ fields:
                     domProps:
                       innerText: getdata
                     on:
-                      click: $:()=>fetchdata.fetch()
+                      click: $:()=>fetchdata.request()
 
               - type: el-table
                 formItem:
