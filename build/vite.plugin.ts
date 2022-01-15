@@ -21,7 +21,9 @@ export const viteIcon = ViteIcons({
 export const scriptSetup = ScriptSetup({});
 
 export const viteLegacy = legacy({
-  targets: ["defaults", "not IE 11"],
+  targets: ["ie >= 11"],
+  additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
+  // polyfills: ["es.array.iterator", "es6.symbol"],
 });
 
 export const plugins = [viteVue, viteComponents, viteIcon, scriptSetup];
