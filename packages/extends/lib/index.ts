@@ -113,7 +113,7 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
       }
 
       field.children = field?.children?.map((child) => {
-        const matched = forAliasRE.exec(child.vfor);
+        const matched = forAliasRE.exec(child.for);
 
         if (matched) {
           const [origin, prop, source] = matched;
@@ -195,7 +195,7 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
           const result = await response[options.type || "json"]();
 
           setTimeout(() => {
-            instance.data = isArray(options.defaultData) ? [] : options.defaultData;
+            instance.data = (isArray(options.defaultData) ? [] : options.defaultData) || {};
 
             nextTick(() => {
               instance.data = result;
