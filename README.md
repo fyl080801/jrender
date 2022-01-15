@@ -81,7 +81,7 @@ const onSetup = ({ onBeforeBind }) => {
 可使用 addFunction 添加自定义功能函数
 
 ```javascript
-import { nextTick } from "vue-demi";
+import { nextTick } from "@vue/composition-api";
 
 useRootRender(({ addFunction }: any) => {
   addFunction("NEXTTICK", (cb: any) => {

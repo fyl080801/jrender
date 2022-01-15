@@ -16,7 +16,6 @@ const config = defineConfig({
       "@": path.resolve(__dirname, "src"),
       ...packages,
     },
-    dedupe: ["vue-demi"],
   },
   build: {
     minify: true,
