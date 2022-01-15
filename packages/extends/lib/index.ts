@@ -103,17 +103,18 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
     next(field);
   });
 
-  const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
-
   // for 表达式，还不知道怎么具体实现vue的for
-  onBeforeBind(({ context, services }) => {
+  onBeforeBind(({ context, scope, services }) => {
+    const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+
     return (field, next) => {
       if (!field) {
         return next(field);
       }
 
       field.children = field?.children?.map((child) => {
-        const matched = forAliasRE.exec(child.for);
+        const matched = forAliasRE.exec(child.vfor);
+
         if (matched) {
           const [origin, prop, source] = matched;
           return {
@@ -144,7 +145,7 @@ export default ({ onBeforeBind, onBind, addDataSource }) => {
 
                   const forList = computed(() => {
                     try {
-                      return compute(source)(context);
+                      return compute(source)(assignObject({}, context, scope));
                     } catch {
                       return [];
                     }
