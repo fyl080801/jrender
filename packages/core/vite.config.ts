@@ -1,7 +1,7 @@
 import path from "path";
 import { defineConfig, mergeConfig } from "vite";
 import base from "../../build/vite.base";
-// import { plugins } from "../../build/vite.plugin";
+import babel from "rollup-plugin-babel";
 
 const config = defineConfig({
   // plugins,
@@ -20,6 +20,16 @@ const config = defineConfig({
           "@vue/composition-api": "VueCompositionAPI",
         },
       },
+      plugins: [
+        babel({
+          presets: [
+            [
+              "@babel/env",
+              { modules: false, targets: { browsers: "> 1%, IE 11" }, useBuiltIns: "usage" },
+            ],
+          ],
+        }),
+      ],
     },
   },
 });

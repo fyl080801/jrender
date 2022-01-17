@@ -30,6 +30,7 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@vue/composition-api": "1.4.3"
+    "@vue/composition-api": "1.4.3",
+    "core-js": "2"
   }
 }

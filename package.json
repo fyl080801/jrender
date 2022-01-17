@@ -21,7 +21,7 @@
     "@vue/composition-api": "1.4.3",
     "@vueuse/core": "^7.5.3",
     "axios": "^0.24.0",
-    "core-js": "2.6.12",
+    "core-js": "2",
     "element-ui": "^2.15.6",
     "js-yaml": "^4.1.0",
     "vue": "^2.6.14",
@@ -29,6 +29,10 @@
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.7",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.16.8",
     "@iconify/json": "^1.1.456",
     "@octokit/core": "3",
     "@types/js-yaml": "^4.0.5",
@@ -49,6 +53,7 @@
     "lint-staged": "^12.1.7",
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
+    "rollup-plugin-babel": "^4.4.0",
     "typescript": "^4.5.4",
     "unplugin-vue2-script-setup": "^0.9.0",
     "vite": "2.7.12",

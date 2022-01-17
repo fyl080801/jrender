@@ -1,3 +1,4 @@
+// import "@babel/polyfill";
 import { JRender, JNode } from "./components";
 
 export { JRender, JNode };
