@@ -1055,10 +1055,10 @@
   resolved "https://registry.npmmirror.com/@iconify/json-tools/download/@iconify/json-tools-1.0.10.tgz#d9a7050dbbe8bb29d684d4b3f9446ed2d0bea3cc"
   integrity sha1-2acFDbvouynWhNSz+URu0tC+o8w=
 
-"@iconify/json@^1.1.458":
-  version "1.1.458"
-  resolved "https://registry.yarnpkg.com/@iconify/json/-/json-1.1.458.tgz#08c7bbf522d573efd46f9ab8ffbe6e54af3c87da"
-  integrity sha512-ZAU4WGRIqCwvIj65Lxp2yMgZx7CjRRlgBcwOUL53qnQMAVC9x/mGYxwOALQBwx3WNqvYOSkcNMvmwhFbdsn+6w==
+"@iconify/json@^1.1.457":
+  version "1.1.457"
+  resolved "https://registry.yarnpkg.com/@iconify/json/-/json-1.1.457.tgz#a2e6919a5e2a20f8a73bb7c5f7719a15892e5b8f"
+  integrity sha512-5KQALvjWwNnmU+JJTLKdLxmltPYDrsSE7rkSJDnuSRCQboN26MwQRW6bjip1P7aF4Z7pkIr+ZsDY/uEd+8wXaQ==
 
 "@lerna/add@4.0.0":
   version "4.0.0"
@@ -2303,7 +2303,7 @@
   optionalDependencies:
     prettier "^1.18.2 || ^2.0.0"
 
-"@vue/composition-api@^1.4.4":
+"@vue/composition-api@1.4.4":
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.4.4.tgz#42cfbe6e3c0dc16100d725cdb0ea1c443919cc7a"
   integrity sha512-0AMpkSy28NG1BUqTPXLfQzJUnjSp+qUa4jaG7A2FBRSKHJOl1g10/xvNb44+OW5Jg9f79zKOb7PYhFhJG2vLyQ==
@@ -3627,14 +3627,6 @@ convert-source-map@^1.7.0:
   integrity sha1-8zc8MtIbTXgN2ABFFGhPt5HKQ2k=
   dependencies:
     safe-buffer "~5.1.1"
-
-core-js-compat@^3.20.0, core-js-compat@^3.20.2:
-  version "3.20.3"
-  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.20.3.tgz#d71f85f94eb5e4bea3407412e549daa083d23bd6"
-  integrity sha512-c8M5h0IkNZ+I92QhIpuSijOxGAcj3lgpsWdkCqmUTZNwidujF4r3pi6x1DCN+Vcs5qTS2XWWMfWSuCqyupX8gw==
-  dependencies:
-    browserslist "^4.19.1"
-    semver "7.0.0"
 
 core-js@3.20.3, core-js@^3.19.1:
   version "3.20.3"

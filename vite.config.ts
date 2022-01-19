@@ -1,16 +1,14 @@
 import path from "path";
 import fs from "fs";
-import { mergeConfig, defineConfig } from "vite";
-import base from "./build/vite.base";
-import { viteLegacy } from "./build/vite.plugin";
-import WindiCSS from "vite-plugin-windicss";
+import { defineConfig } from "vite";
+import { plugins } from "./build/vite.plugin";
 
 const packages = fs.readdirSync(path.resolve(__dirname, "packages")).reduce((target, p) => {
   target[`@jrender-legacy/${p}`] = path.resolve(__dirname, `packages/${p}/lib`);
   return target;
 }, {});
 
-const config = defineConfig({
+export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -20,10 +18,8 @@ const config = defineConfig({
   build: {
     minify: true,
   },
-  plugins: [viteLegacy, WindiCSS()],
+  plugins,
   server: {
     port: 8080,
   },
 });
-
-export default mergeConfig(base, config);

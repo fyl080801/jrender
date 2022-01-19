@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/fyl080801/jrender/issues"
   },
-  "peerDependencies": {
-    "@vue/composition-api": "^1.4.4"
+  "dependencies": {
+    "@vue/composition-api": "1.4.4"
   }
 }

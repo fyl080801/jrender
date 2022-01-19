@@ -18,7 +18,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
-    "@vue/composition-api": "^1.4.4",
+    "@vue/composition-api": "1.4.4",
     "@vueuse/core": "^7.5.3",
     "axios": "^0.25.0",
     "core-js": "3.20.3",
@@ -29,11 +29,7 @@
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.16.8",
-    "@babel/preset-env": "^7.16.8",
-    "@iconify/json": "^1.1.458",
+    "@iconify/json": "^1.1.457",
     "@octokit/core": "3",
     "@rollup/plugin-babel": "^5.3.0",
     "@types/js-yaml": "^4.0.5",
