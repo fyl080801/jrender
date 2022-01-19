@@ -6,11 +6,11 @@
   "homepage": "https://github.com/fyl080801/jrender#readme",
   "license": "ISC",
   "main": "dist/index.umd.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.esm.js",
   "exports": {
     ".": {
       "require": "./dist/index.umd.js",
-      "import": "./dist/index.es.js"
+      "import": "./dist/index.esm.js"
     }
   },
   "directories": {
@@ -28,12 +28,13 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "dist": "vite build"
+    "dist": "cross-env NODE_ENV=production rollup --config rollup.config.js"
   },
   "bugs": {
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "@jrender-legacy/core": "^1.0.0-alpha.7"
+    "@jrender-legacy/core": "^1.0.0-alpha.2",
+    "core-js": "^3.20.3"
   }
 }

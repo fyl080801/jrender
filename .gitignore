@@ -4,3 +4,4 @@ dist
 dist-ssr
 *.local
 lerna-debug.log
+yarn-error.log
