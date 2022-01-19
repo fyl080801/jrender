@@ -1,4 +1,4 @@
-import { reactive, nextTick } from "vue-demi";
+import { reactive, nextTick } from "@vue/composition-api";
 import axios from "axios";
 
 const request = axios.create({});

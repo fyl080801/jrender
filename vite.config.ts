@@ -9,9 +9,6 @@ const packages = fs.readdirSync(path.resolve(__dirname, "packages")).reduce((tar
 }, {});
 
 export default defineConfig({
-  optimizeDeps: {
-    exclude: ["vue-demi"],
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

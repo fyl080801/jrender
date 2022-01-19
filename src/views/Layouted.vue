@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref, provide } from "vue-demi";
+import { onMounted, reactive, ref, provide } from "@vue/composition-api";
 import { JRender, uuid } from "@jrender-legacy/core";
 import request from "../utils/request";
 import yaml from "js-yaml";

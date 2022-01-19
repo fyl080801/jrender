@@ -1,9 +1,10 @@
 const { rollups } = require("../../build");
 const { typescript } = require("../../build/rollup.plugins");
 const { path } = require("../../build/utils");
+const { defineConfig } = require("rollup");
 
-const configs = {
-  types: ["umd", "iife", "esm"],
+const configs = defineConfig({
+  types: ["iife", "esm"],
   external: [],
   plugins: [
     ...rollups.defaultPlugins,
@@ -11,7 +12,7 @@ const configs = {
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
     }),
   ],
-};
+});
 
 export default (() => {
   const entries = {};

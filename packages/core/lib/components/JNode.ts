@@ -3,13 +3,12 @@ import {
   defineComponent,
   ref,
   markRaw,
-  toRaw,
   watch,
   h,
   getCurrentInstance,
   onMounted,
   onUpdated,
-} from "vue-demi";
+} from "@vue/composition-api";
 import { isOriginTag } from "../utils/domTags";
 import { assignObject, deepClone } from "../utils/helper";
 import { useJRender } from "../utils/mixins";

@@ -5,11 +5,11 @@
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/index.umd.js",
+  "main": "dist/index.min.js",
   "module": "dist/index.esm.js",
   "exports": {
     ".": {
-      "require": "./dist/index.umd.js",
+      "require": "./dist/index.min.js",
       "import": "./dist/index.esm.js"
     }
   },
@@ -30,19 +30,9 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "core-js": "^3.20.3",
-    "vue-demi": "^0.12.1"
-  },
-  "devDependencies": {
-    "vue": "^2.6.14"
+    "core-js": "^3.20.3"
   },
   "peerDependencies": {
-    "@vue/composition-api": "1.4.4",
-    "vue": "^2.0.0 || >=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@vue/composition-api": {
-      "optional": true
-    }
+    "@vue/composition-api": "^1.4.4"
   }
 }

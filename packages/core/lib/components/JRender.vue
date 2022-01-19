@@ -1,5 +1,5 @@
 <script lang="ts">
-import { watch, computed, defineComponent, reactive, set } from "vue-demi";
+import { watch, computed, defineComponent, reactive, set } from "@vue/composition-api";
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";

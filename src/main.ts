@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "@/App.vue";
-// import { createApp } from "vue-demi";
+// import { createApp } from "@vue/composition-api";
 import Element from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import { createRouter } from "./router";

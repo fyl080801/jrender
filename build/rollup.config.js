@@ -15,16 +15,9 @@ const { assignObject, assignArray } = require("./utils");
 const commonGlobal = {
   vue: "Vue",
   "@vue/composition-api": "VueCompositionAPI",
-  "vue-demi": "VueDemi",
 };
 const defaultGlobal = assignObject(helperGlobal, commonGlobal);
-const defaultExternal = [
-  "vue",
-  "@vue/composition-api",
-  "vue-demi",
-  /core-js/,
-  /regenerator-runtime/,
-];
+const defaultExternal = ["vue", "@vue/composition-api", /core-js/, /regenerator-runtime/];
 
 const defaultPlugins = [
   alias({
@@ -88,7 +81,7 @@ const createOutputType = (entryKey, entryValue, format, globals = {}) => {
 
   result.format = format;
   result.globals = assignObject(globals, defaultGlobal);
-  result.sourcemap = false;
+  result.sourcemap = true;
 
   if (format === "umd" || format === "iife") {
     result.name = entryKey;
