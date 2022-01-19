@@ -1,6 +1,7 @@
 import path from "path";
 import { defineConfig, mergeConfig } from "vite";
 import base from "../../build/vite.base";
+import { babel } from "@rollup/plugin-babel";
 // import { plugins } from "../../build/vite.plugin";
 
 const config = defineConfig({
@@ -20,8 +21,29 @@ const config = defineConfig({
           "@vue/composition-api": "VueCompositionAPI",
         },
       },
+      plugins: [
+        babel({
+          exclude: ["node_modules/**"],
+          babelHelpers: "runtime",
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                useBuiltIns: "usage",
+                targets: "> 0.25%, IE >= 11",
+                corejs: 3,
+              },
+            ],
+          ],
+          plugins: [
+            "@babel/transform-runtime",
+            // "@vue/babel-plugin-jsx",
+            // ["@babel/plugin-proposal-decorators", { legacy: true }],
+          ],
+        }),
+      ],
     },
   },
 });
 
-export default mergeConfig(base, config);
+export default config; // mergeConfig(base, config);
