@@ -18,7 +18,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
-    "@vue/composition-api": "1.4.4",
+    "@vue/composition-api": "^1.4.4",
     "@vueuse/core": "^7.5.3",
     "axios": "^0.25.0",
     "core-js": "3.20.3",
