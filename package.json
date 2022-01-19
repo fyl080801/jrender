@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "vite build",
     "clean": "yarn workspaces run clean",
-    "dist": "yarn workspaces run dist",
+    "dist": "yarn run clean && yarn workspaces run dist",
     "publish": "lerna publish",
     "prepack": "yarn run dist",
     "postinstall": "husky install",
