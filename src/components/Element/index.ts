@@ -1,6 +1,5 @@
 import { JNode, getProxyDefine } from "@jrender-legacy/core";
-import { inject, provide, getCurrentInstance } from "@vue/composition-api";
-import { defineComponent, h } from "@vue/composition-api";
+import { inject, provide, getCurrentInstance, defineComponent, h } from "vue-demi";
 
 export const ElementExtends = ({ onBeforeBind }) => {
   const formToken = Symbol("form");

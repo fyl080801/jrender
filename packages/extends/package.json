@@ -35,6 +35,13 @@
   },
   "dependencies": {
     "@jrender-legacy/core": "^1.0.0-alpha.4",
-    "core-js": "^3.20.3"
+    "core-js": "^3.20.3",
+    "vue-demi": "^0.12.1"
+  },
+  "devDependencies": {
+    "vue": "^2.6.14"
+  },
+  "peerDependencies": {
+    "vue": "^2.0.0 || >=3.0.0"
   }
 }

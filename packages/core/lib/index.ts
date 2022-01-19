@@ -14,7 +14,8 @@ const install: any = function (Vue: any) {
   Vue.component(JRender.name, JRender);
 };
 
-if (typeof window !== "undefined" && window.Vue) {
+if (typeof window !== "undefined" && window.Vue && window["VueCompositionAPI"]) {
+  window.Vue.use(window["VueCompositionAPI"]);
   install(window.Vue);
 }
 

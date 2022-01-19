@@ -1,4 +1,4 @@
-import { provide } from "@vue/composition-api";
+import { provide } from "vue-demi";
 
 export const layoutToken = Symbol("layoutToken");
 

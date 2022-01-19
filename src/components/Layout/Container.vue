@@ -15,7 +15,7 @@ const styles = computed<any>(() => {
 </script>
 
 <script lang="ts">
-import { defineComponent, computed, provide } from "@vue/composition-api";
+import { defineComponent, computed, provide } from "vue-demi";
 import { layoutToken } from "./mixins";
 
 export default defineComponent({

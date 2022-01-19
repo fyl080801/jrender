@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive } from "@vue/composition-api";
+import { onMounted, reactive } from "vue-demi";
 import { JRender, useRootRender } from "@jrender-legacy/core";
 import { ElementExtends } from "../components";
 import yaml from "js-yaml";
