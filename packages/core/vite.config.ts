@@ -1,7 +1,7 @@
 import path from "path";
 import { defineConfig, mergeConfig } from "vite";
-import base from "../../build/vite.base";
-import { babel } from "@rollup/plugin-babel";
+// import base from "../../build/vite.base";
+import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 // import { plugins } from "../../build/vite.plugin";
 
 const config = defineConfig({
@@ -13,18 +13,20 @@ const config = defineConfig({
       fileName: (format) => `index.${format}.js`,
     },
     sourcemap: true,
+    // target: "es6",
     rollupOptions: {
       external: ["vue", "@vue/composition-api"],
       output: {
+        format: "commonjs",
         globals: {
           vue: "Vue",
           "@vue/composition-api": "VueCompositionAPI",
         },
       },
       plugins: [
-        babel({
+        getBabelOutputPlugin({
           exclude: ["node_modules/**"],
-          babelHelpers: "runtime",
+          allowAllFormats: true,
           presets: [
             [
               "@babel/preset-env",
@@ -37,6 +39,7 @@ const config = defineConfig({
           ],
           plugins: [
             "@babel/transform-runtime",
+            "@babel/syntax-dynamic-import",
             // "@vue/babel-plugin-jsx",
             // ["@babel/plugin-proposal-decorators", { legacy: true }],
           ],
