@@ -13,10 +13,11 @@ const config = defineConfig({
     },
     sourcemap: true,
     rollupOptions: {
-      external: ["vue", "@vue/composition-api"],
+      external: ["vue", "@vue/composition-api", "@jrender-legacy/core"],
       output: {
         globals: {
           vue: "Vue",
+          "@jrender-legacy/core": "JRender",
           "@vue/composition-api": "VueCompositionAPI",
         },
         plugins: [babel],
