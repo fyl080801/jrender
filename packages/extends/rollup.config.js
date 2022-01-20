@@ -21,7 +21,7 @@ const configs = defineConfig({
 
 export default (() => {
   const entries = {};
-
+  //
   entries["JRenderExtends"] = "./lib/index.ts";
 
   const result = rollups.establish(entries, configs);

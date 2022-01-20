@@ -12,6 +12,7 @@ const configs = defineConfig({
   types: ["umd", "iife", "esm"],
   external: [],
   plugins: [
+    // 有问题，模板不能正确解析
     vue2({}),
     ...rollups.defaultPlugins,
     typescript({
