@@ -1,5 +1,4 @@
 import { reactive, nextTick } from "@vue/composition-api";
-import { isArray } from "@jrender-legacy/core";
 import axios from "axios";
 
 const request = axios.create({});

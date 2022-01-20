@@ -1,7 +1,7 @@
 import Vue from "vue";
 import App from "@/App.vue";
-import CompositionApi from "@vue/composition-api";
 import Element from "element-ui";
+import VueCompositionAPI from "@vue/composition-api";
 import "element-ui/lib/theme-chalk/index.css";
 import { createRouter } from "./router";
 import { useGlobalRender } from "@jrender-legacy/core";
@@ -12,7 +12,7 @@ import "virtual:windi.css";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
-Vue.use(CompositionApi);
+Vue.use(VueCompositionAPI);
 Vue.use(Element);
 
 useGlobalRender(JRenderExtends);
