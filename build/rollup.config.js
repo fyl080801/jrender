@@ -41,7 +41,7 @@ const defaultPlugins = [
   commonjs({
     include: "node_modules/**",
   }),
-  // terser(),
+  terser(),
   sizes(),
 ];
 
