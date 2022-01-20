@@ -51,6 +51,11 @@ fields:
         domProps:
           innerText: $:GET(model, 'text')
 
+  - type: p
+    timeout: 1000
+    domProps:
+      innerText: ppppp
+
   - type: el-tabs
     props:
       type: card

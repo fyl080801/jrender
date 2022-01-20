@@ -14,8 +14,18 @@ const configs = reactive({
   fields: [],
 });
 
-const onSetup = () => {
+const onSetup = ({ onBeforeBind }) => {
   //
+  onBeforeBind(() => (field, next) => {
+    if (field.timeout) {
+      setTimeout(() => {
+        next(field);
+      }, field.timeout);
+      return;
+    } else {
+      next(field);
+    }
+  });
 };
 
 onMounted(async () => {
