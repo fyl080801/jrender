@@ -1,6 +1,6 @@
-import { JRender, JNode } from "./components";
+import { JRender as Render, JNode } from "./components";
 
-export { JRender, JNode };
+export { Render as JRender, JNode };
 export { useRootRender } from "./utils/mixins";
 export { useGlobalRender } from "./utils/service";
 export * from "./utils/helper";
@@ -11,15 +11,18 @@ const install: any = function (Vue: any) {
     return;
   }
 
-  Vue.component(JRender.name, JRender);
+  Vue.component(Render.name || "JRender", Render);
 };
 
 if (typeof window !== "undefined" && window.Vue && window["VueCompositionAPI"]) {
-  window.Vue.use(window["VueCompositionAPI"]);
-  install(window.Vue);
+  const { Vue, VueCompositionAPI } = window as any;
+
+  Vue.use(VueCompositionAPI);
+
+  install(Vue);
 }
 
 export default {
   install,
-  ...JRender,
+  ...Render,
 };

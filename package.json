@@ -28,9 +28,10 @@
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/plugin-transform-runtime": "^7.16.8",
-    "@babel/preset-env": "^7.16.8",
+    "@babel/core": "^7.16.10",
+    "@babel/plugin-proposal-decorators": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/preset-env": "^7.16.10",
     "@iconify/json": "^1.1.457",
     "@octokit/core": "3",
     "@rollup/plugin-alias": "^3.1.9",
@@ -46,7 +47,6 @@
     "@vue/babel-plugin-jsx": "^1.1.1",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
-    "@vue/runtime-dom": "^3.2.27",
     "autoprefixer": "^10.4.2",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",

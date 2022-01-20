@@ -1,5 +1,14 @@
 <script lang="ts">
-import { watch, computed, defineComponent, reactive, set } from "@vue/composition-api";
+import {
+  watch,
+  computed,
+  defineComponent,
+  reactive,
+  set,
+  onMounted,
+  ref,
+  unref,
+} from "@vue/composition-api";
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
@@ -17,6 +26,8 @@ export default defineComponent({
     dataSource: { type: Object, default: () => ({}) },
   },
   setup(props, ctx) {
+    const rootRef = ref();
+
     const services = useServices({
       emit: ctx.emit,
     });
@@ -76,7 +87,12 @@ export default defineComponent({
 
     useListener(props, { injector });
 
+    onMounted(() => {
+      // unref(rootRef);
+    });
+
     return {
+      rootRef,
       isArrayRoot,
       context,
     };
@@ -85,13 +101,15 @@ export default defineComponent({
 </script>
 
 <template>
-  <div v-if="isArrayRoot">
-    <JNode
-      v-for="(field, index) in fields"
-      :key="field.key || index"
-      :field="field"
-      :context="context"
-    />
+  <div ref="rootRef">
+    <template v-if="isArrayRoot">
+      <j-node
+        v-for="(field, index) in fields"
+        :key="field.key || index"
+        :field="field"
+        :context="context"
+      />
+    </template>
+    <j-node v-else :field="fields" :context="context" />
   </div>
-  <JNode v-else :field="fields" :context="context" />
 </template>

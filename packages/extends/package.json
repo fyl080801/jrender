@@ -9,7 +9,7 @@
   "module": "dist/index.esm.js",
   "exports": {
     ".": {
-      "require": "./dist/index.min.js",
+      "require": "./dist/index.umd.js",
       "import": "./dist/index.esm.js"
     }
   },

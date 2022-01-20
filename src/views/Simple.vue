@@ -30,7 +30,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="canvas">
     <JRender
       v-model="configs.model"
       :fields="configs.fields"

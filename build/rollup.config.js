@@ -1,14 +1,4 @@
-const {
-  alias,
-  babel,
-  commonjs,
-  nodeResolve,
-  terser,
-  vue2,
-  sizes,
-  scss,
-  // postcss,
-} = require("./rollup.plugins");
+const { alias, babel, commonjs, nodeResolve, terser, sizes } = require("./rollup.plugins");
 const { helperGlobal } = require("./runtime.helper");
 const { assignObject, assignArray } = require("./utils");
 
@@ -40,25 +30,19 @@ const defaultPlugins = [
     plugins: [
       "@babel/transform-runtime",
       "@vue/babel-plugin-jsx",
-      // ["@babel/plugin-proposal-decorators", { legacy: true }],
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
     ],
   }),
   nodeResolve({
     browser: true,
     preferBuiltins: false,
-    // extensions: [".ts", ".js", ".json", ".jsx", ".vue"],
     moduleDirectories: ["node_modules"],
   }),
   commonjs({
     include: "node_modules/**",
   }),
   // terser(),
-  vue2(),
   sizes(),
-  scss(),
-  // postcss({
-  //   plugins: [require("tailwindcss"), require("autoprefixer")]
-  // })
 ];
 
 /**

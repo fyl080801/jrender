@@ -1,4 +1,13 @@
-import { watch, computed, defineComponent, reactive, set, h } from "@vue/composition-api";
+import {
+  watch,
+  computed,
+  defineComponent,
+  reactive,
+  set,
+  h,
+  getCurrentInstance,
+  ref,
+} from "@vue/composition-api";
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
@@ -16,6 +25,10 @@ export default defineComponent({
     dataSource: { type: Object, default: () => ({}) },
   },
   setup(props, ctx) {
+    const { proxy } = getCurrentInstance();
+
+    const renderedCount = ref(0);
+
     const services = useServices({
       emit: ctx.emit,
     });
@@ -27,6 +40,10 @@ export default defineComponent({
 
     const isArrayRoot = computed(() => {
       return isArray(props.fields);
+    });
+
+    const childCount = computed(() => {
+      return isArrayRoot.value ? props.fields.length : 1;
     });
 
     const injector = injectProxy({
@@ -75,26 +92,58 @@ export default defineComponent({
 
     useListener(props, { injector });
 
-    return () => {
-      return isArrayRoot.value
-        ? h(
-            "div",
-            {},
-            props.fields.map((field) =>
+    const onChildRendered = () => {
+      if (renderedCount.value !== childCount.value - 1) {
+        renderedCount.value += 1;
+        return;
+      }
+
+      const elm = proxy.$el;
+
+      const parentElm = elm.parentNode;
+
+      let current = elm;
+
+      const append = (item) => {
+        parentElm.insertBefore(item, current);
+        current = item;
+      };
+
+      for (let i = elm.childNodes.length - 1; i >= 0; i--) {
+        append(elm.childNodes.item(i));
+      }
+
+      elm.remove();
+      console.log("sss");
+    };
+
+    return () =>
+      h(
+        "div",
+        { class: "fake" },
+        isArrayRoot.value
+          ? props.fields.map((field) =>
               h(JNode, {
                 props: {
                   field,
                   context,
                 },
+                on: {
+                  rendered: onChildRendered,
+                },
               }),
-            ),
-          )
-        : h(JNode, {
-            props: {
-              field: props.fields,
-              context,
-            },
-          });
-    };
+            )
+          : [
+              h(JNode, {
+                props: {
+                  field: props.fields,
+                  context,
+                },
+                on: {
+                  rendered: onChildRendered,
+                },
+              }),
+            ],
+      );
   },
 });

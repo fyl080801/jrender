@@ -23,7 +23,7 @@ const JNode = defineComponent({
     scope: { type: Object, default: () => ({}) },
     context: { type: Object, required: true },
   },
-  setup(props) {
+  setup(props, ctx) {
     const { proxy } = getCurrentInstance();
     const { services, slots } = useJRender();
 
@@ -127,6 +127,8 @@ const JNode = defineComponent({
         // eslint-disable-next-line vue/no-mutating-props
         props.context.refs[renderField.value.ref] = proxy.$refs[renderField.value.ref];
       }
+
+      ctx.emit("rendered");
     });
 
     onUpdated(() => {

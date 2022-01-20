@@ -1,16 +1,26 @@
 const { rollups } = require("../../build");
-const { typescript } = require("../../build/rollup.plugins");
+const {
+  typescript,
+  vue2,
+  scss,
+  // postcss
+} = require("../../build/rollup.plugins");
 const { path } = require("../../build/utils");
 const { defineConfig } = require("rollup");
 
 const configs = defineConfig({
-  types: ["iife", "esm"],
+  types: ["umd", "iife", "esm"],
   external: [],
   plugins: [
+    vue2({}),
     ...rollups.defaultPlugins,
     typescript({
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
     }),
+    scss(),
+    // postcss({
+    //   plugins: [require("tailwindcss"), require("autoprefixer")]
+    // })
   ],
 });
 

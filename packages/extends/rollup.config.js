@@ -4,7 +4,7 @@ const { path } = require("../../build/utils");
 const { defineConfig } = require("rollup");
 
 const configs = defineConfig({
-  types: ["iife", "esm"],
+  types: ["umd", "iife", "esm"],
   external: ["@jrender-legacy/core"],
   plugins: [
     ...rollups.defaultPlugins,
