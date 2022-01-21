@@ -8,6 +8,7 @@ const vue2 = require("rollup-plugin-vue2");
 const sizes = require("rollup-plugin-sizes");
 const scss = require("rollup-plugin-scss");
 const postcss = require("rollup-plugin-postcss");
+const banner = require("rollup-plugin-banner").default;
 
 module.exports = {
   alias,
@@ -20,4 +21,5 @@ module.exports = {
   sizes,
   scss,
   postcss,
+  banner,
 };

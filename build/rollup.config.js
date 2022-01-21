@@ -1,4 +1,4 @@
-const { alias, babel, commonjs, nodeResolve, terser, sizes } = require("./rollup.plugins");
+const { alias, babel, commonjs, nodeResolve, terser, sizes, banner } = require("./rollup.plugins");
 const { helperGlobal } = require("./runtime.helper");
 const { assignObject, assignArray } = require("./utils");
 
@@ -43,6 +43,8 @@ const defaultPlugins = [
   }),
   terser(),
   sizes(),
+  banner(`<%= pkg.name %> v<%= pkg.version %>
+(c) 2021-${new Date().getFullYear()} <%= pkg.author %>`),
 ];
 
 /**
