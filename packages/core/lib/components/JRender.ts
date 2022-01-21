@@ -75,8 +75,8 @@ export default defineComponent({
 
     useListener(props, { injector });
 
-    return () => {
-      return isArrayRoot.value
+    return () =>
+      isArrayRoot.value
         ? h(
             "div",
             {},
@@ -90,6 +90,5 @@ export default defineComponent({
             ),
           )
         : h(JNode, { props: { field: props.fields, context } });
-    };
   },
 });

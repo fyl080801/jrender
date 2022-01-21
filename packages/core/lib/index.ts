@@ -1,11 +1,5 @@
 import { JRender as Render, JNode } from "./components";
 
-export { Render as JRender, JNode };
-export { useRootRender } from "./utils/mixins";
-export { useGlobalRender } from "./utils/service";
-export * from "./utils/helper";
-export * from "./utils/proxy";
-
 const install: any = function (Vue: any) {
   if (install.installed) {
     return;
@@ -22,6 +16,11 @@ if (typeof window !== "undefined" && window.Vue && window["VueCompositionAPI"]) 
   install(Vue);
 }
 
+export { Render as JRender, JNode };
+export { useRootRender } from "./utils/mixins";
+export { useGlobalRender } from "./utils/service";
+export * from "./utils/helper";
+export * from "./utils/proxy";
 export default {
   install,
   ...Render,

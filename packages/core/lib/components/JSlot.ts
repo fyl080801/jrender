@@ -4,9 +4,7 @@ export default defineComponent({
   props: {
     renderSlot: {
       type: Function,
-      default: () => {
-        //
-      },
+      default: () => {},
     },
   },
   setup(props) {
