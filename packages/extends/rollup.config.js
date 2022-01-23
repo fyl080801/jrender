@@ -12,16 +12,14 @@ const configs = defineConfig({
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
     }),
   ],
-  output: {
-    globals: {
-      "@jrender-legacy/core": "JRender",
-    },
+  globals: {
+    "@jrender-legacy/core": "JRender",
   },
 });
 
 export default (() => {
   const entries = {};
-  //
+
   entries["JRenderExtends"] = "./lib/index.ts";
 
   const result = rollups.establish(entries, configs);
