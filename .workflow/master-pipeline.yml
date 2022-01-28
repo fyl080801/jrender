@@ -8,7 +8,7 @@ triggers:
       prefix:
         - ''
 stages:
-  - name: stage-4311c581
+  - name: stage-3239187a
     displayName: dist
     strategy: naturally
     trigger: auto
@@ -19,7 +19,7 @@ stages:
         displayName: Nodejs 构建
         nodeVersion: 12.16.1
         commands:
-          - yarn run dist
+          - yarn install && yarn dist
 permissions:
   - role: admin
     members: []
