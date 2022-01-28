@@ -1,0 +1,25 @@
+version: '1.0'
+name: pipeline-20220128
+displayName: pipeline-20220128
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - ''
+stages:
+  - name: stage-4311c581
+    displayName: dist
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@nodejs
+        name: build_nodejs
+        displayName: Nodejs 构建
+        nodeVersion: 12.16.1
+        commands:
+          - yarn run dist
+permissions:
+  - role: admin
+    members: []
