@@ -33,6 +33,6 @@
     "core-js": "^3.21.0"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.4.4"
+    "@vue/composition-api": "^1.4.6"
   }
 }

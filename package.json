@@ -69,7 +69,6 @@
     "unplugin-vue2-script-setup": "^0.9.1",
     "vite": "2.7.13",
     "vite-plugin-components": "^0.13.3",
-    "vite-plugin-icons": "^0.6.5",
     "vite-plugin-vue2": "^1.9.3",
     "vite-plugin-windicss": "^1.7.0",
     "vue-template-compiler": "^2.6.14",
