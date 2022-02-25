@@ -1,4 +1,11 @@
-import { watch, defineComponent, h, markRaw, onBeforeUnmount, computed } from "@vue/composition-api";
+import {
+  watch,
+  defineComponent,
+  h,
+  markRaw,
+  onBeforeUnmount,
+  computed,
+} from "@vue/composition-api";
 import { JNode, assignObject, toPath, compute } from "@jrender-legacy/core";
 
 export default ({ onBeforeBind, onBind }) => {
@@ -12,15 +19,6 @@ export default ({ onBeforeBind, onBind }) => {
       next(field);
     };
   }).name("type");
-
-  // 条件显示
-  onBeforeBind(() => (field, next) => {
-    if (typeof field?.condition === "string") {
-      field.condition = `$:()=>${field?.condition}`;
-    }
-
-    next(field);
-  }).name("condition");
 
   onBind(() => {
     let watcher = null;

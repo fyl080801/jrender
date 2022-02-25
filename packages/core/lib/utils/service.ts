@@ -8,7 +8,8 @@ const sortHandlers = (handlers) => {
     return target;
   }, {});
   const dependencies = handlers.reduce((target, item) => {
-    target[item.name] = item.dependencies;
+    const dts = handlers.filter((dt) => dt.dependent?.indexOf(item.name) >= 0);
+    target[item.name] = [...item.dependencies, ...dts.map((dt) => dt.name)];
     return target;
   }, {});
   const used = new Set();
@@ -60,7 +61,7 @@ export const createServiceProvider = () => {
       }
     },
     onBeforeBind: (handler) => {
-      const hook = { name: `BR_${uuid(5)}`, dependencies: [], handler };
+      const hook = { name: `BR_${uuid(5)}`, dependent: [], dependencies: [], handler };
 
       if (isFunction(handler)) {
         services.beforeBindHandlers.push(hook);
@@ -77,12 +78,18 @@ export const createServiceProvider = () => {
           }
           return instance;
         },
+        dependent: (name) => {
+          if (hook.dependent.indexOf(name) < 0) {
+            hook.dependent.push(name);
+          }
+          return instance;
+        },
       };
 
       return instance;
     },
     onBind: (handler) => {
-      const hook = { name: `R_${uuid(5)}`, dependencies: [], handler };
+      const hook = { name: `R_${uuid(5)}`, dependent: [], dependencies: [], handler };
 
       if (isFunction(handler)) {
         services.bindHandlers.push(hook);
@@ -96,6 +103,12 @@ export const createServiceProvider = () => {
         depend: (name) => {
           if (hook.dependencies.indexOf(name) < 0) {
             hook.dependencies.push(name);
+          }
+          return instance;
+        },
+        dependent: (name) => {
+          if (hook.dependent.indexOf(name) < 0) {
+            hook.dependent.push(name);
           }
           return instance;
         },
@@ -156,6 +169,8 @@ export const mergeServices = (...services) => {
 
   merged.beforeBindHandlers = sortHandlers(merged.beforeBindHandlers);
   merged.bindHandlers = sortHandlers(merged.bindHandlers);
+
+  console.log(merged.beforeBindHandlers.map((item) => item.name));
 
   return merged;
 };

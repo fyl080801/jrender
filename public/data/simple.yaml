@@ -218,7 +218,7 @@ fields:
                 domProps:
                   innerText: asdasds
               - type: el-radio-group
-                condition: GET(model, 'checked')===true
+                condition: $:()=>GET(model, 'checked')===true
                 model: model.radiosel
                 formItem:
                   label: radios
