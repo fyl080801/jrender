@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@jrender-legacy/core": "^1.0.4",
-    "core-js": "^3.21.0"
+    "core-js": "^3.21.1"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.6"
