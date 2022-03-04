@@ -170,8 +170,6 @@ export const mergeServices = (...services) => {
   merged.beforeBindHandlers = sortHandlers(merged.beforeBindHandlers);
   merged.bindHandlers = sortHandlers(merged.bindHandlers);
 
-  console.log(merged.beforeBindHandlers.map((item) => item.name));
-
   return merged;
 };
 

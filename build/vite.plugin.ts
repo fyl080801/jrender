@@ -1,5 +1,5 @@
 import { createVuePlugin } from "vite-plugin-vue2";
-import ViteComponents from "vite-plugin-components";
+// import ViteComponents from "vite-plugin-components";
 import ScriptSetup from "unplugin-vue2-script-setup/vite";
 import legacy from "@vitejs/plugin-legacy";
 import WindiCSS from "vite-plugin-windicss";
