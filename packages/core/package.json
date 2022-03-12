@@ -23,6 +23,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fyl080801/jrender.git"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "dist": "cross-env NODE_ENV=production rollup --config rollup.config.js"
@@ -35,5 +39,6 @@
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.4.6"
-  }
+  },
+  "gitHead": "39bb11ec01022be0d8017fe76c97498db5899e0f"
 }
