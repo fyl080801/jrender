@@ -6,9 +6,9 @@ import {
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, assignObject, toPath, compute, Setup } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath, compute, defineRenderSetup } from "@jrender-legacy/core";
 
-export default ({ onBeforeBind, onBind }: Setup) => {
+export default defineRenderSetup(({ onBeforeBind, onBind }) => {
   // type 简写
   onBeforeBind(({ props }) => {
     if (props.field?.type !== undefined) {
@@ -154,4 +154,4 @@ export default ({ onBeforeBind, onBind }: Setup) => {
       next(field);
     };
   });
-};
+});

@@ -179,3 +179,7 @@ export const globalServiceProvider = createServiceProvider();
 export const useGlobalRender = (setting: SetupHandle) => {
   globalServiceProvider.setup(setting);
 };
+
+export const defineRenderSetup = (setup: SetupHandle) => {
+  return setup;
+};

@@ -18,7 +18,7 @@ if (typeof window !== "undefined" && window.Vue && window["VueCompositionAPI"]) 
 
 export { Render as JRender, JNode };
 export { useRootRender } from "./utils/mixins";
-export { useGlobalRender } from "./utils/service";
+export { useGlobalRender, defineRenderSetup } from "./utils/service";
 export * from "./utils/helper";
 export * from "./utils/proxy";
 export * from "./utils/types";
