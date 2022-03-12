@@ -57,7 +57,7 @@ export default defineComponent({
             set(
               context,
               key,
-              provider(() => injector(info.props)),
+              provider(() => injector(info.props || {})),
             );
           }
         });

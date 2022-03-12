@@ -1,9 +1,10 @@
+import { Setup } from "@jrender-legacy/core";
 import { reactive, nextTick } from "@vue/composition-api";
 import axios from "axios";
 
 const request = axios.create({});
 
-export const DevExtends = ({ addDataSource }) => {
+export const DevExtends = ({ addDataSource }: Setup) => {
   addDataSource("axios", (getOptions) => {
     const { autoLoad } = getOptions() || {};
 

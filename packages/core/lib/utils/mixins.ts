@@ -1,6 +1,7 @@
 import { inject, provide, onMounted, onBeforeUnmount, watch } from "@vue/composition-api";
 import { deepClone, isArray, isFunction } from "./helper";
 import { createServiceProvider, globalServiceProvider, mergeServices } from "./service";
+import { SetupHandle } from "./types";
 
 const serviceToken = Symbol("serviceToken");
 
@@ -16,7 +17,7 @@ export const useJRender = (props?) => {
   }
 };
 
-export const useRootRender = (setup?) => {
+export const useRootRender = (setup?: SetupHandle) => {
   const provider = createServiceProvider();
 
   if (setup) {

@@ -6,9 +6,9 @@ import {
   onBeforeUnmount,
   computed,
 } from "@vue/composition-api";
-import { JNode, assignObject, toPath, compute } from "@jrender-legacy/core";
+import { JNode, assignObject, toPath, compute, Setup } from "@jrender-legacy/core";
 
-export default ({ onBeforeBind, onBind }) => {
+export default ({ onBeforeBind, onBind }: Setup) => {
   // type 简写
   onBeforeBind(({ props }) => {
     if (props.field?.type !== undefined) {

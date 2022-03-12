@@ -1,5 +1,6 @@
 import { assignObject } from "./helper";
 import { isArray, isDom, isFunction, isObject } from "./helper";
+import { BindProxyProvider } from "./types";
 
 const PROXY = "__j_proxy";
 const RAW = "__j_raw";
@@ -69,7 +70,7 @@ export const injectProxy = ({ context, scope, proxy }) => {
   return inject;
 };
 
-export const compute = ({ functional }) => {
+export const compute: BindProxyProvider = ({ functional }) => {
   const computeMatch = /^\$:/g;
 
   return (value) => {

@@ -1,6 +1,7 @@
 import { assignArray, assignObject, isArray, isFunction, isObject, uuid } from "./helper";
 import { rawData, GET, SET, REF } from "./inner";
 import { compute } from "./proxy";
+import { Setup, SetupHandle } from "./types";
 
 const sortHandlers = (handlers) => {
   const maps = handlers.reduce((target, item) => {
@@ -47,7 +48,7 @@ export const createServiceProvider = () => {
     dataSource: {},
   };
 
-  const setting = {
+  const setting: Setup = {
     addComponent: (name, type?) => {
       if (type !== undefined) {
         services.components[name] = type;
@@ -129,7 +130,7 @@ export const createServiceProvider = () => {
   };
 
   const instance = {
-    setup: (onSetup) => {
+    setup: (onSetup: SetupHandle) => {
       onSetup(setting);
       return instance;
     },
@@ -175,6 +176,6 @@ export const mergeServices = (...services) => {
 
 export const globalServiceProvider = createServiceProvider();
 
-export const useGlobalRender = (setting) => {
+export const useGlobalRender = (setting: SetupHandle) => {
   globalServiceProvider.setup(setting);
 };
