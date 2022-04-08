@@ -36,10 +36,8 @@
   },
   "dependencies": {
     "@jrender-legacy/core": "^1.1.5",
-    "core-js": "^3.21.1"
-  },
-  "peerDependencies": {
-    "@vue/composition-api": "^1.4.6"
+    "core-js": "^3.21.1",
+    "@vue/composition-api": "^1.4.9"
   },
   "gitHead": "39bb11ec01022be0d8017fe76c97498db5899e0f"
 }
