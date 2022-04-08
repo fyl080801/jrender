@@ -1,6 +1,6 @@
 {
   "name": "@jrender-legacy/core",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "> TODO: description",
   "author": "fengyuanliang3 <fengyuanliang2@jd.com>",
   "homepage": "",
@@ -35,8 +35,8 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "core-js": "^3.21.1",
-    "@vue/composition-api": "^1.4.9"
+    "@vue/composition-api": "^1.4.9",
+    "core-js": "^3.21.1"
   },
   "gitHead": "39bb11ec01022be0d8017fe76c97498db5899e0f"
 }
