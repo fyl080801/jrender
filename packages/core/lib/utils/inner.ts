@@ -29,7 +29,7 @@ export const GET = (target: Record<string, unknown>, path: string, def: unknown)
 
 export const rawData = (options) => {
   const data = options() || {};
-  return reactive(data !== undefined && data !== null ? data : {});
+  return ref(data !== undefined && data !== null ? data : {});
 };
 
 export const REF = (target) => {

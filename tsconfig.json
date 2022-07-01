@@ -1,6 +1,6 @@
 {
   "vueCompilerOptions": {
-    "experimentalCompatMode": 2
+    "target": 2.7
   },
   "compilerOptions": {
     "target": "esnext",
@@ -14,7 +14,6 @@
     "declaration": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "types": ["unplugin-vue2-script-setup/types"],
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "baseUrl": ".",
     "outDir": "dist",
@@ -24,7 +23,6 @@
     }
   },
   "include": [
-    "node_modules/unplugin-vue2-script-setup/**/*.d.ts",
     "packages/*/lib/**/*.ts",
     "packages/*/lib/**/*.tsx",
     "packages/*/lib/**/*.vue",
