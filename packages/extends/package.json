@@ -39,7 +39,7 @@
     "core-js": "^3.23.3"
   },
   "peerDependencies": {
-    "vue": "^2.7"
+    "vue": "^2.7.0"
   },
-  "gitHead": "39bb11ec01022be0d8017fe76c97498db5899e0f"
+  "gitHead": "916ae16d27ab155a4c175876927bbbf6959739db"
 }

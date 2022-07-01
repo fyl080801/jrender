@@ -26,7 +26,7 @@
     "core-js": "^3.23.3",
     "element-ui": "^2.15.9",
     "js-yaml": "^4.1.0",
-    "vue": "^2.7",
+    "vue": "^2.7.0",
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
