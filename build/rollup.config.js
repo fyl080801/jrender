@@ -4,10 +4,9 @@ const { assignObject, assignArray } = require("./utils");
 
 const commonGlobal = {
   vue: "Vue",
-  "@vue/composition-api": "VueCompositionAPI",
 };
 const defaultGlobal = assignObject(helperGlobal, commonGlobal);
-const defaultExternal = ["vue", "@vue/composition-api", /core-js/, /regenerator-runtime/];
+const defaultExternal = ["vue", /core-js/, /regenerator-runtime/];
 
 const defaultPlugins = [
   alias({

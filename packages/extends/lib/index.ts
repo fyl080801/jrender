@@ -1,11 +1,4 @@
-import {
-  watch,
-  defineComponent,
-  h,
-  markRaw,
-  onBeforeUnmount,
-  computed,
-} from "@vue/composition-api";
+import { watch, defineComponent, h, markRaw, onBeforeUnmount, computed } from "vue";
 import { JNode, assignObject, toPath, compute, defineRenderSetup } from "@jrender-legacy/core";
 
 export default defineRenderSetup(({ onBeforeBind, onBind }) => {

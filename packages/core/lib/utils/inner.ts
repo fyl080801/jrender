@@ -1,5 +1,5 @@
 import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
-import { set, reactive, ref } from "@vue/composition-api";
+import { set, reactive, ref } from "vue";
 
 export const SET = (target, path: string, value: unknown) => {
   const fields = isArray(path) ? path : toPath(path);
@@ -29,7 +29,7 @@ export const GET = (target: Record<string, unknown>, path: string, def: unknown)
 
 export const rawData = (options) => {
   const data = options() || {};
-  return reactive(data !== undefined && data !== null ? data : {});
+  return ref(data !== undefined && data !== null ? data : {});
 };
 
 export const REF = (target) => {

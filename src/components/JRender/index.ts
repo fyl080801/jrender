@@ -1,5 +1,5 @@
 import { Setup } from "@jrender-legacy/core";
-import { reactive, nextTick } from "@vue/composition-api";
+import { reactive, nextTick } from "vue";
 import axios from "axios";
 
 const request = axios.create({});

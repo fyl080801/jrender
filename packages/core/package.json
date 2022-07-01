@@ -35,10 +35,10 @@
     "url": "https://github.com/fyl080801/jrender/issues"
   },
   "dependencies": {
-    "core-js": "^3.21.1"
+    "core-js": "^3.23.3"
   },
   "peerDependencies": {
-    "@vue/composition-api": "^1.4.9"
+    "vue": "^2.7"
   },
   "gitHead": "39bb11ec01022be0d8017fe76c97498db5899e0f"
 }

@@ -38,7 +38,7 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-import { defineComponent, computed, inject, ref, onMounted, unref } from "@vue/composition-api";
+import { defineComponent, computed, inject, ref, onMounted, unref } from "vue";
 import { layoutToken, designerToken } from "./mixins";
 
 export default defineComponent({

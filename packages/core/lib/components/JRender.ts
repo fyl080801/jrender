@@ -1,4 +1,4 @@
-import { watch, computed, defineComponent, reactive, set, h } from "@vue/composition-api";
+import { watch, computed, defineComponent, reactive, set, h } from "vue";
 import { isArray, isFunction } from "../utils/helper";
 import { useJRender, useListener, useServices } from "../utils/mixins";
 import { injectProxy } from "../utils/proxy";
