@@ -1,5 +1,5 @@
 import { deepGet, hasOwnProperty, isArray, isNumberLike, toPath } from "./helper";
-import { set, reactive, ref } from "@vue/composition-api";
+import { set, reactive, ref } from "vue";
 
 export const SET = (target, path: string, value: unknown) => {
   const fields = isArray(path) ? path : toPath(path);

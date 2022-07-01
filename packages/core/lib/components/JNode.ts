@@ -8,7 +8,7 @@ import {
   getCurrentInstance,
   onMounted,
   onUpdated,
-} from "@vue/composition-api";
+} from "vue";
 import { isOriginTag } from "../utils/domTags";
 import { assignObject, deepClone } from "../utils/helper";
 import { useJRender } from "../utils/mixins";
