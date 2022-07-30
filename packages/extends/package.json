@@ -36,10 +36,10 @@
   },
   "dependencies": {
     "@jrender-legacy/core": "^1.2.4",
-    "core-js": "^3.23.4"
+    "core-js": "^3.24.1"
   },
   "peerDependencies": {
-    "vue": "^2.7.4"
+    "vue": "^2.7.8"
   },
   "gitHead": "cca95e23a460b460f73f227be5ea55906b348073"
 }
