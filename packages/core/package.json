@@ -38,7 +38,7 @@
     "core-js": "^3.25.1"
   },
   "peerDependencies": {
-    "vue": "^2.7.8"
+    "vue": "^2.7.10"
   },
-  "gitHead": "237e95487db6f1473f7789a2c5ef7741f323c757"
+  "gitHead": "d7d482e5ddb7eaa7330a674570b1ab1d552fb026"
 }
